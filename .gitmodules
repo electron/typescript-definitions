@@ -1,0 +1,3 @@
+[submodule "electron-api-docs"]
+	path = electron-api-docs
+	url = https://github.com/electron/electron-api-docs.git

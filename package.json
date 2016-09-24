@@ -1,0 +1,23 @@
+{
+  "name": "electron-definitelytyped",
+  "version": "1.4.1",
+  "description": "Automatically generated definitely typed files for the Electron API",
+  "main": "index.js",
+  "scripts": {
+    "build": "node index.js",
+    "fetch-latest": "git submodule update",
+    "prepublish": "npm run fetch-latest && npm run build -- -o=electron.ts",
+    "pretest": "npm run fetch-latest",
+    "test": "snazzy && npm run build -- -o=electron.d.ts"
+  },
+  "author": {
+    "name": "Samuel Attard",
+    "homepage": "https://www.samuelattard.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "lodash": "^4.16.1",
+    "snazzy": "^5.0.0",
+    "typescript": "^2.0.3"
+  }
+}
