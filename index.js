@@ -15,7 +15,7 @@ process.argv.forEach((arg) => {
 const outputLines = []
 
 const extendArray = (arr1, arr2) => Array.prototype.push.apply(arr1, arr2)
-const addThing = (lines) => extendArray(outputLines, lines.concat(['\n']))
+const addThing = (lines, sep = '') => extendArray(outputLines, lines.map((l, i) => (i === 0 || i >= lines.length - 2) ? l : `${l}${sep}`).concat(['\n']))
 const wrapComment = (comment) => {
   if (!comment) return []
   const result = ['/**']
@@ -41,7 +41,7 @@ let ElectronMainAndRendererInterface = ['interface ElectronMainAndRenderer {']
 
 API.forEach((module) => {
   let TargetInterface
-  const moduleString = `  ${module.name}: Electron.${_.upperFirst(module.name)},`
+  const moduleString = `  ${module.name}: Electron.${_.upperFirst(module.name)}`
   if (module.process.main && module.process.renderer) {
     TargetInterface = CommonInterface
   } else if (module.process.main) {
@@ -58,10 +58,10 @@ MainInterface.push('}')
 RendererInterface.push('}')
 ElectronMainAndRendererInterface.push('}')
 
-addThing(CommonInterface)
-addThing(MainInterface)
-addThing(RendererInterface)
-addThing(ElectronMainAndRendererInterface)
+addThing(CommonInterface, ',')
+addThing(MainInterface, ',')
+addThing(RendererInterface, ',')
+addThing(ElectronMainAndRendererInterface, ',')
 
 const modules = {}
 const paramInterfacesToDeclare = {}
@@ -201,7 +201,7 @@ if (outFile) {
   outStream = fs.createWriteStream(outFile)
 }
 outStream.write('declare namespace Electron {\n')
-outputLines.forEach((l) => outStream.write(`${l.trim().length ? '  ' : ''}${l.trim()}\n`))
+outputLines.forEach((l) => outStream.write(`${_.trimEnd(`  ${l}`)}\n`))
 outStream.write('}\n\n')
 
 outStream.write(fs.readFileSync('./raw_base.ts', 'utf8').replace('<<VERSION>>', require('./package.json').version))
