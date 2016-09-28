@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const fs = require('fs')
+const { extendArray, isOptional, paramify, typify, wrapComment } = require('./utils')
 
 const API = require('./electron-api-docs/electron-api.json')
 
@@ -14,30 +15,48 @@ process.argv.forEach((arg) => {
 
 const outputLines = []
 
-const extendArray = (arr1, arr2) => Array.prototype.push.apply(arr1, arr2)
 const addThing = (lines, sep = '') => extendArray(outputLines, lines.map((l, i) => (i === 0 || i >= lines.length - 2) ? l : `${l}${sep}`).concat(['\n']))
-const wrapComment = (comment) => {
-  if (!comment) return []
-  const result = ['/**']
-  while (comment.trim().length > 0) {
-    let index = 0
-    for (let i = 0; i <= 80; i++) {
-      if (comment[i] === ' ') index = i
-    }
-    if (comment.length <= 80) {
-      index = 80
-    }
-    result.push(` * ${comment.substring(0, index)}`)
-    comment = comment.substring(index + 1)
+
+// Remap optionals to actually be multiple methods when appropriate
+API.forEach((module) => {
+  const remap = (attr) => {
+    const moreMethods = []
+    module[attr] ? module[attr].forEach((method) => {
+      if (!method.parameters) return
+      if (method.__handled) return
+      let optionalFound = false
+      _.concat([], method.parameters).forEach((param, index) => {
+        if (optionalFound && !isOptional(param)) {
+          console.log('Duplicating method due to prefixed optional:', method.name, 'Slicing at:', index)
+          moreMethods.push(Object.assign({}, _.cloneDeep(method), {
+            parameters: [].concat(_.cloneDeep(method.parameters)).filter((tParam, pIndex) => {
+              if (pIndex >= index) return true
+              return !isOptional(tParam)
+            })
+          }))
+          for (let i = 0; i < index; i++) {
+            if (method.parameters[i].description) {
+              method.parameters[i].description = method.parameters[i].description.replace(/\(optional\)/gi, '')
+            }
+          }
+          method.__handled = true
+        }
+        optionalFound = optionalFound || isOptional(param)
+      })
+    }) : null
+    moreMethods.forEach((newMethod) => module[attr].push(newMethod))
   }
-  return result.concat(' */')
-}
+  remap('methods')
+  remap('instanceMethods')
+  remap('staticMethods')
+})
 
 // Generate Main / Renderer process interfaces
 let CommonInterface = ['interface CommonInterface {']
 let MainInterface = ['interface MainInterface extends CommonInterface {']
 let RendererInterface = ['interface RendererInterface extends CommonInterface {']
-let ElectronMainAndRendererInterface = ['interface ElectronMainAndRenderer {']
+let ElectronMainAndRendererInterface = ['interface AllElectron {']
+const EMRI = {}
 
 API.forEach((module) => {
   let TargetInterface
@@ -49,7 +68,8 @@ API.forEach((module) => {
   } else if (module.process.renderer) {
     TargetInterface = RendererInterface
   }
-  ElectronMainAndRendererInterface.push(moduleString)
+  if (!EMRI[module.name.toLowerCase()]) ElectronMainAndRendererInterface.push(moduleString)
+  EMRI[module.name.toLowerCase()] = true
   TargetInterface.push(moduleString)
 })
 
@@ -112,10 +132,11 @@ API.forEach((module, index) => {
   const moduleAPI = modules[_.upperFirst(module.name)] || []
   const newModule = !modules[_.upperFirst(module.name)]
   const isStaticVersion = module.type === 'Module' && API.some((tModule, tIndex) => index !== tIndex && tModule.name.toLowerCase() === module.name.toLowerCase())
+  const isClass = module.type === 'Class' || isStaticVersion
   // Interface Declaration
   if (newModule) {
-    moduleAPI.push(`interface ${_.upperFirst(module.name)} extends ${module.name === 'remote' ? 'MainInterface' : 'NodeJS.EventEmitter'} {`)
-    moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '')
+    moduleAPI.push(`${isClass ? 'class' : 'interface'} ${_.upperFirst(module.name)} extends ${module.name === 'remote' ? 'MainInterface' : 'EventEmitter'} {`)
+    moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '', 'on(event: string, listener: Function): this;', '')
   }
   // Event Declaration
   _.concat([], module.instanceEvents || [], module.events || []).sort((a, b) => a.name.localeCompare(b.name)).forEach((moduleEvent) => {
@@ -134,7 +155,7 @@ API.forEach((module, index) => {
           // Check if we have the same structure for a different name
           argType = createParamInterface(moduleEventListenerArg, moduleEventListenerArg.name === 'params' ? _.upperFirst(_.camelCase(moduleEvent.name)) : undefined, _.upperFirst(_.camelCase(moduleEvent.name)))
         }
-        args.push(`${argString}${moduleEventListenerArg.name}: ${argType}`)
+        args.push(`${argString}${paramify(moduleEventListenerArg.name)}: ${typify(argType)}`)
       })
       listener = `(${args.join(`,\n${indent}`)}) => void`
     }
@@ -143,6 +164,10 @@ API.forEach((module, index) => {
   // Method Handler
   const addMethod = (moduleMethod, prefix = '') => {
     extendArray(moduleAPI, wrapComment(moduleMethod.description))
+    let returnType = 'void'
+    if (moduleMethod.returns && moduleMethod.returns.type !== 'undefined') {
+      returnType = moduleMethod.returns.type
+    }
     moduleAPI.push(`${prefix}${moduleMethod.name}(${moduleMethod.parameters.map((param) => {
       let paramType = param.type
       if (param.type === 'Object' && param.properties) {
@@ -153,12 +178,12 @@ API.forEach((module, index) => {
           paramType = createParamInterface(param, '', _.upperFirst(moduleMethod.name))
         }
       }
-      return `${param.name}${/optional/gi.test(param.description) ? '?' : ''}: ${
+      return `${paramify(param.name)}${isOptional(param) ? '?' : ''}: ${
         param.possibleValues && param.possibleValues.length
-        ? param.possibleValues.map(v => `"${v}"`).join(',')
-        : paramType
+        ? param.possibleValues.map(v => `'${v.value}'`).join(' | ')
+        : typify(paramType)
       }`
-    }).join(', ')}): void;`)
+    }).join(', ')}): ${typify(returnType)};`)
   }
   // Method Declaration
   module.methods ? module.methods.sort((a, b) => a.name.localeCompare(b.name)).forEach(m => addMethod(m, isStaticVersion ? 'static ' : '')) : null
@@ -188,7 +213,7 @@ Object.keys(paramInterfacesToDeclare).sort((a, b) => paramInterfacesToDeclare[a]
     if (paramProperty.description) {
       extendArray(paramAPI, wrapComment(paramProperty.description))
     }
-    paramAPI.push(`${paramProperty.name}: ${paramProperty.type};`)
+    paramAPI.push(`${paramProperty.name}: ${typify(paramProperty.type)};`)
   })
   paramAPI.push('}')
   // console.log(paramAPI)
@@ -200,10 +225,14 @@ let outStream = process.stdout
 if (outFile) {
   outStream = fs.createWriteStream(outFile)
 }
+
+outStream.write(fs.readFileSync('./base_header.ts', 'utf8').replace('<<VERSION>>', require('./package.json').version))
+
 outStream.write('declare namespace Electron {\n')
+outStream.write(fs.readFileSync('./base_inner.ts', 'utf8').replace('<<VERSION>>', require('./package.json').version))
 outputLines.forEach((l) => outStream.write(`${_.trimEnd(`  ${l}`)}\n`))
 outStream.write('}\n\n')
 
-outStream.write(fs.readFileSync('./raw_base.ts', 'utf8').replace('<<VERSION>>', require('./package.json').version))
+outStream.write(fs.readFileSync('./base_footer.ts', 'utf8').replace('<<VERSION>>', require('./package.json').version))
 
 // outStream.close && outStream.close()
