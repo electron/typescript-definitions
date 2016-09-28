@@ -36,7 +36,7 @@ const typify = (type) => {
       console.warn('[Objects] is not a valid array definition, please conform to the styleguide')
       return 'any[]'
     case 'object':
-      console.warn('Unstructure "Object" type specified')
+      console.warn('Unstructured "Object" type specified')
       return 'any'
   }
   return type
