@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const fs = require('fs')
-const { extendArray, isOptional, paramify, typify, wrapComment } = require('./utils')
+const { extendArray, isEmitter, isOptional, paramify, typify, wrapComment } = require('./utils')
 
 const API = require('./electron-api-docs/electron-api.json')
 
@@ -137,8 +137,13 @@ API.sort((m1, m2) => m1.name.localeCompare(m2.name)).forEach((module, index) => 
   // Interface Declaration
   if (newModule) {
     if (module.type !== 'Structure') {
-      moduleAPI.push(`${isClass ? 'class' : 'interface'} ${_.upperFirst(module.name)} extends ${module.name === 'remote' ? 'MainInterface' : 'EventEmitter'} {`)
-      moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '', 'on(event: string, listener: Function): this;', '')
+      if (isEmitter(module.name)) {
+        moduleAPI.push(`${isClass ? 'class' : 'interface'} ${_.upperFirst(module.name)} extends ${module.name === 'remote' ? 'MainInterface' : 'EventEmitter'} {`)
+        moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '', 'on(event: string, listener: Function): this;', '')
+      } else {
+        moduleAPI.push(`${isClass ? 'class' : 'interface'} ${_.upperFirst(module.name)} {`)
+        moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '')
+      }
     } else {
       moduleAPI.push(`type ${_.upperFirst(module.name)} = {`)
       moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '')
