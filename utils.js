@@ -1,3 +1,5 @@
+require('colors')
+
 const extendArray = (arr1, arr2) => Array.prototype.push.apply(arr1, arr2)
 const wrapComment = (comment) => {
   if (!comment) return []
@@ -20,24 +22,28 @@ const typify = (type) => {
     case 'double':
     case 'integer':
     case 'float':
-      return 'Number'
+      return 'number'
     case 'double[]':
     case 'integer[]':
     case 'float[]':
-      return 'Number[]'
+      return 'number[]'
     case 'array':
-      console.warn('Untyped "Array" as return type')
+      console.warn('Untyped "Array" as return type'.yellow)
       return 'any[]'
     case 'true':
     case 'false':
-      console.warn('"true" or "false" provided as return value, inferring "Boolean" type')
-      return 'Boolean'
+      console.warn('"true" or "false" provided as return value, inferring "Boolean" type'.info)
+      return 'boolean'
     case '[objects]':
-      console.warn('[Objects] is not a valid array definition, please conform to the styleguide')
+      console.warn('[Objects] is not a valid array definition, please conform to the styleguide'.red)
       return 'any[]'
     case 'object':
-      console.warn('Unstructured "Object" type specified')
+      console.warn('Unstructured "Object" type specified'.yellow)
       return 'any'
+    case 'string':
+    case 'boolean':
+    case 'number':
+      return type.toLowerCase()
     case 'buffer':
       return 'NodeJS.Buffer'
   }
@@ -50,6 +56,17 @@ const paramify = (paramName) => {
   }
   return paramName
 }
+const isEmitter = (moduleName) => {
+  switch (moduleName.toLowerCase()) {
+    case 'menu':
+    case 'menuitem':
+    case 'nativeimage':
+    case 'shell':
+      return false
+    default:
+      return true
+  }
+}
 const isOptional = (param) => {
   if (/optional/gi.test(param.description)) return true
   if (/^\(.+\)/g.test(param.description) && !/required/gi.test(param.description)) {
@@ -60,6 +77,7 @@ const isOptional = (param) => {
 
 module.exports = {
   extendArray,
+  isEmitter,
   isOptional,
   paramify,
   typify,
