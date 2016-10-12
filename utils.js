@@ -30,8 +30,8 @@ const typify = (type) => {
       return 'any[]'
     case 'true':
     case 'false':
-      return 'Boolean'
       console.warn('"true" or "false" provided as return value, inferring "Boolean" type')
+      return 'Boolean'
     case '[objects]':
       console.warn('[Objects] is not a valid array definition, please conform to the styleguide')
       return 'any[]'

@@ -52,7 +52,7 @@ API.forEach((module) => {
 })
 
 // Generate Main / Renderer process interfaces
-let CommonInterface = ['', 'interface CommonInterface {']
+let CommonInterface = ['interface CommonInterface {']
 let MainInterface = ['interface MainInterface extends CommonInterface {']
 let RendererInterface = ['interface RendererInterface extends CommonInterface {']
 let ElectronMainAndRendererInterface = ['interface AllElectron {']
@@ -78,6 +78,7 @@ MainInterface.push('}')
 RendererInterface.push('}')
 ElectronMainAndRendererInterface.push('}')
 
+addThing([''])
 addThing(CommonInterface, ',')
 addThing(MainInterface, ',')
 addThing(RendererInterface, ',')
@@ -133,14 +134,13 @@ API.sort((m1, m2) => m1.name.localeCompare(m2.name)).forEach((module, index) => 
   const newModule = !modules[_.upperFirst(module.name)]
   const isStaticVersion = module.type === 'Module' && API.some((tModule, tIndex) => index !== tIndex && tModule.name.toLowerCase() === module.name.toLowerCase())
   const isClass = module.type === 'Class' || isStaticVersion
-  if (module.name.toLowerCase() === 'nativeimage') console.log(module.type, isStaticVersion, isClass)
   // Interface Declaration
   if (newModule) {
     if (module.type !== 'Structure') {
       moduleAPI.push(`${isClass ? 'class' : 'interface'} ${_.upperFirst(module.name)} extends ${module.name === 'remote' ? 'MainInterface' : 'EventEmitter'} {`)
       moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '', 'on(event: string, listener: Function): this;', '')
     } else {
-      moduleAPI.push(`interface ${_.upperFirst(module.name)} {`)
+      moduleAPI.push(`type ${_.upperFirst(module.name)} = {`)
       moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '')
     }
   }
@@ -179,9 +179,9 @@ API.sort((m1, m2) => m1.name.localeCompare(m2.name)).forEach((module, index) => 
       if (param.type === 'Object' && param.properties) {
         // Check if we have the same structure for a different name
         if (param.name === 'options') {
-          paramType = createParamInterface(param, _.upperFirst(moduleMethod.name))
+          paramType = createParamInterface(param, _.upperFirst(moduleMethod._name || moduleMethod.name))
         } else {
-          paramType = createParamInterface(param, '', _.upperFirst(moduleMethod.name))
+          paramType = createParamInterface(param, _.upperFirst(moduleMethod._name) || '', _.upperFirst(moduleMethod.name))
         }
       }
       return `${paramify(param.name)}${isOptional(param) ? '?' : ''}: ${
@@ -189,18 +189,24 @@ API.sort((m1, m2) => m1.name.localeCompare(m2.name)).forEach((module, index) => 
         ? param.possibleValues.map(v => `'${v.value}'`).join(' | ')
         : typify(paramType)
       }`
-    }).join(', ')}): ${typify(returnType)};`)
+    }).join(', ')})${moduleMethod.name === 'constructor' ? '' : `: ${typify(returnType)}`};`)
   }
+  // Class constructor
+  module.constructorMethod ? [module.constructorMethod].forEach(m => {
+    addMethod(Object.assign({ name: 'constructor', _name: `${module.name}Constructor` }, m))
+  }) : null
+  // Static Method Declaration
+  module.staticMethods ? module.staticMethods.sort((a, b) => a.name.localeCompare(b.name)).forEach(m => addMethod(m, 'static ')) : null
   // Method Declaration
   module.methods ? module.methods.sort((a, b) => a.name.localeCompare(b.name)).forEach(m => addMethod(m, isStaticVersion ? 'static ' : '')) : null
   // Instance Method Declaration
   module.instanceMethods ? module.instanceMethods.sort((a, b) => a.name.localeCompare(b.name)).forEach(m => addMethod(m)) : null
-  // Static Method Declaration
-  module.staticMethods ? module.staticMethods.sort((a, b) => a.name.localeCompare(b.name)).forEach(m => addMethod(m, 'static ')) : null
+  // Class properties
   module.instanceProperties ? module.instanceProperties.sort((a, b) => a.name.localeCompare(b.name)).forEach(prop => {
     // FIXME: The docs need prop types before we can specify the type here
     moduleAPI.push(`${prop.name}: any;`)
   }) : null
+  // Structure properties
   module.properties ? module.properties.sort((a, b) => a.name.localeCompare(b.name)).forEach(p => {
     moduleAPI.push(`${p.name}: ${p.type};`)
   }) : null
