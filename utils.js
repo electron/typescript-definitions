@@ -30,14 +30,16 @@ const typify = (type) => {
       return 'any[]'
     case 'true':
     case 'false':
-      console.warn('"true" or "false" provided as return value, inferring "Boolean" type')
       return 'Boolean'
+      console.warn('"true" or "false" provided as return value, inferring "Boolean" type')
     case '[objects]':
       console.warn('[Objects] is not a valid array definition, please conform to the styleguide')
       return 'any[]'
     case 'object':
       console.warn('Unstructured "Object" type specified')
       return 'any'
+    case 'buffer':
+      return 'NodeJS.Buffer'
   }
   return type
 }

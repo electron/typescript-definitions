@@ -52,7 +52,7 @@ API.forEach((module) => {
 })
 
 // Generate Main / Renderer process interfaces
-let CommonInterface = ['interface CommonInterface {']
+let CommonInterface = ['', 'interface CommonInterface {']
 let MainInterface = ['interface MainInterface extends CommonInterface {']
 let RendererInterface = ['interface RendererInterface extends CommonInterface {']
 let ElectronMainAndRendererInterface = ['interface AllElectron {']
@@ -128,21 +128,27 @@ const createParamInterface = (param, IName = '', backupIName = '') => {
   return argType
 }
 
-API.forEach((module, index) => {
+API.sort((m1, m2) => m1.name.localeCompare(m2.name)).forEach((module, index) => {
   const moduleAPI = modules[_.upperFirst(module.name)] || []
   const newModule = !modules[_.upperFirst(module.name)]
   const isStaticVersion = module.type === 'Module' && API.some((tModule, tIndex) => index !== tIndex && tModule.name.toLowerCase() === module.name.toLowerCase())
   const isClass = module.type === 'Class' || isStaticVersion
+  if (module.name.toLowerCase() === 'nativeimage') console.log(module.type, isStaticVersion, isClass)
   // Interface Declaration
   if (newModule) {
-    moduleAPI.push(`${isClass ? 'class' : 'interface'} ${_.upperFirst(module.name)} extends ${module.name === 'remote' ? 'MainInterface' : 'EventEmitter'} {`)
-    moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '', 'on(event: string, listener: Function): this;', '')
+    if (module.type !== 'Structure') {
+      moduleAPI.push(`${isClass ? 'class' : 'interface'} ${_.upperFirst(module.name)} extends ${module.name === 'remote' ? 'MainInterface' : 'EventEmitter'} {`)
+      moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '', 'on(event: string, listener: Function): this;', '')
+    } else {
+      moduleAPI.push(`interface ${_.upperFirst(module.name)} {`)
+      moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '')
+    }
   }
   // Event Declaration
   _.concat([], module.instanceEvents || [], module.events || []).sort((a, b) => a.name.localeCompare(b.name)).forEach((moduleEvent) => {
     extendArray(moduleAPI, wrapComment(moduleEvent.description))
     let listener = 'Function'
-    if (moduleEvent.returns.length) {
+    if (moduleEvent.returns && moduleEvent.returns.length) {
       const args = []
       const indent = _.repeat(' ', moduleEvent.name.length + 29)
       moduleEvent.returns.forEach((moduleEventListenerArg) => {
@@ -168,7 +174,7 @@ API.forEach((module, index) => {
     if (moduleMethod.returns && moduleMethod.returns.type !== 'undefined') {
       returnType = moduleMethod.returns.type
     }
-    moduleAPI.push(`${prefix}${moduleMethod.name}(${moduleMethod.parameters.map((param) => {
+    moduleAPI.push(`${prefix}${moduleMethod.name}(${(moduleMethod.parameters || []).map((param) => {
       let paramType = param.type
       if (param.type === 'Object' && param.properties) {
         // Check if we have the same structure for a different name
@@ -194,6 +200,9 @@ API.forEach((module, index) => {
   module.instanceProperties ? module.instanceProperties.sort((a, b) => a.name.localeCompare(b.name)).forEach(prop => {
     // FIXME: The docs need prop types before we can specify the type here
     moduleAPI.push(`${prop.name}: any;`)
+  }) : null
+  module.properties ? module.properties.sort((a, b) => a.name.localeCompare(b.name)).forEach(p => {
+    moduleAPI.push(`${p.name}: ${p.type};`)
   }) : null
   // Save moduleAPI for later reuse
   modules[_.upperFirst(module.name)] = moduleAPI
