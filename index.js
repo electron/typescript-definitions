@@ -228,7 +228,7 @@ API.sort((m1, m2) => m1.name.localeCompare(m2.name)).forEach((module, index) => 
   }) : null
   // Structure properties
   module.properties ? module.properties.sort((a, b) => a.name.localeCompare(b.name)).forEach(p => {
-    moduleAPI.push(`${p.name}: ${p.type};`)
+    moduleAPI.push(`${p.name}: ${typify(p.type)};`)
   }) : null
   // Save moduleAPI for later reuse
   modules[_.upperFirst(module.name)] = moduleAPI
