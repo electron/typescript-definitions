@@ -42,6 +42,8 @@ const typify = (type) => {
     case 'object':
       console.warn('Unstructured "Object" type specified'.yellow)
       return 'any'
+    case 'any':
+      return 'any'
     case 'string':
     case 'boolean':
     case 'number':
