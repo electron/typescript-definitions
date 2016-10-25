@@ -3,6 +3,8 @@ require('colors')
 const extendArray = (arr1, arr2) => Array.prototype.push.apply(arr1, arr2)
 const wrapComment = (comment) => {
   if (!comment) return []
+  comment = comment.replace(/^\(optional\)(?: - )?/g, '').trim()
+  if (!comment) return []
   const result = ['/**']
   while (comment.trim().length > 0) {
     let index = 0

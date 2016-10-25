@@ -175,20 +175,15 @@ API.sort((m1, m2) => m1.name.localeCompare(m2.name)).forEach((module, index) => 
           // Check if we have the same structure for a different name
           argType = createParamInterface(moduleEventListenerArg, moduleEventListenerArg.name === 'params' ? _.upperFirst(_.camelCase(moduleEvent.name)) : undefined, _.upperFirst(_.camelCase(moduleEvent.name)))
         }
-        args.push(`${argString}${paramify(moduleEventListenerArg.name)}: ${typify(argType)}`)
+        args.push(`${argString}${paramify(moduleEventListenerArg.name)}${isOptional(moduleEventListenerArg) ? '?' : ''}: ${typify(argType)}`)
       })
       listener = `(${args.join(`,\n${indent}`)}) => void`
     }
     moduleAPI.push(`on(event: "${moduleEvent.name}", listener: ${listener}): this;`)
   })
   // Method Handler
-  const addMethod = (moduleMethod, prefix = '') => {
-    extendArray(moduleAPI, wrapComment(moduleMethod.description))
-    let returnType = 'void'
-    if (moduleMethod.returns && moduleMethod.returns.type !== 'undefined') {
-      returnType = moduleMethod.returns.type
-    }
-    moduleAPI.push(`${prefix}${moduleMethod.name}(${(moduleMethod.parameters || []).map((param) => {
+  const genMethodString = (moduleMethod, parameters, includeType=true) => {
+    return `${includeType ? '(' : ''}${(parameters || []).map((param) => {
       let paramType = param.type
       if (param.type === 'Object' && param.properties) {
         // Check if we have the same structure for a different name
@@ -198,12 +193,23 @@ API.sort((m1, m2) => m1.name.localeCompare(m2.name)).forEach((module, index) => 
           paramType = createParamInterface(param, _.upperFirst(moduleMethod._name) || '', _.upperFirst(moduleMethod.name))
         }
       }
+      if (param.type === 'Function' && param.parameters) {
+        paramType = genMethodString(moduleMethod, param.parameters)
+      }
       return `${paramify(param.name)}${isOptional(param) ? '?' : ''}: ${
         param.possibleValues && param.possibleValues.length
         ? param.possibleValues.map(v => `'${v.value}'`).join(' | ')
         : typify(paramType)
       }`
-    }).join(', ')})${moduleMethod.name === 'constructor' ? '' : `: ${typify(returnType)}`};`)
+    }).join(', ')}${includeType ? `) => void` : ''}`
+  }
+  const addMethod = (moduleMethod, prefix = '') => {
+    extendArray(moduleAPI, wrapComment(moduleMethod.description))
+    let returnType = 'void'
+    if (moduleMethod.returns && moduleMethod.returns.type !== 'undefined') {
+      returnType = moduleMethod.returns.type
+    }
+    moduleAPI.push(`${prefix}${moduleMethod.name}(${genMethodString(moduleMethod, moduleMethod.parameters, false)})${moduleMethod.name === 'constructor' ? '' : `: ${typify(returnType)}`};`)
   }
   // Class constructor
   module.constructorMethod ? [module.constructorMethod].forEach(m => {
@@ -242,7 +248,7 @@ Object.keys(paramInterfacesToDeclare).sort((a, b) => paramInterfacesToDeclare[a]
     if (paramProperty.description) {
       extendArray(paramAPI, wrapComment(paramProperty.description))
     }
-    paramAPI.push(`${paramProperty.name}: ${typify(paramProperty.type)};`)
+    paramAPI.push(`${paramProperty.name}${isOptional(paramProperty) ? '?' : ''}: ${typify(paramProperty.type)};`)
   })
   paramAPI.push('}')
   // console.log(paramAPI)
