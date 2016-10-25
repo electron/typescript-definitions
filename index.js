@@ -148,7 +148,7 @@ API.sort((m1, m2) => m1.name.localeCompare(m2.name)).forEach((module, index) => 
     if (module.type !== 'Structure') {
       if (isEmitter(module.name)) {
         moduleAPI.push(`${isClass ? 'class' : 'interface'} ${_.upperFirst(module.name)} extends ${module.name === 'remote' ? 'MainInterface' : 'EventEmitter'} {`)
-        moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '', 'on(event: string, listener: Function): this;', '')
+        moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '')
       } else {
         moduleAPI.push(`${isClass ? 'class' : 'interface'} ${_.upperFirst(module.name)} {`)
         moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '')
