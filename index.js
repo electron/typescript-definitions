@@ -2,17 +2,26 @@ const _ = require('lodash')
 const fs = require('fs')
 const { extendArray, isEmitter, isOptional, paramify, typify, wrapComment } = require('./utils')
 
-const API = require('./electron-api-docs/electron-api.json')
 
 let outFile
+let inFile
 process.argv.forEach((arg) => {
   if (arg.startsWith('-o=')) {
     outFile = arg.substring(3)
   } else if (arg.startsWith('--out=')) {
     outFile = arg.substring(6)
   }
+  if (arg.startsWith('-i=')) {
+    inFile = arg.substring(3)
+  } else if (arg.startsWith('--in=')) {
+    inFile = arg.substring(5)
+  }
 })
 
+let API = require('./electron-api-docs/electron-api.json')
+if (inFile) {
+  API = require(inFile)
+}
 const outputLines = []
 
 const addThing = (lines, sep = '') => extendArray(outputLines, lines.map((l, i) => (i === 0 || i >= lines.length - 2) ? l : `${l}${sep}`).concat(['\n']))
