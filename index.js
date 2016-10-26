@@ -223,8 +223,7 @@ API.sort((m1, m2) => m1.name.localeCompare(m2.name)).forEach((module, index) => 
   module.instanceMethods ? module.instanceMethods.sort((a, b) => a.name.localeCompare(b.name)).forEach(m => addMethod(m)) : null
   // Class properties
   module.instanceProperties ? module.instanceProperties.sort((a, b) => a.name.localeCompare(b.name)).forEach(prop => {
-    // FIXME: The docs need prop types before we can specify the type here
-    moduleAPI.push(`${prop.name}: any;`)
+    moduleAPI.push(`${prop.name}: ${typify(prop.type)};`)
   }) : null
   // Structure properties
   module.properties ? module.properties.sort((a, b) => a.name.localeCompare(b.name)).forEach(p => {
