@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const fs = require('fs')
 const { extendArray, isEmitter, isOptional, paramify, typify, wrapComment } = require('./utils')
+require('colors')
 
 
 let outFile
@@ -36,7 +37,7 @@ API.forEach((module) => {
       let optionalFound = false
       _.concat([], method.parameters).forEach((param, index) => {
         if (optionalFound && !isOptional(param)) {
-          console.log('Duplicating method due to prefixed optional:', method.name, 'Slicing at:', index)
+          console.log(`Duplicating method due to prefixed optional: ${method.name} Slicing at: ${index}`.cyan)
           moreMethods.push(Object.assign({}, _.cloneDeep(method), {
             parameters: [].concat(_.cloneDeep(method.parameters)).filter((tParam, pIndex) => {
               if (pIndex >= index) return true
@@ -239,20 +240,43 @@ Object.keys(modules).forEach((moduleKey) => {
   addThing(moduleAPI.map((l, index) => (index === 0 || index === moduleAPI.length - 1) ? l : `  ${l}`))
 })
 
-Object.keys(paramInterfacesToDeclare).sort((a, b) => paramInterfacesToDeclare[a].tName.localeCompare(paramInterfacesToDeclare[b].tName)).forEach((paramKey) => {
-  const param = paramInterfacesToDeclare[paramKey]
-  const paramAPI = []
-  paramAPI.push(`interface ${_.upperFirst(param.tName)} {`)
-  param.properties.forEach((paramProperty) => {
-    if (paramProperty.description) {
-      extendArray(paramAPI, wrapComment(paramProperty.description))
-    }
-    paramAPI.push(`${paramProperty.name}${isOptional(paramProperty) ? '?' : ''}: ${typify(paramProperty.type)};`)
+const declared = {}
+
+while (Object.keys(paramInterfacesToDeclare).length > 0) {
+  const nestedInterfacesToDeclare = {}
+
+  Object.keys(paramInterfacesToDeclare).sort((a, b) => paramInterfacesToDeclare[a].tName.localeCompare(paramInterfacesToDeclare[b].tName)).forEach((paramKey) => {
+    if (declared[paramKey]) throw new Error('Ruh roh, "' + paramKey + '" is already declared')
+    declared[paramKey] = true
+    const param = paramInterfacesToDeclare[paramKey]
+    const paramAPI = []
+    paramAPI.push(`interface ${_.upperFirst(param.tName)} {`)
+    param.properties.forEach((paramProperty) => {
+      if (paramProperty.description) {
+        extendArray(paramAPI, wrapComment(paramProperty.description))
+      }
+      if (paramProperty.type.toLowerCase() === 'object') {
+        let argType = _.upperFirst(_.camelCase(paramProperty.name))
+        if (API.some(a => a.name === argType)) {
+          paramProperty.type = argType
+          console.warn(`Auto-correcting type from Object --> ${argType} in Interface: ${_.upperFirst(param.tName)} --- This should be fixed in the docs`.red)
+        } else {
+          nestedInterfacesToDeclare[argType] = paramProperty
+          nestedInterfacesToDeclare[argType].name = paramProperty.name
+          nestedInterfacesToDeclare[argType].tName = argType
+          paramProperty.type = argType
+        }
+      }
+      paramAPI.push(`${paramProperty.name}${isOptional(paramProperty) ? '?' : ''}: ${typify(paramProperty.type)};`)
+    })
+    paramAPI.push('}')
+    // console.log(paramAPI)
+    addThing(paramAPI.map((l, index) => (index === 0 || index === paramAPI.length - 1) ? l : `  ${l}`))
+    delete paramInterfacesToDeclare[paramKey]
   })
-  paramAPI.push('}')
-  // console.log(paramAPI)
-  addThing(paramAPI.map((l, index) => (index === 0 || index === paramAPI.length - 1) ? l : `  ${l}`))
-})
+
+  Object.assign(paramInterfacesToDeclare, nestedInterfacesToDeclare)
+}
 
 // process.exit(0)
 let outStream = process.stdout
