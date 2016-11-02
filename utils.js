@@ -20,6 +20,9 @@ const wrapComment = (comment) => {
   return result.concat(' */')
 }
 const typify = (type) => {
+  if (Array.isArray(type)) {
+    return type.map(t => typify(t)).join(' | ')
+  }
   if (!type) return 'any'
   switch (type.toLowerCase()) {
     case 'double':

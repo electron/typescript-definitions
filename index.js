@@ -172,7 +172,7 @@ API.sort((m1, m2) => m1.name.localeCompare(m2.name)).forEach((module, index) => 
           argString += wrapComment(moduleEventListenerArg.description).map((l, i) => `${l}\n${indent}`).join('')
         }
         let argType = moduleEventListenerArg.type
-        if (moduleEventListenerArg.type === 'Object' && moduleEventListenerArg.properties) {
+        if (moduleEventListenerArg.type === 'Object' && moduleEventListenerArg.properties && moduleEventListenerArg.properties.length) {
           // Check if we have the same structure for a different name
           argType = createParamInterface(moduleEventListenerArg, moduleEventListenerArg.name === 'params' ? _.upperFirst(_.camelCase(moduleEvent.name)) : undefined, _.upperFirst(_.camelCase(moduleEvent.name)))
         }
@@ -186,7 +186,7 @@ API.sort((m1, m2) => m1.name.localeCompare(m2.name)).forEach((module, index) => 
   const genMethodString = (moduleMethod, parameters, includeType=true) => {
     return `${includeType ? '(' : ''}${(parameters || []).map((param) => {
       let paramType = param.type
-      if (param.type === 'Object' && param.properties) {
+      if (param.type === 'Object' && param.properties && param.properties.length) {
         // Check if we have the same structure for a different name
         if (param.name === 'options') {
           paramType = createParamInterface(param, _.upperFirst(moduleMethod._name || moduleMethod.name))
@@ -251,6 +251,8 @@ while (Object.keys(paramInterfacesToDeclare).length > 0) {
     const param = paramInterfacesToDeclare[paramKey]
     const paramAPI = []
     paramAPI.push(`interface ${_.upperFirst(param.tName)} {`)
+
+    param.properties = param.properties || []
     param.properties.forEach((paramProperty) => {
       if (paramProperty.description) {
         extendArray(paramAPI, wrapComment(paramProperty.description))
