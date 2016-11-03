@@ -6,10 +6,12 @@
   "main": "index.js",
   "scripts": {
     "build": "node cli.js",
+    "demo": "npm run build -- -o=electron.d.ts",
     "fetch-latest": "git submodule update",
+    "lint": "snazzy",
     "prepublish": "npm run fetch-latest && npm run build -- -o=electron.ts",
-    "pretest": "npm run fetch-latest",
-    "test": "snazzy && npm run build -- -o=electron.d.ts"
+    "predemo": "npm run fetch-latest",
+    "test": "mocha test/*_spec.js"
   },
   "author": {
     "name": "Samuel Attard",
@@ -17,6 +19,8 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.1.2",
     "snazzy": "^5.0.0",
     "standard": "^8.5.0",
     "typescript": "^2.0.3"

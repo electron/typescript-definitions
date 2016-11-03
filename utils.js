@@ -1,6 +1,6 @@
 require('colors')
 
-const extendArray = (arr1, arr2) => Array.prototype.push.apply(arr1, arr2)
+const extendArray = (arr1, arr2) => Array.prototype.push.apply(arr1, arr2) && arr1
 const wrapComment = (comment) => {
   if (!comment) return []
   comment = comment.replace(/^\(optional\)(?: - )?/gi, '').trim()
@@ -21,7 +21,7 @@ const wrapComment = (comment) => {
 }
 const typify = (type) => {
   if (Array.isArray(type)) {
-    return type.map(t => typify(t)).join(' | ')
+    return Array.from(new Set(type.map(t => typify(t)))).join(' | ')
   }
   if (!type) return 'any'
   switch (type.toLowerCase()) {
@@ -51,9 +51,14 @@ const typify = (type) => {
     case 'string':
     case 'boolean':
     case 'number':
+    case 'string[]':
+    case 'boolean[]':
+    case 'number[]':
       return type.toLowerCase()
     case 'buffer':
       return 'NodeJS.Buffer'
+    case 'buffer[]':
+      return 'NodeJS.Buffer[]'
   }
   return type
 }
