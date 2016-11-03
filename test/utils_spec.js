@@ -1,5 +1,5 @@
 /* eslint-env mocha */
-const { expect } = require('chai')
+const expect = require('chai').expect
 
 const utils = require('../utils')
 
