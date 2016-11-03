@@ -1,3 +1,5 @@
+'use strict'
+
 require('colors')
 
 const extendArray = (arr1, arr2) => Array.prototype.push.apply(arr1, arr2) && arr1
