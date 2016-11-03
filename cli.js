@@ -32,11 +32,11 @@ if (outFile) {
   outStream = fs.createWriteStream(outFile)
 }
 
-outStream.write(fs.readFileSync('./base_header.ts', 'utf8').replace('<<VERSION>>', require('./package.json').version))
+outStream.write(fs.readFileSync('./base/base_header.ts', 'utf8').replace('<<VERSION>>', require('./package.json').version))
 
 outStream.write('declare namespace Electron {\n')
-outStream.write(fs.readFileSync('./base_inner.ts', 'utf8').replace('<<VERSION>>', require('./package.json').version))
+outStream.write(fs.readFileSync('./base/base_inner.ts', 'utf8').replace('<<VERSION>>', require('./package.json').version))
 outputLines.forEach((l) => outStream.write(`${_.trimEnd(`  ${l}`)}\n`))
 outStream.write('}\n\n')
 
-outStream.write(fs.readFileSync('./base_footer.ts', 'utf8').replace('<<VERSION>>', require('./package.json').version))
+outStream.write(fs.readFileSync('./base/base_footer.ts', 'utf8').replace('<<VERSION>>', require('./package.json').version))
