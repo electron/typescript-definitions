@@ -11,7 +11,7 @@
     "lint": "snazzy",
     "prepublish": "npm run fetch-latest && npm run build -- -o=electron.ts",
     "predemo": "npm run fetch-latest",
-    "test": "mocha test/*_spec.js"
+    "test": "npm run lint && mocha test/*_spec.js"
   },
   "author": {
     "name": "Samuel Attard",
