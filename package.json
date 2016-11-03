@@ -1,6 +1,6 @@
 {
   "name": "electron-definitelytyped",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Automatically generated definitely typed files for the Electron API",
   "bin": "cli.js",
   "main": "index.js",
