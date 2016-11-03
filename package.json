@@ -16,11 +16,12 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "lodash": "^4.16.1",
     "snazzy": "^5.0.0",
+    "standard": "^8.5.0",
     "typescript": "^2.0.3"
   },
   "dependencies": {
-    "colors": "^1.1.2"
+    "colors": "^1.1.2",
+    "lodash": "^4.16.1"
   }
 }
