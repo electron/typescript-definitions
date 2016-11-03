@@ -64,8 +64,8 @@ const paramify = (paramName) => {
   }
   return paramName
 }
-const isEmitter = (moduleName) => {
-  switch (moduleName.toLowerCase()) {
+const isEmitter = (module) => {
+  switch (module.name.toLowerCase()) {
     case 'menu':
     case 'menuitem':
     case 'nativeimage':
