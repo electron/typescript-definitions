@@ -8,7 +8,10 @@ const remapOptionals = require('./lib/remap-optionals')
 module.exports = (API) => {
   const outputLines = []
 
-  const addThing = (lines, sep = '') => utils.extendArray(outputLines, lines.map((l, i) => (i === 0 || i >= lines.length - 2) ? l : `${l}${sep}`).concat(['\n']))
+  const addThing = (lines, sep) => {
+    sep = sep || ''
+    utils.extendArray(outputLines, lines.map((l, i) => (i === 0 || i >= lines.length - 2) ? l : `${l}${sep}`).concat(['\n']))
+  }
 
   remapOptionals(API)
   generateMasterInterfaces(API, addThing)
