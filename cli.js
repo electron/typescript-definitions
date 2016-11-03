@@ -37,7 +37,7 @@ const outputLines = generateTypings(API)
 
 let outStream = process.stdout
 if (outFile) {
-  outStream = fs.createWriteStream(outFile)
+  outStream = fs.createWriteStream(path.resolve(process.cwd(), outFile))
 }
 
 outStream.write(fs.readFileSync('./base/base_header.ts', 'utf8').replace('<<VERSION>>', require('./package.json').version))
