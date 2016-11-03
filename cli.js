@@ -20,9 +20,16 @@ process.argv.forEach((arg) => {
   }
 })
 
-let API = require('./electron-api-docs/electron-api.json')
+let API
 if (inFile) {
   API = require(inFile)
+} else {
+  try {
+    API = require('./electron-api-docs/electron-api.json')
+  } catch (err) {
+    console.error('Could not find "electron-api.json".  Please provide a path with --in=path')
+    process.exit(1)
+  }
 }
 
 const outputLines = generateTypings(API)
