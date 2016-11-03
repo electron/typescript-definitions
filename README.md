@@ -1,4 +1,4 @@
-# electron-DefinitelyTyped [![Build Status](https://travis-ci.org/MarshallOfSound/electron-DefinitelyTyped.svg?branch=master)](https://travis-ci.org/electron/electron-docs-linter)
+# electron-DefinitelyTyped [![Build Status](https://travis-ci.org/MarshallOfSound/electron-DefinitelyTyped.svg?branch=master)](https://travis-ci.org/MarshallOfSound/electron-DefinitelyTyped)
 
 Parse Electron's JSON API documentation and spit out a typescript definition file
 
