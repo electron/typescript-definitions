@@ -3,6 +3,7 @@
 
 const _ = require('lodash')
 const fs = require('fs')
+const path = require('path')
 const generateTypings = require('./')
 
 let outFile
@@ -22,7 +23,7 @@ process.argv.forEach((arg) => {
 
 let API
 if (inFile) {
-  API = require(inFile)
+  API = require(path.resolve(process.cwd(), inFile))
 } else {
   try {
     API = require('./electron-api-docs/electron-api.json')
