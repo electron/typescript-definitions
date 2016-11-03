@@ -5,7 +5,7 @@
   "bin": "cli.js",
   "main": "index.js",
   "scripts": {
-    "build": "node index.js",
+    "build": "node cli.js",
     "fetch-latest": "git submodule update",
     "prepublish": "npm run fetch-latest && npm run build -- -o=electron.ts",
     "pretest": "npm run fetch-latest",
