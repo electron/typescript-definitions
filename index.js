@@ -24,4 +24,6 @@ module.exports = (API) => {
   })
 
   flushParamInterfaces(API, addThing)
+
+  return outputLines
 }
