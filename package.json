@@ -9,7 +9,7 @@
     "demo": "npm run build -- -o=electron.d.ts",
     "fetch-latest": "git submodule update",
     "lint": "snazzy",
-    "prepublish": "npm run fetch-latest && npm run build -- -o=electron.ts",
+    "prepublish": "npm run fetch-latest && npm run demo",
     "predemo": "npm run fetch-latest",
     "test": "npm run lint && mocha test/*_spec.js"
   },
