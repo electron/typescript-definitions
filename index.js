@@ -5,6 +5,10 @@ const generateMasterInterfaces = require('./lib/master-interfaces')
 const moduleDeclaration = require('./lib/module-declaration')
 const remapOptionals = require('./lib/remap-optionals')
 
+Array.prototype.includes = Array.prototype.includes || function (thing) { // eslint-disable-line
+  return this.indexOf(thing) !== -1
+}
+
 module.exports = (API) => {
   const outputLines = []
 
