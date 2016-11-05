@@ -1,4 +1,4 @@
-  class EventEmitter extends NodeJS.EventEmitter {
+  class EventEmitter implements NodeJS.EventEmitter {
     addListener(event: string, listener: Function): this;
     on(event: string, listener: Function): this;
     once(event: string, listener: Function): this;
@@ -97,3 +97,9 @@
     */
     getState(): 'progressing' | 'completed' | 'cancelled' | 'interrupted';
   }
+
+  interface Event {
+		preventDefault: Function;
+		sender: WebContents;
+    returnValue?: any;
+	}

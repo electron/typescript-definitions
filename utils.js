@@ -58,9 +58,9 @@ const typify = (type) => {
     case 'number[]':
       return type.toLowerCase()
     case 'buffer':
-      return 'NodeJS.Buffer'
+      return 'Buffer'
     case 'buffer[]':
-      return 'NodeJS.Buffer[]'
+      return 'Buffer[]'
   }
   return type
 }
