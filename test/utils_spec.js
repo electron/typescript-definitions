@@ -76,8 +76,8 @@ describe('utils', () => {
       expect(utils.typify(['String', 'Float', 'Double'])).to.deep.equal('string | number')
     })
 
-    it('should map node objects to the NodeJS prefix', () => {
-      expect(utils.typify('Buffer')).to.equal('NodeJS.Buffer')
+    it('should map node objects to the correct type', () => {
+      expect(utils.typify('buffer')).to.equal('Buffer')
     })
   })
 
