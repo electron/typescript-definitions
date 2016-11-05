@@ -1,5 +1,6 @@
 'use strict'
 
+const _ = require('lodash')
 require('colors')
 
 const extendArray = (arr1, arr2) => Array.prototype.push.apply(arr1, arr2) && arr1
@@ -90,11 +91,39 @@ const isOptional = (param) => {
   return false
 }
 
+const genMethodString = (paramInterfaces, module, moduleMethod, parameters, returns, includeType) => {
+  if (typeof includeType === 'undefined') includeType = true
+  return `${includeType ? '(' : ''}${(parameters || []).map((param) => {
+    let paramType = param.type
+    if (param.type === 'Object' && param.properties && param.properties.length) {
+      // Check if we have the same structure for a different name
+      if (param.name === 'options') {
+        if (['show', 'hide', 'open', 'close', 'start', 'stop'].includes((moduleMethod._name || moduleMethod.name).toLowerCase())) {
+          paramType = paramInterfaces.createParamInterface(param, _.upperFirst(module.name) + _.upperFirst(moduleMethod._name || moduleMethod.name))
+        } else {
+          paramType = paramInterfaces.createParamInterface(param, _.upperFirst(moduleMethod._name || moduleMethod.name))
+        }
+      } else {
+        paramType = paramInterfaces.createParamInterface(param, _.upperFirst(moduleMethod._name) || '', _.upperFirst(moduleMethod.name))
+      }
+    }
+    if (param.type === 'Function' && param.parameters) {
+      paramType = genMethodString(paramInterfaces, module, moduleMethod, param.parameters, param.returns)
+    }
+    return `${paramify(param.name)}${isOptional(param) ? '?' : ''}: ${
+      param.possibleValues && param.possibleValues.length
+      ? param.possibleValues.map(v => `'${v.value}'`).join(' | ')
+      : typify(paramType)
+    }`
+  }).join(', ')}${includeType ? `) => ${returns ? typify(returns.type) : 'void'}` : ''}`
+}
+
 module.exports = {
   extendArray,
   isEmitter,
   isOptional,
   paramify,
   typify,
-  wrapComment
+  wrapComment,
+  genMethodString
 }
