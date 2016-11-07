@@ -15,7 +15,7 @@ interface File {
 }
 
 declare module 'original-fs' {
-	import * as fs from 'fs';
+  import * as fs from 'fs';
 
-	export = fs;
+  export = fs;
 }

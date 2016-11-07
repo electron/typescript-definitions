@@ -62,6 +62,8 @@ const typify = (type) => {
       return 'Buffer'
     case 'buffer[]':
       return 'Buffer[]'
+    case 'promise':
+      return 'Promise<any>'
   }
   return type
 }

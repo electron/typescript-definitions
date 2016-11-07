@@ -14,7 +14,7 @@ module.exports = (API) => {
 
   const addThing = (lines, sep) => {
     sep = sep || ''
-    utils.extendArray(outputLines, lines.map((l, i) => (i === 0 || i >= lines.length - 2) ? l : `${l}${sep}`).concat(['\n']))
+    utils.extendArray(outputLines, lines.map((l, i) => (i === 0 || i >= lines.length - 1) ? l : `${l}${sep}`).concat(['\n']))
   }
 
   remapOptionals(API)
