@@ -1,3 +1,5 @@
+'use strict'
+
 /* eslint-env mocha */
 const fs = require('fs')
 const spawn = require('child_process').spawn
