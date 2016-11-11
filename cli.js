@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 'use strict'
 
-const _ = require('lodash')
 const fs = require('fs')
 const path = require('path')
 const generateTypings = require('./')
@@ -21,30 +20,20 @@ process.argv.forEach((arg) => {
   }
 })
 
-let API
+let apiPromise
 if (inFile) {
-  API = require(path.resolve(process.cwd(), inFile))
+  apiPromise = Promise.resolve(require(path.resolve(process.cwd(), inFile)))
 } else {
-  try {
-    API = require('./electron-api-docs/electron-api.json')
-  } catch (err) {
-    console.error('Could not find "electron-api.json".  Please provide a path with --in=path')
-    process.exit(1)
+  apiPromise = require('./vendor/fetch-docs')
+}
+
+apiPromise.then(API => {
+  return JSON.parse(JSON.stringify(API))
+}).then(API => {
+  let outStream = process.stdout
+  if (outFile) {
+    outStream = fs.createWriteStream(path.resolve(process.cwd(), outFile))
   }
-}
 
-const outputLines = generateTypings(API)
-
-let outStream = process.stdout
-if (outFile) {
-  outStream = fs.createWriteStream(path.resolve(process.cwd(), outFile))
-}
-
-outStream.write(fs.readFileSync(path.resolve(__dirname, 'base/base_header.ts'), 'utf8').replace('<<VERSION>>', require('./package.json').version))
-
-outStream.write('declare namespace Electron {\n')
-outStream.write(fs.readFileSync(path.resolve(__dirname, 'base/base_inner.ts'), 'utf8').replace('<<VERSION>>', require('./package.json').version))
-outputLines.forEach((l) => outStream.write(`${_.trimEnd(`  ${l}`)}\n`))
-outStream.write('}\n\n')
-
-outStream.write(fs.readFileSync(path.resolve(__dirname, 'base/base_footer.ts'), 'utf8').replace('<<VERSION>>', require('./package.json').version))
+  generateTypings(API).forEach(line => outStream.write(`${line}\n`))
+})

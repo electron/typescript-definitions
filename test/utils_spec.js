@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 const expect = require('chai').expect
 
-const utils = require('../utils')
+const utils = require('../lib/utils')
 
 describe('utils', () => {
   describe('extendArray', () => {

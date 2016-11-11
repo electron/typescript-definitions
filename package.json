@@ -7,10 +7,8 @@
   "scripts": {
     "build": "node cli.js",
     "demo": "npm run build -- -o=electron.d.ts",
-    "fetch-latest": "git submodule update",
     "lint": "snazzy",
-    "prepublish": "npm run fetch-latest && npm run demo",
-    "predemo": "npm run fetch-latest",
+    "prepublish": "npm run demo",
     "test": "npm run lint && mocha test/*_spec.js"
   },
   "author": {
@@ -26,6 +24,10 @@
   },
   "dependencies": {
     "colors": "^1.1.2",
-    "lodash": "^4.16.1"
+    "electron-docs": "^2.0.0",
+    "electron-docs-linter": "^1.14.0",
+    "lodash": "^4.16.1",
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.5.4"
   }
 }
