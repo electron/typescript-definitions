@@ -3,6 +3,8 @@
 
 const fs = require('fs')
 const path = require('path')
+
+const fetchDocs = require('./vendor/fetch-docs')
 const generateTypings = require('./')
 
 let outFile
@@ -22,9 +24,14 @@ process.argv.forEach((arg) => {
 
 let apiPromise
 if (inFile) {
-  apiPromise = Promise.resolve(require(path.resolve(process.cwd(), inFile)))
+  const inPath = path.resolve(process.cwd(), inFile)
+  if (fs.existsSync(inPath)) {
+    apiPromise = Promise.resolve(require(path.resolve(process.cwd(), inFile)))
+  } else {
+    apiPromise = fetchDocs(inFile)
+  }
 } else {
-  apiPromise = require('./vendor/fetch-docs')
+  apiPromise = fetchDocs()
 }
 
 apiPromise.then(API => {
