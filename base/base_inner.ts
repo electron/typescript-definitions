@@ -22,4 +22,7 @@
     preventDefault: Function;
     sender: WebContents;
     returnValue?: any;
+    ctrlkey?: boolean;
+    metaKey?: boolean;
+    shiftKey?: boolean;
   }
