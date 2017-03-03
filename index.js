@@ -13,7 +13,8 @@ Array.prototype.includes = Array.prototype.includes || function (thing) { // esl
   return this.indexOf(thing) !== -1
 }
 
-const finalizeThings = (outputLines, electronVersion) => {
+// takes the predefined header and footer and wraps them around the generated files
+const wrapWithHeaderAndFooter = (outputLines, electronVersion) => {
   const newOutputLines = []
   utils.extendArray(newOutputLines, fs.readFileSync(path.resolve(__dirname, 'base/base_header.ts'), 'utf8').replace('<<VERSION>>', electronVersion).split(/\r?\n/))
 
@@ -29,25 +30,28 @@ const finalizeThings = (outputLines, electronVersion) => {
 module.exports = (API) => {
   const outputLines = []
 
-  const addThing = (lines, sep) => {
-    sep = sep || ''
-    utils.extendArray(outputLines, lines.map((l, i) => (i === 0 || i >= lines.length - 1) ? l : `${l}${sep}`).concat(['\n']))
+  // adds lines to output with given indentation level
+  const addToOutput = (lines, indentation) => {
+    indentation = indentation || ''
+    utils.extendArray(outputLines, lines.map((l, i) => (i === 0 || i >= lines.length - 1) ? l : `${l}${indentation}`).concat(['\n']))
   }
 
   remapOptionals(API)
-  generateMasterInterfaces(API, addThing)
+  generateMasterInterfaces(API, addToOutput)
 
+  // generate module declaration for every class, module, structure, element, etc
   API.sort((m1, m2) => m1.name.localeCompare(m2.name)).forEach((module, index) => {
     moduleDeclaration.generateModuleDeclaration(module, index, API)
   })
 
+  // fetch everything that's been made and pop it into the actual API
   Object.keys(moduleDeclaration.getModuleDeclarations()).forEach((moduleKey) => {
     const moduleAPI = moduleDeclaration.getModuleDeclarations()[moduleKey]
     moduleAPI.push('}')
-    addThing(moduleAPI.map((l, index) => (index === 0 || index === moduleAPI.length - 1) ? l : `  ${l}`))
+    addToOutput(moduleAPI.map((l, index) => (index === 0 || index === moduleAPI.length - 1) ? l : `  ${l}`))
   })
 
-  paramInterfaces.flushParamInterfaces(API, addThing)
+  paramInterfaces.flushParamInterfaces(API, addToOutput)
 
-  return finalizeThings(outputLines, API[0].version)
+  return wrapWithHeaderAndFooter(outputLines, API[0].version)
 }
