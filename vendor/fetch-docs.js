@@ -22,3 +22,8 @@ module.exports = target =>
   .then(() => {
     return linter(downloadPath, '9.9.9')
   })
+
+process.on('unhandledRejection', (err) => {
+  console.error(err);
+  process.exit(0);
+})

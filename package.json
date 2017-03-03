@@ -9,8 +9,11 @@
     "demo": "npm run build -- -o=electron.d.ts",
     "prepublish": "npm run demo",
     "test": "mocha && snazzy",
-    "lint-output": "node scripts/lint.js",
-    "lint": "tslint -c tslint.json -t verbose electron.d.ts --fix"
+    "lint-output": "tslint -c tslint.json -t verbose electron.d.ts --fix",
+    "test": "mocha && snazzy && npm run test-output && npm run lint-output",
+    "pretest-output": "npm run build -- -o=test-smoke/electron/index.d.ts && cd test-smoke/electron/test && rm -f *.js",
+    "test-output": "cd test-smoke && node ../node_modules/types-publisher/bin/tester/test.js --run-from-definitely-typed --nProcesses 1",
+    "posttest-output": "node scripts/lint.js && cd test-smoke/electron && tsc --project tsconfig.json"
   },
   "author": {
     "name": "Samuel Attard",
@@ -18,10 +21,13 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^7.0.5",
     "chai": "^3.5.0",
     "mocha": "^3.1.2",
     "snazzy": "^6.0.0",
-    "types-publisher": "github:microsoft/types-publisher#production"
+    "tslint": "^4.5.1",
+    "types-publisher": "github:microsoft/types-publisher#production",
+    "typescript": "^2.2.1"
   },
   "standard": {
     "env": {
@@ -31,7 +37,7 @@
   "dependencies": {
     "colors": "^1.1.2",
     "electron-docs": "^2.0.0",
-    "electron-docs-linter": "1.14.0",
+    "electron-docs-linter": "^2.0.0",
     "lodash": "^4.16.1",
     "mkdirp": "^0.5.1",
     "rimraf": "^2.5.4"

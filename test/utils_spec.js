@@ -101,7 +101,7 @@ describe('utils', () => {
 
   describe('isOptional', () => {
     it('should return false for an empty description', () => {
-      expect(utils.isOptional({ description: '' })).to.eq(false)
+      expect(utils.isOptional({ description: '', required: true })).to.eq(false)
     })
 
     it('should return true if optional is in the description', () => {
@@ -113,7 +113,7 @@ describe('utils', () => {
     })
 
     it('should return false if the description has brackets but is required', () => {
-      expect(utils.isOptional({ description: '(not needed) - This thing is required' })).to.eq(false)
+      expect(utils.isOptional({ description: '(not needed) - This thing is required', required: true })).to.eq(false)
     })
   })
 })

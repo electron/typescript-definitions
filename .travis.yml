@@ -4,4 +4,7 @@ node_js:
   - "5"
   - "6"
 
-after_script: npm run demo
+after_script:
+  - npm run demo
+  - npm run lint-output
+  - npm run test

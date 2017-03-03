@@ -13,7 +13,8 @@ const fakeAPI = [{
           description: 'optional'
         },
         {
-          name: 'bar'
+          name: 'bar',
+          required: true
         }
       ]
     },
@@ -21,11 +22,35 @@ const fakeAPI = [{
       name: 'example2',
       parameters: [
         {
-          name: 'foo'
+          name: 'foo',
+          required: true
         },
         {
           name: 'bar',
           description: 'optional'
+        }
+      ]
+    }
+  ]
+}]
+
+const middleAPI = [{
+  name: 'MiddleModule',
+  methods: [
+    {
+      name: 'example',
+      parameters: [
+        {
+          name: 'foo',
+          required: true
+        },
+        {
+          name: 'bar',
+          required: false
+        },
+        {
+          name: 'fee',
+          required: true
         }
       ]
     }
@@ -59,5 +84,21 @@ describe('remap-optionals', () => {
     const methodBefore = _.cloneDeep(API[0].methods[1])
     remapOptionals(API)
     expect(API[0].methods[1]).to.deep.equal(methodBefore)
+  })
+
+  it('should remap optional middle params', () => {
+    const API = _.cloneDeep(middleAPI)
+    expect(API[0].methods.length).to.equal(1)
+    expect(API[0].methods[0].parameters.length).to.equal(3)
+    remapOptionals(API)
+    expect(API[0].methods.length).to.equal(2)
+    expect(API[0].methods[1].parameters.length).to.equal(2)
+
+    expect(API[0].methods[0].parameters[0].required).to.equal(true, 'should make prefixed optionals required')
+    expect(API[0].methods[0].parameters[1].required).to.equal(true, 'should make prefixed optionals required')
+    expect(API[0].methods[0].parameters[2].required).to.equal(true, 'should make prefixed optionals required')
+
+    expect(API[0].methods[1].parameters[0].required).to.equal(true, 'should make prefixed optionals required')
+    expect(API[0].methods[1].parameters[1].required).to.equal(true, 'should make prefixed optionals required')
   })
 })
