@@ -9,7 +9,8 @@
     "demo": "npm run build -- -o=electron.d.ts",
     "prepublish": "npm run demo",
     "test": "mocha && snazzy",
-    "lint-output": "node scripts/lint.js"
+    "lint-output": "node scripts/lint.js",
+    "lint": "tslint -c tslint.json -t verbose electron.d.ts --fix"
   },
   "author": {
     "name": "Samuel Attard",

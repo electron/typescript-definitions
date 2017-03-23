@@ -1,1 +1,7 @@
-{ "extends": "./node_modules/types-publisher/tslint-definitions.json" }
+{
+  "extends": "tslint:latest",
+  "rules": {
+    "ban-types": false,
+    "unified-signatures": false
+  }
+}
