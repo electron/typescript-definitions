@@ -1,6 +1,4 @@
-/* eslint-env mocha */
 const expect = require('chai').expect
-
 const utils = require('../lib/utils')
 
 describe('utils', () => {
@@ -45,7 +43,7 @@ describe('utils', () => {
       const wrapped = utils.wrapComment('Thisisalongword Thisisalongword Thisisalongword Thisisalongword Thisisalongword Thisisalongword Thisisalongword Thisisalongword')
       wrapped.forEach((line, index) => {
         if (index === 0 || index === wrapped.length - 1) return
-        expect(line.endsWith('Thisisalongword')).to.be.true
+        expect(line.endsWith('Thisisalongword')).to.eq(true)
       })
     })
   })
@@ -93,29 +91,29 @@ describe('utils', () => {
 
   describe('isEmitter', () => {
     it('should return true on most modules', () => {
-      expect(utils.isEmitter({ name: 'app' })).to.be.true
+      expect(utils.isEmitter({ name: 'app' })).to.eq(true)
     })
 
     it('should return false for specific non-emitter modules', () => {
-      expect(utils.isEmitter({ name: 'menuitem' })).to.be.false
+      expect(utils.isEmitter({ name: 'menuitem' })).to.eq(false)
     })
   })
 
   describe('isOptional', () => {
     it('should return false for an empty description', () => {
-      expect(utils.isOptional({ description: '' })).to.be.false
+      expect(utils.isOptional({ description: '' })).to.eq(false)
     })
 
     it('should return true if optional is in the description', () => {
-      expect(utils.isOptional({ description: 'This param is completely optional' })).to.be.true
+      expect(utils.isOptional({ description: 'This param is completely optional' })).to.eq(true)
     })
 
     it('should return true if the description has brackets and is not required', () => {
-      expect(utils.isOptional({ description: '(not needed) - This thing' })).to.be.true
+      expect(utils.isOptional({ description: '(not needed) - This thing' })).to.eq(true)
     })
 
     it('should return false if the description has brackets but is required', () => {
-      expect(utils.isOptional({ description: '(not needed) - This thing is required' })).to.be.false
+      expect(utils.isOptional({ description: '(not needed) - This thing is required' })).to.eq(false)
     })
   })
 })

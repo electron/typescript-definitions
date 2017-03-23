@@ -7,9 +7,9 @@
   "scripts": {
     "build": "node cli.js",
     "demo": "npm run build -- -o=electron.d.ts",
-    "lint": "snazzy",
     "prepublish": "npm run demo",
-    "test": "npm run lint && mocha test/*_spec.js"
+    "test": "mocha && snazzy",
+    "lint-output": "node scripts/lint.js"
   },
   "author": {
     "name": "Samuel Attard",
@@ -19,8 +19,13 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^3.1.2",
-    "snazzy": "^5.0.0",
-    "standard": "^8.5.0"
+    "snazzy": "^6.0.0",
+    "types-publisher": "github:microsoft/types-publisher#production"
+  },
+  "standard": {
+    "env": {
+      "mocha": true
+    }
   },
   "dependencies": {
     "colors": "^1.1.2",

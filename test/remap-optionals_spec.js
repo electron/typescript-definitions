@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 const _ = require('lodash')
 const expect = require('chai').expect
 const remapOptionals = require('../lib/remap-optionals')
