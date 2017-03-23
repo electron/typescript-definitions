@@ -1,6 +1,6 @@
 const execSync = require('child_process').execSync
 const path = require('path')
-const cmd = `node ./node_modules/tslint/bin/tslint --format stylish "electron.d.ts"`
+const cmd = 'node ./node_modules/tslint/bin/tslint --format stylish "electron.d.ts"'
 
 console.log(cmd)
 
