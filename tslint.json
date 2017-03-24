@@ -3,6 +3,7 @@
   "rules": {
     "ban-types": false,
     "max-line-length": [0],
-    "unified-signatures": false
+    "unified-signatures": false,
+    "interface-name": [false]
   }
 }
