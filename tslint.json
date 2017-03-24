@@ -6,6 +6,7 @@
     "unified-signatures": false,
     "interface-name": [false],
     "max-classes-per-file": [false],
-    "member-ordering": [false]
+    "member-ordering": [false],
+    "no-namespace": false
   }
 }
