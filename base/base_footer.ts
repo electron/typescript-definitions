@@ -3,7 +3,7 @@ declare module 'electron' {
   export = electron;
 }
 
-type NodeRequireFunction = (moduleName: 'electron') => Electron.AllElectron
+type NodeRequireFunction = (moduleName: 'electron') => Electron.AllElectron;
 
 interface File {
  /**
@@ -14,6 +14,5 @@ interface File {
 
 declare module 'original-fs' {
   import * as fs from 'fs';
-
   export = fs;
 }
