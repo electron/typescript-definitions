@@ -8,6 +8,7 @@
     "max-classes-per-file": [false],
     "member-ordering": [false],
     "no-namespace": false,
-    "variable-name": false
+    "variable-name": false,
+    "no-empty-interface": false
   }
 }
