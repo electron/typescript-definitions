@@ -9,6 +9,7 @@
     "member-ordering": [false],
     "no-namespace": false,
     "variable-name": false,
-    "no-empty-interface": false
+    "no-empty-interface": false,
+    "adjacent-overload-signatures": false
   }
 }
