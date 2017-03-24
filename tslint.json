@@ -4,6 +4,7 @@
     "ban-types": false,
     "max-line-length": [0],
     "unified-signatures": false,
-    "interface-name": [false]
+    "interface-name": [false],
+    "max-classes-per-file": [false]
   }
 }
