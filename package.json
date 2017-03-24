@@ -8,9 +8,8 @@
     "build": "node cli.js",
     "demo": "npm run build -- -o=electron.d.ts",
     "prepublish": "npm run demo",
-    "test": "mocha && snazzy",
     "lint-output": "tslint -c tslint.json -t verbose electron.d.ts --fix",
-    "test": "mocha && snazzy && npm run test-output && npm run lint-output",
+    "test": "mocha && standard && npm run test-output && npm run lint-output",
     "pretest-output": "npm run build -- -o=test-smoke/electron/index.d.ts && cd test-smoke/electron/test && rm -f *.js",
     "test-output": "cd test-smoke && node ../node_modules/types-publisher/bin/tester/test.js --run-from-definitely-typed --nProcesses 1",
     "posttest-output": "node scripts/lint.js && cd test-smoke/electron && tsc --project tsconfig.json"
@@ -24,7 +23,7 @@
     "@types/node": "^7.0.5",
     "chai": "^3.5.0",
     "mocha": "^3.1.2",
-    "snazzy": "^6.0.0",
+    "standard": "^9.0.2",
     "tslint": "^4.5.1",
     "types-publisher": "github:microsoft/types-publisher#production",
     "typescript": "^2.2.1"
