@@ -2,6 +2,14 @@
   "extends": "tslint:latest",
   "rules": {
     "ban-types": false,
-    "unified-signatures": false
+    "max-line-length": [0],
+    "unified-signatures": false,
+    "interface-name": [false],
+    "max-classes-per-file": [false],
+    "member-ordering": [false],
+    "no-namespace": false,
+    "variable-name": false,
+    "no-empty-interface": false,
+    "adjacent-overload-signatures": false
   }
 }

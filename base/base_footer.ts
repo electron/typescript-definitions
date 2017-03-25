@@ -3,12 +3,10 @@ declare module 'electron' {
   export = electron;
 }
 
-interface NodeRequireFunction {
-  (moduleName: 'electron'): Electron.AllElectron;
-}
+type NodeRequireFunction = (moduleName: 'electron') => Electron.AllElectron;
 
 interface File {
-  /**
+ /**
   * The real path to the file on the users filesystem
   */
   path: string;
@@ -16,6 +14,5 @@ interface File {
 
 declare module 'original-fs' {
   import * as fs from 'fs';
-
   export = fs;
 }
