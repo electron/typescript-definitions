@@ -11,6 +11,7 @@
     "variable-name": false,
     "no-empty-interface": false,
     "adjacent-overload-signatures": false,
-    "quotemark": [false]
+    "quotemark": [false],
+    "callable-types": [false]
   }
 }

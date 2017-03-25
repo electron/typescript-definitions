@@ -3,7 +3,9 @@ declare module 'electron' {
   export = electron;
 }
 
-type NodeRequireFunction = (moduleName: 'electron') => Electron.AllElectron;
+interface NodeRequireFunction {
+  (moduleName: 'electron'): Electron.AllElectron;
+}
 
 interface File {
  /**
