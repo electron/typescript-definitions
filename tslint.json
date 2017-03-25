@@ -10,6 +10,7 @@
     "no-namespace": false,
     "variable-name": false,
     "no-empty-interface": false,
-    "adjacent-overload-signatures": false
+    "adjacent-overload-signatures": false,
+    "quotemark": [false]
   }
 }
