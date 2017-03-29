@@ -1,11 +1,11 @@
-# electron-DefinitelyTyped [![Build Status](https://travis-ci.org/electron/electron-typescript-definitions.svg?branch=master)](https://travis-ci.org/electron/electron-typescript-definitions)
+# Electron TypeScript Definitions [![Build Status](https://travis-ci.org/electron/electron-typescript-definitions.svg?branch=master)](https://travis-ci.org/electron/electron-typescript-definitions)
 
-Parse Electron's JSON API documentation and spit out a typescript definition file
+This module uses Electron's [JSON API documentation](https://electron.atom.io/blog/2016/09/27/api-docs-json-schema) to produce a TypeScript definition file.
 
 ## Installation
 
 ```sh
-npm install electron-DefinitelyTyped --save
+npm install electron-typescript-definitions --save
 ```
 
 ## CLI Usage
@@ -13,7 +13,7 @@ npm install electron-DefinitelyTyped --save
 To generate the definitions
 
 ```sh
-electron-DefinitelyTyped --in=path/to/electron/api.json --out=path/to/electron.d.ts
+electron-typescript-definitions --in=path/to/electron/api.json --out=path/to/electron.d.ts
 ```
 
 Any warnings during the generation can normally be ignored unless it actually throws
@@ -25,7 +25,7 @@ The module exports a function that parses a given API JSON object and returns
 an array of lines to create the definition file
 
 ```js
-const generateDefinitions = require('electron-DefinitelyTyped')
+const generateDefinitions = require('electron-typescript-definitions')
 const apiPath = './vendor/electron/docs/api.json'
 
 const definitionLines = generateDefinitions(require(apiPath))
