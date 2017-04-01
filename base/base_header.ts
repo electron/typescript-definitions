@@ -4,3 +4,5 @@
 // Definitions: https://github.com/electron/electron-typescript-definitions
 
 /// <reference types="node" />
+
+type GlobalEvent = Event;

@@ -18,10 +18,10 @@
 
   }
 
-  interface Event {
-    preventDefault: Function;
+  interface Event extends GlobalEvent {
+    preventDefault: () => void;
     sender: WebContents;
-    returnValue?: any;
+    returnValue: any;
     ctrlkey?: boolean;
     metaKey?: boolean;
     shiftKey?: boolean;
