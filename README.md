@@ -1,6 +1,6 @@
 # Electron TypeScript Definitions [![Build Status](https://travis-ci.org/electron/electron-typescript-definitions.svg?branch=master)](https://travis-ci.org/electron/electron-typescript-definitions)
 
-This module uses Electron's [JSON API documentation](https://electron.atom.io/blog/2016/09/27/api-docs-json-schema) to produce a TypeScript definition file.
+This module uses Electron's [JSON API documentation](https://electron.atom.io/blog/2016/09/27/api-docs-json-schema) to produce a TypeScript definition file for the Electron API.
 
 ## Installation
 
