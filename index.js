@@ -20,11 +20,25 @@ const wrapWithHeaderAndFooter = (outputLines, electronVersion) => {
 
   newOutputLines.push('declare namespace Electron {')
   utils.extendArray(newOutputLines, fs.readFileSync(path.resolve(__dirname, 'base/base_inner.ts'), 'utf8').replace('<<VERSION>>', electronVersion).split(/\r?\n/))
-  outputLines.forEach((l) => newOutputLines.push(`${_.trimEnd(`  ${l}`)}`))
+
+  outputLines.slice(1).forEach((l) => newOutputLines.push(`${_.trimEnd(`  ${l}`)}`))
   utils.extendArray(newOutputLines, ['}', ''])
 
   utils.extendArray(newOutputLines, fs.readFileSync(path.resolve(__dirname, 'base/base_footer.ts'), 'utf8').replace('<<VERSION>>', electronVersion).split(/\r?\n/))
   return newOutputLines
+}
+
+const appendNodeJSOverride = (outputLines) => {
+  utils.extendArray(outputLines, ['', 'declare namespace NodeJS {'])
+
+  const processAPI = moduleDeclaration.getModuleDeclarations().Process
+  processAPI.push('}')
+  utils.extendArray(outputLines, (processAPI.map((l, index) => l.length ? ((index === 0 || index === processAPI.length - 1) ? `  ${l}` : `    ${l}`) : '')))
+  utils.extendArray(outputLines, ['  interface ProcessVersions {', '    electron: string;', '    chrome: string;', '  }'])
+
+  utils.extendArray(outputLines, ['}'])
+
+  return outputLines
 }
 
 module.exports = (API) => {
@@ -46,6 +60,7 @@ module.exports = (API) => {
 
   // fetch everything that's been made and pop it into the actual API
   Object.keys(moduleDeclaration.getModuleDeclarations()).forEach((moduleKey) => {
+    if (moduleKey === 'Process') return
     const moduleAPI = moduleDeclaration.getModuleDeclarations()[moduleKey]
     moduleAPI.push('}')
     addToOutput(moduleAPI.map((l, index) => (index === 0 || index === moduleAPI.length - 1) ? l : `  ${l}`))
@@ -53,5 +68,7 @@ module.exports = (API) => {
 
   paramInterfaces.flushParamInterfaces(API, addToOutput)
 
-  return wrapWithHeaderAndFooter(outputLines, API[0].version)
+  const electronOutput = wrapWithHeaderAndFooter(outputLines, API[0].version)
+
+  return appendNodeJSOverride(electronOutput)
 }

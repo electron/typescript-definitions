@@ -7,7 +7,7 @@ const mkdirp = require('mkdirp').sync
 const os = require('os')
 
 const downloadPath = path.join(os.tmpdir(), 'electron-api-tmp')
-const ELECTRON_COMMIT = '46aed5ff6f4f2e27222dc197f67c48106cf817c8'
+const ELECTRON_COMMIT = 'a686237d9bc47e56498d7aa3d9f8a21f9ca2a8e9'
 
 rm(downloadPath)
 
