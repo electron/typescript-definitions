@@ -7,6 +7,7 @@
     "interface-name": false,
     "max-classes-per-file": false,
     "max-line-length": false,
+    "member-access": false,
     "member-ordering": false,
     "no-empty-interface": false,
     "no-namespace": false,
