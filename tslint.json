@@ -1,17 +1,17 @@
 {
   "extends": "tslint:latest",
   "rules": {
-    "ban-types": false,
-    "max-line-length": [0],
-    "unified-signatures": false,
-    "interface-name": [false],
-    "max-classes-per-file": [false],
-    "member-ordering": [false],
-    "no-namespace": false,
-    "variable-name": false,
-    "no-empty-interface": false,
     "adjacent-overload-signatures": false,
-    "quotemark": [false],
-    "callable-types": [false]
+    "ban-types": false,
+    "callable-types": false,
+    "interface-name": false,
+    "max-classes-per-file": false,
+    "max-line-length": false,
+    "member-ordering": false,
+    "no-empty-interface": false,
+    "no-namespace": false,
+    "quotemark": false,
+    "unified-signatures": false,
+    "variable-name": false
   }
 }
