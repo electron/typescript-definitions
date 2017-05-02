@@ -11,7 +11,7 @@
     "lint-output": "tslint -c tslint.json -t verbose electron.d.ts --fix",
     "test": "mocha && standard && npm run test-output && npm run lint-output",
     "pretest-output": "npm run build -- -o=test-smoke/electron/index.d.ts && cd test-smoke/electron/test && rm -f *.js",
-    "test-output": "node scripts/lint.js && cd test-smoke/electron && tsc --project tsconfig.json"
+    "test-output": "tslint electron.d.ts --format stylish && cd test-smoke/electron && tsc --project tsconfig.json"
   },
   "author": {
     "name": "Samuel Attard",
@@ -22,9 +22,7 @@
     "@types/node": "^7.0.5",
     "chai": "^3.5.0",
     "mocha": "^3.1.2",
-    "standard": "^9.0.2",
-    "tslint": "^4.5.1",
-    "typescript": "^2.2.1"
+    "standard": "^9.0.2"
   },
   "standard": {
     "env": {
@@ -38,6 +36,8 @@
     "electron-docs-linter": "^2.3.0",
     "lodash": "^4.16.1",
     "mkdirp": "^0.5.1",
-    "rimraf": "^2.5.4"
+    "rimraf": "^2.5.4",
+    "tslint": "^4.5.1",
+    "typescript": "^2.2.1"
   }
 }
