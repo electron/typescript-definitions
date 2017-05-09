@@ -3,6 +3,7 @@
 
 const fs = require('fs')
 const path = require('path')
+const tslint = require('tslint')
 
 const fetchDocs = require('./vendor/fetch-docs')
 const generateTypings = require('./')
@@ -37,10 +38,20 @@ if (inFile) {
 apiPromise.then(API => {
   return JSON.parse(JSON.stringify(API))
 }).then(API => {
-  let outStream = process.stdout
-  if (outFile) {
-    outStream = fs.createWriteStream(path.resolve(process.cwd(), outFile))
-  }
+  const output = generateTypings(API).join('\n') + '\n'
+  const linter = new tslint.Linter({})
+  const configuration = tslint.Configuration.findConfiguration(
+    path.join(__dirname, 'tslint.json'), outFile
+  ).results
+  linter.lint(outFile, output, configuration)
+  const result = linter.getResult()
 
-  generateTypings(API).forEach(line => outStream.write(`${line}\n`))
+  if (result.failureCount === 0) {
+    fs.writeFileSync(outFile, output)
+    process.exit(0)
+  } else {
+    console.error('Failed to lint electron.d.ts')
+    console.error(result)
+    process.exit(1)
+  }
 })
