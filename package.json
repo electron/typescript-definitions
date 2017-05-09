@@ -1,6 +1,6 @@
 {
   "name": "electron-typescript-definitions",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Automatically generated TypeScript definitions files for the Electron API",
   "bin": "cli.js",
   "main": "index.js",
