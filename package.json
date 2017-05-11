@@ -19,7 +19,6 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^7.0.5",
     "chai": "^3.5.0",
     "mocha": "^3.1.2",
     "standard": "^9.0.2"
@@ -30,6 +29,7 @@
     }
   },
   "dependencies": {
+    "@types/node": "^7.0.5",
     "colors": "^1.1.2",
     "debug": "^2.6.3",
     "electron-docs": "^2.0.0",
