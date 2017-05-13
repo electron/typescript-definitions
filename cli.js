@@ -38,7 +38,7 @@ if (inFile) {
 
 const typeCheck = () => {
   const tscExec = path.resolve(require.resolve('typescript'), '../../bin/tsc')
-  const tscChild = childProcess.spawn(tscExec, ['--project', 'tsconfig.json'], {
+  const tscChild = childProcess.spawn('node', [tscExec, '--project', 'tsconfig.json'], {
     cwd: path.resolve(__dirname, 'test-smoke/electron')
   })
   tscChild.stdout.on('data', d => console.log(d.toString()))
