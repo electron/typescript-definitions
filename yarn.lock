@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@types/node@^7.0.5":
-  version "7.0.12"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.12.tgz#ae5f67a19c15f752148004db07cbbb372e69efc9"
+"@types/node@^7.0.18":
+  version "7.0.18"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.18.tgz#cd67f27d3dc0cfb746f0bdd5e086c4c5d55be173"
 
 JSONStream@^1.0.4:
   version "1.3.1"
@@ -787,9 +787,9 @@ ecc-jsbn@~0.1.1:
   dependencies:
     jsbn "~0.1.0"
 
-electron-docs-linter@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/electron-docs-linter/-/electron-docs-linter-2.3.0.tgz#c7216d7de843c034ec6b9dfd12a743c43917cbd9"
+electron-docs-linter@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/electron-docs-linter/-/electron-docs-linter-2.3.3.tgz#2eac408bb8af884feac3109071a677a6826a013d"
   dependencies:
     cheerio "^0.22.0"
     clean-deep "^2.0.1"
