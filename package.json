@@ -29,11 +29,11 @@
     }
   },
   "dependencies": {
-    "@types/node": "^7.0.5",
+    "@types/node": "^7.0.18",
     "colors": "^1.1.2",
     "debug": "^2.6.3",
     "electron-docs": "^2.0.0",
-    "electron-docs-linter": "^2.3.0",
+    "electron-docs-linter": "^2.3.3",
     "lodash": "^4.16.1",
     "mkdirp": "^0.5.1",
     "rimraf": "^2.5.4",
