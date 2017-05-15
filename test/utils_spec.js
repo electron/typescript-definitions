@@ -107,5 +107,13 @@ describe('utils', () => {
     it('should return false if param is required', () => {
       expect(utils.isOptional({ required: true })).to.eq(false)
     })
+
+    it('should default to true if param is a non-function', () => {
+      expect(utils.isOptional({ type: 'Foo' })).to.eq(true)
+    })
+
+    it('should default to false if param is a function', () => {
+      expect(utils.isOptional({ type: 'Function' })).to.eq(false)
+    })
   })
 })
