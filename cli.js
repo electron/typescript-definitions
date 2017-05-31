@@ -68,7 +68,12 @@ apiPromise.then(API => {
     typeCheck()
   } else {
     console.error('Failed to lint electron.d.ts')
-    console.error(result)
+    result.failures.forEach(failure => {
+      delete failure.rawLines
+      delete failure.sourceFile
+      console.log('\n\n----------\n\n')
+      console.log(failure)
+    })
     process.exit(1)
   }
 })
