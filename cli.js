@@ -68,7 +68,18 @@ apiPromise.then(API => {
     typeCheck()
   } else {
     console.error('Failed to lint electron.d.ts')
-    console.error(result)
+    result.failures.forEach(failure => {
+      delete failure.rawLines
+      delete failure.sourceFile
+      console.log('\n\n----------\n\n')
+      console.log(failure)
+    })
+
+    // Save file for debugging purpsoses
+    const debugFile = path.resolve(__dirname, 'test-smoke/electron/index.d.ts')
+    fs.writeFileSync(debugFile, output)
+    console.log(`See ${debugFile}`)
+
     process.exit(1)
   }
 })
