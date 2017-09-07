@@ -22,7 +22,8 @@
     preventDefault: () => void;
     sender: WebContents;
     returnValue: any;
-    ctrlkey?: boolean;
+    ctrlKey?: boolean;
     metaKey?: boolean;
     shiftKey?: boolean;
+    altKey?: boolean;
   }
