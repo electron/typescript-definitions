@@ -8,6 +8,12 @@ const path = require('path')
 const OUTPUT_PATH = path.resolve(__dirname, '..', 'electron.d.ts')
 let output
 
+function getDefinitionsForInterface (interfaceName) {
+  const interface_ = output.match(interfaceName + '[^{]+{([\\s\\S]+?)}')
+  expect(interface_).to.be.an('array')
+  return interface_[1].split(';').map(l => l.trim())
+}
+
 describe('Definition File', function () {
   this.timeout(20000)
 
@@ -15,6 +21,7 @@ describe('Definition File', function () {
     spawn('node', ['cli.js', '-o=electron.d.ts'], {
       cwd: path.resolve(__dirname, '..')
     }).on('exit', () => done())
+    done()
   })
 
   it('should output a electron.d.ts file', () => {
@@ -23,18 +30,20 @@ describe('Definition File', function () {
   })
 
   it('should correctly output all exported Electron modules', () => {
-    const AllElectron = output.match(/AllElectron {([\s\S]+?)}/)
-    expect(AllElectron).to.be.an('array')
-    const AllElectronModules = AllElectron[1].split(';').map(l => l.trim())
+    const AllElectronModules = getDefinitionsForInterface('MainInterface').concat(
+      getDefinitionsForInterface('CommonInterface'),
+      getDefinitionsForInterface('RendererInterface')
+    )
     const knownElectronModules = ['clipboard', 'app', 'autoUpdater', 'dialog', 'ipcMain', 'Menu', 'MenuItem', 'webContents', 'BrowserWindow']
     knownElectronModules.forEach(knownModule => expect(AllElectronModules.some(tModule => tModule.indexOf(knownModule) === 0)).to.equal(true))
   })
 
   it('should not output classes that are not exported Electron modules', () => {
-    const AllElectron = output.match(/AllElectron {([\s\S]+?)}/)
-    expect(AllElectron).to.be.an('array')
-    const AllElectronModules = AllElectron[1].split(';').map(l => l.trim())
+    const AllElectronModules = getDefinitionsForInterface('MainInterface').concat(
+      getDefinitionsForInterface('CommonInterface'),
+      getDefinitionsForInterface('RendererInterface')
+    )
     const unKnownElectronModules = ['Clipboard', 'CrashReport', 'WebContents', 'menu', 'Session']
-    unKnownElectronModules.forEach(knownModule => expect(AllElectronModules.some(tModule => tModule.indexOf(knownModule) === 0)).to.equal(false))
+    unKnownElectronModules.forEach(knownModule => expect(AllElectronModules.some(tModule => tModule.indexOf(knownModule) === 0)).to.equal(false, knownModule))
   })
 })
