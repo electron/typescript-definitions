@@ -13,6 +13,7 @@
     "no-namespace": false,
     "quotemark": false,
     "unified-signatures": false,
-    "variable-name": false
+    "variable-name": false,
+    "no-shadowed-variable": false
   }
 }
