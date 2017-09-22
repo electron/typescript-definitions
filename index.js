@@ -18,7 +18,6 @@ const wrapWithHeaderAndFooter = (outputLines, electronVersion) => {
   const newOutputLines = []
   utils.extendArray(newOutputLines, fs.readFileSync(path.resolve(__dirname, 'base/base_header.ts'), 'utf8').replace('<<VERSION>>', electronVersion).split(/\r?\n/))
 
-  newOutputLines.push('/** @deprecated */')
   newOutputLines.push('declare namespace Electron {')
   utils.extendArray(newOutputLines, fs.readFileSync(path.resolve(__dirname, 'base/base_inner.ts'), 'utf8').replace('<<VERSION>>', electronVersion).split(/\r?\n/))
 
