@@ -23,6 +23,7 @@ import {
   session,
   systemPreferences,
   webContents,
+  Event,
 } from "electron";
 
 import * as path from "path";
@@ -33,6 +34,7 @@ import * as path from "path";
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the javascript object is GCed.
 let mainWindow: Electron.BrowserWindow = null;
+const mainWindow2: BrowserWindow = null;
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
@@ -521,6 +523,11 @@ ipcMain.on("asynchronous-message", (event: Electron.Event, arg: any) => {
 
 ipcMain.on("synchronous-message", (event: Electron.Event, arg: any) => {
   console.log(arg);  // prints "ping"
+  event.returnValue = "pong";
+});
+
+ipcMain.on("synchronous-message", (event: Event, arg: any) => {
+  console.log("event isn't namespaced and refers to the correct type.");
   event.returnValue = "pong";
 });
 

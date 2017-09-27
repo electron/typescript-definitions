@@ -1,10 +1,9 @@
 declare module 'electron' {
-  const electron: Electron.AllElectron;
-  export = electron;
+  export = Electron;
 }
 
 interface NodeRequireFunction {
-  (moduleName: 'electron'): Electron.AllElectron;
+  (moduleName: 'electron'): typeof Electron;
 }
 
 interface File {
