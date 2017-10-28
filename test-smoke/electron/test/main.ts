@@ -883,6 +883,7 @@ app.on("ready", () => {
 
   appIcon.displayBalloon({
     title: "Hello World!",
+    content: "This the the balloon content.",
   });
 });
 
