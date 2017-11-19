@@ -21,7 +21,6 @@ describe('Definition File', function () {
     spawn('node', ['cli.js', '-o=electron.d.ts'], {
       cwd: path.resolve(__dirname, '..')
     }).on('exit', () => done())
-    done()
   })
 
   it('should output a electron.d.ts file', () => {

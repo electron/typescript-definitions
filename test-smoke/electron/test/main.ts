@@ -1146,5 +1146,6 @@ win4.loadURL("http://github.com");
 const unusedTouchBar = new TouchBar({
   items: [
     new TouchBar.TouchBarButton({ label: '' }),
+    new TouchBar.TouchBarLabel({ label: '' }),
   ],
 });
