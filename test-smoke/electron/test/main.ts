@@ -24,6 +24,7 @@ import {
   systemPreferences,
   webContents,
   Event,
+  TouchBar,
 } from "electron";
 
 import * as path from "path";
@@ -1141,3 +1142,9 @@ win4.webContents.on("paint", (event, dirty, _image) => {
 });
 
 win4.loadURL("http://github.com");
+
+const unusedTouchBar = new TouchBar({
+  items: [
+    new TouchBar.TouchBarButton({ label: '' }),
+  ],
+});
