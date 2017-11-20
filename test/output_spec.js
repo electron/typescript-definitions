@@ -15,7 +15,7 @@ function getDefinitionsForInterface (interfaceName) {
 }
 
 describe('Definition File', function () {
-  this.timeout(20000)
+  this.timeout(30 * 1000)
 
   before((done) => {
     spawn('node', ['cli.js', '-o=electron.d.ts'], {
