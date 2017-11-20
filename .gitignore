@@ -2,5 +2,4 @@ electron.d.ts
 node_modules
 test-smoke/electron/index.d.ts
 test-smoke/**/*.js
-package-lock.json
 yarn.lock
