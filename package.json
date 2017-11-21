@@ -1,6 +1,6 @@
 {
   "name": "electron-typescript-definitions",
-  "version": "1.2.11",
+  "version": "0.0.0-development",
   "description": "Automatically generated TypeScript definitions files for the Electron API",
   "bin": "cli.js",
   "main": "index.js",
@@ -13,7 +13,8 @@
     "pretest-output": "npm run build -- -o=test-smoke/electron/index.d.ts && cd test-smoke/electron/test && rm -f *.js",
     "test-output": "tslint electron.d.ts --format stylish && cd test-smoke/electron && tsc --project tsconfig.json",
     "prepack": "check-for-leaks",
-    "prepush": "check-for-leaks"
+    "prepush": "check-for-leaks",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "author": {
     "name": "Samuel Attard",
@@ -25,7 +26,8 @@
     "check-for-leaks": "^1.2.0",
     "husky": "^0.14.3",
     "mocha": "^3.1.2",
-    "standard": "^9.0.2"
+    "standard": "^9.0.2",
+    "semantic-release": "^8.2.0"
   },
   "standard": {
     "env": {
@@ -43,5 +45,9 @@
     "rimraf": "^2.5.4",
     "tslint": "^4.5.1",
     "typescript": "^2.2.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/electron/electron-typescript-definitions.git"
   }
 }
