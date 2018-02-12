@@ -3,3 +3,5 @@ node_modules
 test-smoke/electron/index.d.ts
 test-smoke/**/*.js
 yarn.lock
+.npmrc
+.env
