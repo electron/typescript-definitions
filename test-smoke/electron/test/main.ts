@@ -430,7 +430,13 @@ app.exit(0);
 // auto-updater
 // https://github.com/atom/electron/blob/master/docs/api/auto-updater.md
 
-autoUpdater.setFeedURL("http://mycompany.com/myapp/latest?version=" + app.getVersion());
+autoUpdater.setFeedURL({
+  url: "http://mycompany.com/myapp/latest?version=" + app.getVersion(),
+  headers: {
+    key: 'value',
+  },
+  serverType: 'default',
+});
 autoUpdater.checkForUpdates();
 autoUpdater.quitAndInstall();
 
