@@ -568,7 +568,7 @@ menu.insert(0, menuItem);
 console.log(menu.items);
 
 const pos = screen.getCursorScreenPoint();
-menu.popup(null, {x: pos.x, y: pos.y});
+menu.popup({x: pos.x, y: pos.y});
 
 // main.js
 const template = <Electron.MenuItemConstructorOptions[]> [
