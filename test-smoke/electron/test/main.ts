@@ -45,15 +45,9 @@ app.on("window-all-closed", () => {
 });
 
 // Check single instance app
-const shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
-  // Someone tried to run a second instance, we should focus our window
-  if (mainWindow) {
-    if (mainWindow.isMinimized()) mainWindow.restore();
-    mainWindow.focus();
-  }
-});
+const gotLock = app.requestSingleInstanceLock();
 
-if (shouldQuit) {
+if (!gotLock) {
   app.quit();
   process.exit(0);
 }
