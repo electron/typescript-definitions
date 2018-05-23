@@ -66,7 +66,6 @@ webFrame.setSpellCheckProvider('en-US', true, {
 	}
 });
 
-webFrame.registerURLSchemeAsSecure('app');
 webFrame.registerURLSchemeAsBypassingCSP('app');
 webFrame.registerURLSchemeAsPrivileged('app');
 webFrame.registerURLSchemeAsPrivileged('app', {
