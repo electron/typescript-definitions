@@ -739,19 +739,19 @@ Menu.setApplicationMenu(menu); // Must be called within app.on('ready', function
 
 Menu.buildFromTemplate([
   { label: "4", id: "4" },
-  { label: "5", id: "5" },
-  { label: "1", id: "1", position: "before=4" },
-  { label: "2", id: "2" },
+  { label: "5", id: "5", after: ["4"] },
+  { label: "1", id: "1", before: ["4"] },
+  { label: "2", id: "2",  },
   { label: "3", id: "3" },
 ]);
 
 Menu.buildFromTemplate([
-  { label: "a", position: "endof=letters" },
-  { label: "1", position: "endof=numbers" },
-  { label: "b", position: "endof=letters" },
-  { label: "2", position: "endof=numbers" },
-  { label: "c", position: "endof=letters" },
-  { label: "3", position: "endof=numbers" },
+  { label: "a" },
+  { label: "1" },
+  { label: "b" },
+  { label: "2" },
+  { label: "c" },
+  { label: "3" },
 ]);
 
 // net
