@@ -67,11 +67,11 @@ describe('utils', () => {
     })
 
     it('should map an array of types through typify as well', () => {
-      expect(utils.typify(['String', 'Float', 'Boolean'])).to.deep.equal('string | number | boolean')
+      expect(utils.typify(['String', 'Float', 'Boolean'])).to.deep.equal('(string) | (number) | (boolean)')
     })
 
     it('should map an array of types through typify as well and remove duplicates', () => {
-      expect(utils.typify(['String', 'Float', 'Double'])).to.deep.equal('string | number')
+      expect(utils.typify(['String', 'Float', 'Double'])).to.deep.equal('(string) | (number)')
     })
 
     it('should map node objects to the correct type', () => {
