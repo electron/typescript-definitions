@@ -60,11 +60,19 @@ console.log(webFrame.getZoomLevel());
 webFrame.setVisualZoomLevelLimits(50, 200);
 webFrame.setLayoutZoomLevelLimits(50, 200);
 
-webFrame.setSpellCheckProvider('en-US', true, {
-	spellCheck: text => {
-		return !(require('spellchecker').isMisspelled(text));
-	}
-});
+webFrame.setSpellCheckProvider('en-US', {
+  spellCheck (words, callback) {
+    setTimeout(() => {
+      let misspeltWords = []
+      for (let word of words) {
+        if (require('spellchecker').isMisspelled(word)) {
+          misspeltWords.push(word)
+        }
+      }
+      callback(misspeltWords)
+    }, 0)
+  }
+})
 
 webFrame.registerURLSchemeAsBypassingCSP('app');
 webFrame.registerURLSchemeAsPrivileged('app');
