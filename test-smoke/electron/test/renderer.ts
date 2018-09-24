@@ -60,11 +60,15 @@ console.log(webFrame.getZoomLevel());
 webFrame.setVisualZoomLevelLimits(50, 200);
 webFrame.setLayoutZoomLevelLimits(50, 200);
 
-webFrame.setSpellCheckProvider('en-US', true, {
-	spellCheck: text => {
-		return !(require('spellchecker').isMisspelled(text));
-	}
-});
+webFrame.setSpellCheckProvider('en-US', {
+  spellCheck (words, callback) {
+    setTimeout(() => {
+		const spellchecker = require('spellchecker')
+		const misspelled = words.filter(x => spellchecker.isMisspelled(x))
+		callback(misspelled)
+    }, 0)
+  }
+})
 
 webFrame.registerURLSchemeAsBypassingCSP('app');
 webFrame.registerURLSchemeAsPrivileged('app');
