@@ -308,7 +308,7 @@ if (app.isUnityRunning()) {
 if (app.isAccessibilitySupportEnabled()) {
     console.log("a11y running");
 }
-app.setLoginItemSettings({ openAtLogin: true, openAsHidden: false });
+app.addToLoginItems({ openAsHidden: false });
 console.log(app.getLoginItemSettings().wasOpenedAtLogin);
 app.setAboutPanelOptions({
   applicationName: "Test",
