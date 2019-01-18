@@ -685,9 +685,8 @@ const template = <Electron.MenuItemConstructorOptions[]> [
         click: (item, focusedWindow) => {
           if (focusedWindow) {
             const { webContents } = focusedWindow;
-            webContents.getZoomLevel((zoomLevel) => {
-              webContents.setZoomLevel(zoomLevel + 0.5);
-            });
+            const zoomLevel = webContents.getZoomLevel();
+            webContents.setZoomLevel(zoomLevel + 0.5);
           }
         },
       },
@@ -697,9 +696,8 @@ const template = <Electron.MenuItemConstructorOptions[]> [
         click: (item, focusedWindow) => {
           if (focusedWindow) {
             const { webContents } = focusedWindow;
-            webContents.getZoomLevel((zoomLevel) => {
-              webContents.setZoomLevel(zoomLevel - 0.5);
-            });
+            const zoomLevel = webContents.getZoomLevel();
+            webContents.setZoomLevel(zoomLevel - 0.5);
           }
         },
       },
