@@ -1003,6 +1003,38 @@ shell.beep();
 
 shell.writeShortcutLink("/home/user/Desktop/shortcut.lnk", "update", shell.readShortcutLink("/home/user/Desktop/shortcut.lnk"));
 
+// cookies
+// https://github.com/atom/electron/blob/master/docs/api/cookies.md
+{
+  const { session } = require('electron')
+
+  // Query all cookies.
+  session.defaultSession.cookies.get({})
+    .then((cookies) => {
+      console.log(cookies)
+    }).catch((error) => {
+      console.log(error)
+    })
+
+  // Query all cookies associated with a specific url.
+  session.defaultSession.cookies.get({ url: 'http://www.github.com' })
+    .then((cookies) => {
+      console.log(cookies)
+    }).catch((error) => {
+      console.log(error)
+    })
+
+  // Set a cookie with the given cookie data;
+  // may overwrite equivalent cookies if they exist.
+  const cookie = { url: 'http://www.github.com', name: 'dummy_name', value: 'dummy' }
+  session.defaultSession.cookies.set(cookie)
+    .then(() => {
+      // success
+    }, (error) => {
+      console.error(error)
+    })
+}
+
 // session
 // https://github.com/atom/electron/blob/master/docs/api/session.md
 
@@ -1011,25 +1043,6 @@ session.defaultSession.on("will-download", (event, item, webContents) => {
   require("request")(item.getURL(), (data: any) => {
     require("fs").writeFileSync("/somewhere", data);
   });
-});
-
-// Query all cookies.
-session.defaultSession.cookies.get({}, (error, cookies) => {
-  console.log(cookies);
-});
-
-// Query all cookies associated with a specific url.
-session.defaultSession.cookies.get({ url: "http://www.github.com" }, (error, cookies) => {
-  console.log(cookies);
-});
-
-// Set a cookie with the given cookie data;
-// may overwrite equivalent cookies if they exist.
-const cookie = { url: "http://www.github.com", name: "dummy_name", value: "dummy" };
-session.defaultSession.cookies.set(cookie, (error) => {
-  if (error) {
-    console.error(error);
-  }
 });
 
 // In the main process.
