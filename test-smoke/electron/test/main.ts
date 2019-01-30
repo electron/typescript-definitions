@@ -827,8 +827,14 @@ powerSaveBlocker.stop(id);
 // https://github.com/atom/electron/blob/master/docs/api/protocol.md
 
 app.on("ready", () => {
-  protocol.registerStandardSchemes(["https"]);
-  protocol.registerServiceWorkerSchemes(["https"]);
+  // protocol.registerSchemesAsPrivileged([
+  //   { scheme: 'app', options: { standard: true, secure: true } },
+  //   { scheme: 'zoom', options: { standard: true, secure: true } },
+  //   { scheme: 'cors', options: { corsEnabled: true, supportFetchAPI: true } },
+  //   { scheme: 'cors-blob', options: { corsEnabled: true, supportFetchAPI: true } },
+  //   { scheme: 'no-cors', options: { supportFetchAPI: true } },
+  //   { scheme: 'no-fetch', options: { corsEnabled: true } }
+  // ])
 
   protocol.registerFileProtocol("atom", (request, callback) => {
     callback(`${__dirname}/${request.url}`);

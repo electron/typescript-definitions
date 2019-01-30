@@ -70,13 +70,6 @@ webFrame.setSpellCheckProvider('en-US', {
   }
 })
 
-webFrame.registerURLSchemeAsBypassingCSP('app');
-webFrame.registerURLSchemeAsPrivileged('app');
-webFrame.registerURLSchemeAsPrivileged('app', {
-	secure: true,
-	supportFetchAPI: true,
-});
-
 webFrame.insertText('text');
 
 webFrame.executeJavaScript('JSON.stringify({})', false, (result) => {
