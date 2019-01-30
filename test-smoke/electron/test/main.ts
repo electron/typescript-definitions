@@ -827,8 +827,7 @@ powerSaveBlocker.stop(id);
 // https://github.com/atom/electron/blob/master/docs/api/protocol.md
 
 app.on("ready", () => {
-  protocol.registerStandardSchemes(["https"]);
-  protocol.registerServiceWorkerSchemes(["https"]);
+  protocol.registerSchemesAsPrivileged([{ scheme: "https", privileges: { standard: true, allowServiceWorkers: true } }]);
 
   protocol.registerFileProtocol("atom", (request, callback) => {
     callback(`${__dirname}/${request.url}`);
