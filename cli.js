@@ -49,7 +49,6 @@ apiPromise.then(API => {
 
   if (result.failureCount === 0) {
     fs.writeFileSync(outFile, output)
-    fs.writeFileSync(path.resolve(__dirname, 'test-smoke/electron/index.d.ts'), output)
   } else {
     console.error('Failed to lint electron.d.ts')
     result.failures.forEach(failure => {
@@ -58,11 +57,6 @@ apiPromise.then(API => {
       console.log('\n\n----------\n\n')
       console.log(failure)
     })
-
-    // Save file for debugging purpsoses
-    const debugFile = path.resolve(__dirname, 'test-smoke/electron/index.d.ts')
-    fs.writeFileSync(debugFile, output)
-    console.log(`See ${debugFile}`)
 
     process.exit(1)
   }
