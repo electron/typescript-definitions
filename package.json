@@ -10,8 +10,7 @@
     "prepublish": "npm run demo && npm run test-output",
     "lint-output": "tslint -c tslint.json -t verbose electron.d.ts --fix",
     "test": "mocha && standard --fix && npm run demo && npm run test-output && npm run lint-output",
-    "pretest-output": "npm run build -- -o=test-smoke/electron/index.d.ts && cd test-smoke/electron/test && rm -f *.js",
-    "test-output": "tslint electron.d.ts --format stylish && cd test-smoke/electron && tsc --project tsconfig.json",
+    "test-output": "tslint electron.d.ts --format stylish",
     "prepack": "check-for-leaks",
     "prepush": "check-for-leaks",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
