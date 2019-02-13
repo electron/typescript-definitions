@@ -36,20 +36,6 @@ if (inFile) {
   apiPromise = fetchDocs()
 }
 
-const typeCheck = () => {
-  const tscExec = path.resolve(require.resolve('typescript'), '../../bin/tsc')
-  const tscChild = childProcess.spawn('node', [tscExec, '--project', 'tsconfig.json'], {
-    cwd: path.resolve(__dirname, 'test-smoke/electron')
-  })
-  tscChild.stdout.on('data', d => console.log(d.toString()))
-  tscChild.stderr.on('data', d => console.error(d.toString()))
-  tscChild.on('exit', (tscStatus) => {
-    if (tscStatus !== 0) {
-      process.exit(tscStatus)
-    }
-  })
-}
-
 apiPromise.then(API => {
   return JSON.parse(JSON.stringify(API))
 }).then(API => {
@@ -64,8 +50,6 @@ apiPromise.then(API => {
   if (result.failureCount === 0) {
     fs.writeFileSync(outFile, output)
     fs.writeFileSync(path.resolve(__dirname, 'test-smoke/electron/index.d.ts'), output)
-
-    typeCheck()
   } else {
     console.error('Failed to lint electron.d.ts')
     result.failures.forEach(failure => {
