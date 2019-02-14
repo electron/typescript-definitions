@@ -17,13 +17,3 @@
   class Accelerator extends String {
 
   }
-
-  interface Event extends GlobalEvent {
-    preventDefault: () => void;
-    sender: WebContents;
-    returnValue: any;
-    ctrlKey?: boolean;
-    metaKey?: boolean;
-    shiftKey?: boolean;
-    altKey?: boolean;
-  }
