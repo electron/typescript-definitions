@@ -38,7 +38,7 @@
     "colors": "^1.1.2",
     "debug": "^2.6.3",
     "electron-docs": "^2.0.0",
-    "electron-docs-linter": "^2.4.0",
+    "electron-docs-linter": "^2.5.0",
     "lodash": "^4.17.11",
     "mkdirp": "^0.5.1",
     "rimraf": "^2.5.4",
