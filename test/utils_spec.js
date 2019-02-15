@@ -61,6 +61,10 @@ describe('utils', () => {
       expect(utils.typify('Number')).to.equal('number')
     })
 
+    it('should correctly convert a void function', () => {
+      expect(utils.typify('VoidFunction')).to.equal('(() => void)')
+    })
+
     it('should lower case known array types', () => {
       expect(utils.typify('String[]')).to.equal('string[]')
       expect(utils.typify('Number[]')).to.equal('number[]')
