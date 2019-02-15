@@ -62,7 +62,7 @@ describe('utils', () => {
     })
 
     it('should correctly convert a void function', () => {
-      expect(utils.typify('VoidFunction')).to.equal('() => void')
+      expect(utils.typify('VoidFunction')).to.equal('(() => void)')
     })
 
     it('should lower case known array types', () => {
