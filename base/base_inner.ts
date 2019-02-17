@@ -1,3 +1,4 @@
+  // TODO: Replace this declaration with NodeJS.EventEmitter
   class EventEmitter {
     addListener(event: string, listener: Function): this;
     on(event: string, listener: Function): this;
@@ -11,7 +12,7 @@
     listenerCount(type: string): number;
     prependListener(event: string, listener: Function): this;
     prependOnceListener(event: string, listener: Function): this;
-    eventNames(): string[];
+    eventNames(): Array<(string | symbol)>;
   }
 
   class Accelerator extends String {
