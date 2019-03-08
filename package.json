@@ -7,13 +7,13 @@
   "scripts": {
     "build": "node cli.js",
     "demo": "npm run build -- -o=electron.d.ts",
-    "prepublish": "npm run demo && npm run test-output",
+    "prepublishOnly": "npm run demo && npm run test-output",
     "lint-output": "tslint -c tslint.json -t verbose electron.d.ts --fix",
     "test": "mocha && standard --fix && npm run demo && npm run test-output && npm run lint-output",
     "test-output": "tslint electron.d.ts --format stylish",
     "prepack": "check-for-leaks",
     "prepush": "check-for-leaks",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release"
   },
   "author": {
     "name": "Samuel Attard",
@@ -21,11 +21,12 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@continous-auth/semantic-release-npm": "1.0.3",
     "chai": "^3.5.0",
     "check-for-leaks": "^1.2.0",
     "husky": "^0.14.3",
     "mocha": "^5.2.0",
-    "semantic-release": "^8.2.0",
+    "semantic-release": "^15.13.3",
     "standard": "^11.0.1"
   },
   "standard": {
