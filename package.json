@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node cli.js",
-    "demo": "npm run build -- -o=electron.d.ts",
+    "demo": "npm run build -- -o=electron.d.ts --force-write",
     "prepublishOnly": "npm run demo && npm run test-output",
     "lint-output": "tslint -c tslint.json -t verbose electron.d.ts --fix",
     "test": "mocha && standard --fix && npm run demo && npm run test-output && npm run lint-output",
