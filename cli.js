@@ -46,7 +46,7 @@ apiPromise.then(API => {
   linter.lint(outFile, output, configuration)
   const result = linter.getResult()
 
-  if (result.failureCount === 0) {
+  if (result.failureCount === 0 || process.argv.includes('--force-write')) {
     fs.writeFileSync(outFile, output)
   } else {
     console.error('Failed to lint electron.d.ts')
