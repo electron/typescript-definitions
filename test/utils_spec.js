@@ -1,5 +1,5 @@
 const expect = require('chai').expect
-const utils = require('../lib/utils')
+const utils = require('../dist/utils')
 
 describe('utils', () => {
   describe('extendArray', () => {

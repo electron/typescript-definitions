@@ -1,16 +1,14 @@
 {
-  "name": "electron-typescript-definitions",
+  "name": "@electron/typescript-definitions",
   "version": "0.0.0-development",
   "description": "Automatically generated TypeScript definitions files for the Electron API",
-  "bin": "cli.js",
-  "main": "index.js",
+  "bin": "dist/bin.js",
+  "main": "dist/index.js",
   "scripts": {
-    "build": "node cli.js",
-    "demo": "npm run build -- -o=electron.d.ts --force-write",
-    "prepublishOnly": "npm run demo && npm run test-output",
-    "lint-output": "tslint -c tslint.json -t verbose electron.d.ts --fix",
-    "test": "mocha && standard --fix && npm run demo && npm run test-output && npm run lint-output",
-    "test-output": "tslint electron.d.ts --format stylish",
+    "build": "tsc",
+    "prettier:check": "prettier --list-different \"src/**/*.{ts,tsx}\"",
+    "prettier:write": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "test": "yarn build && mocha",
     "prepack": "check-for-leaks",
     "prepush": "check-for-leaks",
     "semantic-release": "semantic-release"
@@ -22,29 +20,33 @@
   "license": "MIT",
   "devDependencies": {
     "@continous-auth/semantic-release-npm": "1.0.3",
-    "chai": "^3.5.0",
+    "@types/debug": "^4.1.4",
+    "@types/fs-extra": "^5.0.5",
+    "@types/lodash": "^4.14.123",
+    "@types/minimist": "^1.2.0",
+    "chai": "^4.2.0",
     "check-for-leaks": "^1.2.0",
-    "husky": "^0.14.3",
-    "mocha": "^5.2.0",
-    "semantic-release": "^15.13.3",
-    "standard": "^11.0.1"
-  },
-  "standard": {
-    "env": {
-      "mocha": true
-    }
+    "husky": "^2.1.0",
+    "mocha": "^6.1.4",
+    "prettier": "^1.17.0",
+    "semantic-release": "^15.13.3"
   },
   "dependencies": {
-    "@types/node": "^7.0.18",
+    "@types/node": "^11.13.7",
+    "chalk": "^2.4.2",
     "colors": "^1.1.2",
-    "debug": "^2.6.3",
-    "electron-docs": "^2.0.0",
-    "electron-docs-linter": "^3.0.0",
+    "debug": "^4.1.1",
+    "electron-docs": "^3.0.2",
+    "@electron/docs-parser": "^0.1.1",
+    "fs-extra": "^7.0.1",
     "lodash": "^4.17.11",
+    "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
+    "ora": "^3.4.0",
+    "pretty-ms": "^5.0.0",
     "rimraf": "^2.5.4",
-    "tslint": "^4.5.1",
-    "typescript": "^2.2.1"
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
   },
   "repository": {
     "type": "git",

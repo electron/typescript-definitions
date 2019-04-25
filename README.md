@@ -1,11 +1,11 @@
 # Electron TypeScript Definitions [![Build Status](https://travis-ci.org/electron/electron-typescript-definitions.svg?branch=master)](https://travis-ci.org/electron/electron-typescript-definitions)
 
-This module uses Electron's [JSON API documentation](https://electron.atom.io/blog/2016/09/27/api-docs-json-schema) to produce a TypeScript definition file for the Electron API.
+This module uses Electron's [JSON API documentation](https://github.com/electron/docs-parser) to produce a TypeScript definition file for the Electron API.
 
 ## Installation
 
 ```sh
-npm install electron-typescript-definitions --save
+npm install @electron/typescript-definitions --save
 ```
 
 ## CLI Usage
@@ -13,7 +13,7 @@ npm install electron-typescript-definitions --save
 To generate the definitions
 
 ```sh
-electron-typescript-definitions --in=path/to/electron/api.json --out=path/to/electron.d.ts
+electron-typescript-definitions --api=path/to/electron/api.json --out-dir=path/to/out/dir
 ```
 
 Any warnings during the generation can normally be ignored unless it actually throws
@@ -25,11 +25,11 @@ The module exports a function that parses a given API JSON object and returns
 an array of lines to create the definition file
 
 ```js
-const generateDefinitions = require('electron-typescript-definitions')
+const { generateDefinitions } = require('electron-typescript-definitions')
 const apiPath = './vendor/electron/docs/api.json'
 
-const definitionLines = generateDefinitions(require(apiPath))
-// definitionLines will be an array of file lines
+const definitionLines = generateDefinitions({ electronApi: require(apiPath) })
+// definitionLines will be an strin representation of the definition file
 ```
 
 ## License
