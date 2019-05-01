@@ -14,11 +14,11 @@ function getDefinitionsForInterface (interfaceName) {
   return interface_[1].split(';').map(l => l.trim())
 }
 
-describe('Definition File', function () {
+describe.skip('Definition File', function () {
   this.timeout(30 * 1000)
 
   before((done) => {
-    spawn('node', ['cli.js', '-o=electron.d.ts'], {
+    spawn('node', ['dist/bin.js', '--api=electron-api.json'], {
       cwd: path.resolve(__dirname, '..')
     }).on('exit', () => done())
   })

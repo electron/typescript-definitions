@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const expect = require('chai').expect
-const remapOptionals = require('../lib/remap-optionals')
+const { remapOptionals } = require('../dist/remap-optionals')
 
 const fakeAPI = [{
   name: 'FakeModule',
