@@ -2,7 +2,9 @@
   "name": "@electron/typescript-definitions",
   "version": "0.0.0-development",
   "description": "Automatically generated TypeScript definitions files for the Electron API",
-  "bin": "dist/bin.js",
+  "bin": {
+    "electron-typescript-definitions": "dist/bin.js"
+  },
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
