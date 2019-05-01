@@ -89,6 +89,7 @@ export const typify = (
         if (type.collection) {
           // Array<foo | bar> syntax instead of (foo | bar)[]
           newType = `Array<${stringEnum}>`;
+          type.collection = false;
         } else {
           newType = `(${stringEnum})`;
         }
