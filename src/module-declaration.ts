@@ -272,7 +272,8 @@ export const generateModuleDeclaration = (
     module.instanceProperties
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach(prop => {
-        moduleAPI.push(`${prop.name}: ${utils.typify(prop)};`);
+        const isOptional = !prop.required ? '?' : '';
+        moduleAPI.push(`${prop.name}${isOptional}: ${utils.typify(prop)};`);
       });
   }
 
