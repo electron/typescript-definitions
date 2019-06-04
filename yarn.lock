@@ -27,10 +27,10 @@
     read-pkg "^4.0.0"
     registry-auth-token "^3.3.1"
 
-"@electron/docs-parser@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@electron/docs-parser/-/docs-parser-0.1.1.tgz#a350d666ebc7c23ab2572c40eb7b85935e3bdf0b"
-  integrity sha512-M2fgTOfFo9tcoGJFsRInfU78s7ZvWBeskhC4yHZ0uBEUf3NCV5vhXIIN0vJjtwhFg8llcl9DIRedjjSmIM4viw==
+"@electron/docs-parser@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@electron/docs-parser/-/docs-parser-0.2.1.tgz#14bcc7ec5afa1b2e89dc6dbdb7152dc74c2b5c46"
+  integrity sha512-vQNxIQzIudFp3TECH9TEkPZUvLrDzZO5wZPmgN5e3c69yqmMj779I86Ny8giQfY93jFpRZ/+gRqIwVfD6gFEWA==
   dependencies:
     "@types/markdown-it" "^0.0.7"
     chai "^4.2.0"
