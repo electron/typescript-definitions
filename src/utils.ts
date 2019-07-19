@@ -198,18 +198,30 @@ export const paramify = (paramName: string) => {
 };
 // TODO: Infer through electron-docs-linter/parser
 export const isEmitter = (module: Pick<ModuleDocumentationContainer, 'name'>) => {
-  switch (module.name.toLowerCase()) {
-    case 'menu':
-    case 'menuitem':
-    case 'nativeimage':
-    case 'shell':
-    case 'crashreporter':
-    case 'dock':
-    case 'commandline':
-      return false;
-    default:
-      return true;
-  }
+  const nonEventEmitters = [
+    'menu',
+    'menuitem',
+    'nativeimage',
+    'shell',
+    'browserview',
+    'webrequest',
+    'crashreporter',
+    'dock',
+    'commandline',
+    'browserwindowproxy',
+    'clipboard',
+    'contenttracing',
+    'desktopcapturer',
+    'dialog',
+    'globalshortcut',
+    'powersaveblocker',
+    'touchbar',
+    'touchbarbutton',
+    'net',
+    'netlog',
+    'protocol'
+  ];
+  return !(nonEventEmitters.includes(module.name.toLowerCase()))
 };
 export const isPrimitive = (type: string) => {
   const primitives = ['boolean', 'number', 'any', 'string', 'void', 'unknown'];
