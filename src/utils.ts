@@ -176,6 +176,11 @@ export const typify = (
       }
       debug(chalk.red('Record with missing inner types, default to any'));
       return 'Record<any, any>';
+    case 'partial':
+      if (!innerTypes || innerTypes.length !== 1) {
+        throw new Error('Partial generic type must have exactly one inner type.  i.e. Partial<T>');
+      }
+      return `Partial<${typify(innerTypes[0])}>`;
     case 'url':
       return 'string';
     case 'touchbaritem':
