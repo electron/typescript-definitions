@@ -34,7 +34,7 @@
     "semantic-release": "^15.13.3"
   },
   "dependencies": {
-    "@electron/docs-parser": "^0.2.1",
+    "@electron/docs-parser": "^0.4.1",
     "@types/node": "^11.13.7",
     "chalk": "^2.4.2",
     "colors": "^1.1.2",

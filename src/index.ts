@@ -54,8 +54,8 @@ const appendNodeJSOverride = (outputLines: string[]) => {
   );
   utils.extendArray(outputLines, [
     '  interface ProcessVersions {',
-    '    electron: string;',
-    '    chrome: string;',
+    '    readonly electron: string;',
+    '    readonly chrome: string;',
     '  }',
   ]);
 
