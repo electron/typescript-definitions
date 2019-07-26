@@ -35,8 +35,8 @@ $ npm run create-api-json
 ```
 
 Either way, once you have `electron-api.json`, run it through the typescript generator:
+
 ```sh
 $ cd typescript-definitions
-$ yarn build && node dist/bin.js --dir /path/to/electron-gn/src/electron
-￼
+$ yarn build && node dist/bin.js --api /path/to/electron-api.json
 ```
