@@ -12,6 +12,7 @@ import {
   TypeInformation,
   DetailedFunctionType,
   ElementDocumentationContainer,
+  DocumentationTag,
 } from '@electron/docs-parser';
 
 const modules: Record<string, string[]> = {};
@@ -65,7 +66,7 @@ export const generateModuleDeclaration = (
     _.concat([], module.instanceEvents || [], module.events || [])
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach(moduleEvent => {
-        utils.extendArray(moduleAPI, utils.wrapComment(moduleEvent.description));
+        utils.extendArray(moduleAPI, utils.wrapComment(moduleEvent.description, moduleEvent.additionalTags));
         let listener = 'Function';
 
         if (moduleEvent.parameters && moduleEvent.parameters.length) {
@@ -102,7 +103,7 @@ export const generateModuleDeclaration = (
             }
 
             let newType = argType || utils.typify(eventListenerArg);
-            const functionListenerArg = eventListenerArg as DetailedFunctionType &
+            const functionListenerArg = eventListenerArg as any as DetailedFunctionType &
               DocumentationBlock &
               TypeInformation;
             if (newType === 'Function') {
@@ -133,7 +134,7 @@ export const generateModuleDeclaration = (
   if (module.type === 'Element') {
     if (module.events) {
       module.events.forEach(domEvent => {
-        utils.extendArray(moduleAPI, utils.wrapComment(domEvent.description));
+        utils.extendArray(moduleAPI, utils.wrapComment(domEvent.description, domEvent.additionalTags));
         let eventType = 'Event';
 
         if (domEvent.parameters && domEvent.parameters.length) {
@@ -189,7 +190,7 @@ export const generateModuleDeclaration = (
     ['on', 'once', 'removeAllListeners', 'removeListener'].includes(moduleMethod.name);
 
   const addMethod = (moduleMethod: MethodDocumentationBlock, prefix = '') => {
-    utils.extendArray(moduleAPI, utils.wrapComment(moduleMethod.description));
+    utils.extendArray(moduleAPI, utils.wrapComment(moduleMethod.description, moduleMethod.additionalTags));
     let returnType: string | TypeInformation = returnsThis(moduleMethod) ? 'this' : 'void';
 
     if (moduleMethod.returns) {
@@ -245,6 +246,7 @@ export const generateModuleDeclaration = (
       ...module.constructorMethod,
       description: module.name,
       returns: null,
+      additionalTags: [],
     });
   }
 
@@ -273,7 +275,8 @@ export const generateModuleDeclaration = (
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach(prop => {
         const isOptional = !prop.required ? '?' : '';
-        moduleAPI.push(`${prop.name}${isOptional}: ${utils.typify(prop)};`);
+        const isReadonly = prop.additionalTags.includes(DocumentationTag.AVAILABILITY_READONLY) ? 'readonly ' : '';
+        moduleAPI.push(`${isReadonly}${prop.name}${isOptional}: ${utils.typify(prop)};`);
       });
   }
 
@@ -282,12 +285,8 @@ export const generateModuleDeclaration = (
     module.staticProperties
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach(prop => {
-        // if (prop.type === 'Class') {
-        //   moduleAPI.push(`static ${prop.name}: typeof ${prop.name};`);
-        //   generateModuleDeclaration(prop, -1, API);
-        // } else {
-        moduleAPI.push(`static ${prop.name}: ${utils.typify(prop)};`);
-        // }
+        const isReadonly = prop.additionalTags.includes(DocumentationTag.AVAILABILITY_READONLY) ? 'readonly ' : '';
+        moduleAPI.push(`static${isReadonly} ${prop.name}: ${utils.typify(prop)};`);
       });
   }
 
@@ -305,16 +304,17 @@ export const generateModuleDeclaration = (
 
         const isStatic = isStaticVersion ? 'static ' : '';
         const isOptional = utils.isOptional(p) ? '?' : '';
+        const isReadonly = p.additionalTags.includes(DocumentationTag.AVAILABILITY_READONLY) ? 'readonly ' : '';
         type = type || utils.typify(paramType);
 
-        utils.extendArray(moduleAPI, utils.wrapComment(p.description));
+        utils.extendArray(moduleAPI, utils.wrapComment(p.description, p.additionalTags));
         if (module.name === 'process' && p.name === 'versions') return;
 
         if (p.name.match(/^\d/)) {
           // Wrap key in quotes if it starts with a number, e.g. `2d_canvas`
-          moduleAPI.push(`'${isStatic}${p.name}${isOptional}': ${type};`);
+          moduleAPI.push(`'${isStatic}${isReadonly}${p.name}${isOptional}': ${type};`);
         } else {
-          moduleAPI.push(`${isStatic}${p.name}${isOptional}: ${type};`);
+          moduleAPI.push(`${isStatic}${isReadonly}${p.name}${isOptional}: ${type};`);
         }
       });
   }

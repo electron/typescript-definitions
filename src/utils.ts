@@ -7,6 +7,7 @@ import {
   DetailedObjectType,
   DocumentationBlock,
   DetailedFunctionType,
+  DocumentationTag,
 } from '@electron/docs-parser';
 import _ from 'lodash';
 import d from 'debug';
@@ -26,7 +27,7 @@ export const extendArray = <T>(arr1: T[], arr2: T[]): T[] => {
   return arr1;
 };
 
-export const wrapComment = (comment: string): string[] => {
+export const wrapComment = (comment: string, additionalTags: DocumentationTag[] = []): string[] => {
   if (!comment) return [];
   comment = comment.replace(/^\(optional\)(?: - )?/gi, '').trim();
   if (!comment) return [];
@@ -45,6 +46,34 @@ export const wrapComment = (comment: string): string[] => {
     }
     result.push(` * ${comment.substring(0, index)}`);
     comment = comment.substring(index + 1);
+  }
+  if (additionalTags.length) {
+    result.push(' *');
+    const nodePlatforms: string[] = [];
+    result.push(...(additionalTags.map(tag => {
+      switch (tag) {
+        case DocumentationTag.STABILITY_DEPRECATED:
+          return ' * @deprecated';
+        case DocumentationTag.STABILITY_EXPERIMENTAL:
+          return ' * @experimental';
+        case DocumentationTag.OS_LINUX:
+          nodePlatforms.push('linux');
+          break;
+        case DocumentationTag.OS_MACOS:
+          nodePlatforms.push('darwin');
+          break;
+        case DocumentationTag.OS_MAS:
+          nodePlatforms.push('mas');
+          break;
+        case DocumentationTag.OS_WINDOWS:
+          nodePlatforms.push('win32');
+          break;
+      }
+      return '';
+    }).filter(tag => tag)))
+    if (nodePlatforms.length) {
+      result.push(` * @platform ${nodePlatforms.join(',')}`);
+    }
   }
   return result.concat(' */');
 };
