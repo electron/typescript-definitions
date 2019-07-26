@@ -16,17 +16,28 @@ $ # make your changes...
 $ yarn build
 ```
 
-To test with a pre-generated json file, e.g. from running `npm run create-api-json` from an [Electron repository](https://github.com/electron/electron/):
+To run it, first you'll need a `electron-api.json` file. There are a few common ways to get this:
+
+From a [electron/docs-parser](https://github.com/electron/docs-parser) repo (since working on this often goes hand-in-hand wth typescript-definitions):
 
 ```sh
-$ cd typescript-definitions
-$ yarn build && node dist/bin.js --api /path/to/electron-gn/src/electron/electron-api.json
+$ cd docs-parser
+$ yarn install
+$ yarn build && node dist/bin.js --dir /path/to/electron-gn/src/electron
 ```
 
-If you want to test the docs parser as well:
+From a [electron/electron](https://github.com/electron/electron/) repo:
 
 ```sh
+$ cd /path/to/electron-gn/src/electron
+$ npm install
+$ npm run create-api-json
+```
+
+Either way, once you have `electron-api.json`, run it through the typescript generator:
+```sh
 $ cd typescript-definitions
+./node_modules/@electron/docs-parser/dist/bin.js --dir $HOME/electron/electron-gn/src/electron
 $ yarn build && node dist/bin.js --dir /path/to/electron-gn/src/electron
 ￼
 ```
