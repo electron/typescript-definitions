@@ -286,7 +286,7 @@ export const generateModuleDeclaration = (
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach(prop => {
         const isReadonly = prop.additionalTags.includes(DocumentationTag.AVAILABILITY_READONLY) ? 'readonly ' : '';
-        moduleAPI.push(`static${isReadonly} ${prop.name}: ${utils.typify(prop)};`);
+        moduleAPI.push(`static ${isReadonly}${prop.name}: ${utils.typify(prop)};`);
       });
   }
 
