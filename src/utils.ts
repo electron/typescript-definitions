@@ -50,27 +50,31 @@ export const wrapComment = (comment: string, additionalTags: DocumentationTag[] 
   if (additionalTags.length) {
     result.push(' *');
     const nodePlatforms: string[] = [];
-    result.push(...(additionalTags.map(tag => {
-      switch (tag) {
-        case DocumentationTag.STABILITY_DEPRECATED:
-          return ' * @deprecated';
-        case DocumentationTag.STABILITY_EXPERIMENTAL:
-          return ' * @experimental';
-        case DocumentationTag.OS_LINUX:
-          nodePlatforms.push('linux');
-          break;
-        case DocumentationTag.OS_MACOS:
-          nodePlatforms.push('darwin');
-          break;
-        case DocumentationTag.OS_MAS:
-          nodePlatforms.push('mas');
-          break;
-        case DocumentationTag.OS_WINDOWS:
-          nodePlatforms.push('win32');
-          break;
-      }
-      return '';
-    }).filter(tag => tag)))
+    result.push(
+      ...additionalTags
+        .map(tag => {
+          switch (tag) {
+            case DocumentationTag.STABILITY_DEPRECATED:
+              return ' * @deprecated';
+            case DocumentationTag.STABILITY_EXPERIMENTAL:
+              return ' * @experimental';
+            case DocumentationTag.OS_LINUX:
+              nodePlatforms.push('linux');
+              break;
+            case DocumentationTag.OS_MACOS:
+              nodePlatforms.push('darwin');
+              break;
+            case DocumentationTag.OS_MAS:
+              nodePlatforms.push('mas');
+              break;
+            case DocumentationTag.OS_WINDOWS:
+              nodePlatforms.push('win32');
+              break;
+          }
+          return '';
+        })
+        .filter(tag => tag),
+    );
     if (nodePlatforms.length) {
       result.push(` * @platform ${nodePlatforms.join(',')}`);
     }
@@ -253,9 +257,9 @@ export const isEmitter = (module: Pick<ModuleDocumentationContainer, 'name'>) =>
     'touchbarbutton',
     'net',
     'netlog',
-    'protocol'
+    'protocol',
   ];
-  return !(nonEventEmitters.includes(module.name.toLowerCase()))
+  return !nonEventEmitters.includes(module.name.toLowerCase());
 };
 export const isPrimitive = (type: string) => {
   const primitives = ['boolean', 'number', 'any', 'string', 'void', 'unknown'];
@@ -285,6 +289,29 @@ export const genMethodString = (
   includeType = true,
   paramTypePrefix = '',
 ): string => {
+  const createMethodObjectParamType = (
+    objectParam: DetailedObjectType & TypeInformation & DocumentationBlock & { required: boolean },
+  ) => {
+    if ('constructor' === moduleMethod.name.toLowerCase()) {
+      objectParam.name = objectParam.name || 'options';
+    }
+    if (objectParam.name === 'options') {
+      if (
+        ['show', 'hide', 'open', 'close', 'start', 'stop', 'constructor'].includes(
+          moduleMethod.name.toLowerCase(),
+        )
+      ) {
+        return paramInterfaces.createParamInterface(
+          objectParam,
+          _.upperFirst(module.name) + _.upperFirst(moduleMethod.name),
+        );
+      }
+
+      return paramInterfaces.createParamInterface(objectParam, _.upperFirst(moduleMethod.name));
+    }
+
+    return paramInterfaces.createParamInterface(objectParam, '', _.upperFirst(moduleMethod.name));
+  };
   return `${includeType ? '(' : ''}${(moduleMethod.parameters || [])
     .map(param => {
       let paramType: string | null = param as any;
@@ -294,34 +321,15 @@ export const genMethodString = (
         DocumentationBlock & { required: boolean };
       if (param.type === 'Object' && objectParam.properties && objectParam.properties.length) {
         // Check if we have the same structure for a different name
-        if (param.name === 'options') {
-          if (
-            ['show', 'hide', 'open', 'close', 'start', 'stop', 'constructor'].includes(
-              moduleMethod.name.toLowerCase(),
-            )
-          ) {
-            paramType = paramInterfaces.createParamInterface(
-              objectParam,
-              _.upperFirst(module.name) + _.upperFirst(moduleMethod.name),
-            );
-          } else {
-            paramType = paramInterfaces.createParamInterface(
-              objectParam,
-              _.upperFirst(moduleMethod.name),
-            );
-          }
-        } else {
-          paramType = paramInterfaces.createParamInterface(
-            objectParam,
-            '',
-            _.upperFirst(moduleMethod.name),
-          );
-        }
+        paramType = createMethodObjectParamType(objectParam);
       }
 
       if (Array.isArray(param.type)) {
         param.type = param.type.map(paramType => {
           const functionParam = paramType as DetailedFunctionType;
+          const objectParam = paramType as DetailedObjectType &
+            TypeInformation &
+            DocumentationBlock & { required: boolean };
           if (paramType.type === 'Function' && functionParam.parameters) {
             return Object.assign({}, paramType, {
               type: genMethodString(
@@ -333,6 +341,11 @@ export const genMethodString = (
                 } as any /* FIXME: */,
               ),
             });
+          } else if (paramType.type === 'Object' && objectParam.properties) {
+            return {
+              ...objectParam,
+              type: createMethodObjectParamType(objectParam),
+            };
           }
           return paramType;
         });
