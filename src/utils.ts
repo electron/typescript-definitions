@@ -107,13 +107,21 @@ export const typify = (
     return arrayType;
   }
 
-  if (!type) return 'any';
+  if (!type)
+    throw new Error('Missing type provided to typify, something is wrong in the documentation');
 
   let innerTypes: TypeInformation[] | undefined;
   let typeAsString: string | TypeInformation | TypeInformation[] = type;
 
   if (typeof type === 'object') {
-    let newType = type.type || 'any';
+    if (!type.type) {
+      console.error(type);
+      throw new Error(
+        'Missing type property on object provided to typify, something is wrong in the documentation',
+      );
+    }
+
+    let newType = type.type;
 
     if (typeof newType === 'string' && newType.toLowerCase() === 'string') {
       const stringType = type as DetailedStringType;
@@ -167,21 +175,19 @@ export const typify = (
       return 'number[]';
     case 'array': {
       if (innerTypes) return `Array<${typify(innerTypes[0])}>`;
-      debug(chalk.yellow('Untyped "Array" as return type'));
-      return 'any[]';
+      throw new Error('Untyped "Array" as return type');
     }
     case 'true':
     case 'false':
-      debug(chalk.cyan('"true" or "false" provided as return value, inferring "Boolean" type'));
-      return 'boolean';
+      throw new Error('"true" or "false" provided as return value, inferring "Boolean" type');
     case '[objects]':
-      debug(
-        chalk.red('[Objects] is not a valid array definition, please conform to the styleguide'),
+      throw new Error(
+        '[Objects] is not a valid array definition, please conform to the styleguide',
       );
-      return 'any[]';
     case 'object':
-      debug(chalk.yellow('Unstructured "Object" type specified'));
-      return 'any';
+      throw new Error(
+        'Unstructured "Object" type specified, you must specify either the type of the object or provide the key structure inline in the documentation',
+      );
     case 'any':
       return 'any';
     case 'string':
@@ -201,14 +207,12 @@ export const typify = (
       if (innerTypes) {
         return `Promise<${prefixTypeForSafety(typify(innerTypes[0]))}>`;
       }
-      debug(chalk.red('Promise with missing inner type, defaulting to any'));
-      return 'Promise<any>';
+      throw new Error('Promise with missing inner type');
     case 'record':
       if (innerTypes && innerTypes.length === 2) {
         return `Record<${typify(innerTypes[0])}, ${typify(innerTypes[1])}>`;
       }
-      debug(chalk.red('Record with missing inner types, default to any'));
-      return 'Record<any, any>';
+      throw new Error('Record with missing inner types');
     case 'partial':
       if (!innerTypes || innerTypes.length !== 1) {
         throw new Error('Partial generic type must have exactly one inner type.  i.e. Partial<T>');
