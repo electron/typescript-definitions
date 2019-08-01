@@ -66,7 +66,10 @@ export const generateModuleDeclaration = (
     _.concat([], module.instanceEvents || [], module.events || [])
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach(moduleEvent => {
-        utils.extendArray(moduleAPI, utils.wrapComment(moduleEvent.description, moduleEvent.additionalTags));
+        utils.extendArray(
+          moduleAPI,
+          utils.wrapComment(moduleEvent.description, moduleEvent.additionalTags),
+        );
         let listener = 'Function';
 
         if (moduleEvent.parameters && moduleEvent.parameters.length) {
@@ -103,7 +106,7 @@ export const generateModuleDeclaration = (
             }
 
             let newType = argType || utils.typify(eventListenerArg);
-            const functionListenerArg = eventListenerArg as any as DetailedFunctionType &
+            const functionListenerArg = (eventListenerArg as any) as DetailedFunctionType &
               DocumentationBlock &
               TypeInformation;
             if (newType === 'Function') {
@@ -134,7 +137,10 @@ export const generateModuleDeclaration = (
   if (module.type === 'Element') {
     if (module.events) {
       module.events.forEach(domEvent => {
-        utils.extendArray(moduleAPI, utils.wrapComment(domEvent.description, domEvent.additionalTags));
+        utils.extendArray(
+          moduleAPI,
+          utils.wrapComment(domEvent.description, domEvent.additionalTags),
+        );
         let eventType = 'Event';
 
         if (domEvent.parameters && domEvent.parameters.length) {
@@ -190,7 +196,10 @@ export const generateModuleDeclaration = (
     ['on', 'once', 'removeAllListeners', 'removeListener'].includes(moduleMethod.name);
 
   const addMethod = (moduleMethod: MethodDocumentationBlock, prefix = '') => {
-    utils.extendArray(moduleAPI, utils.wrapComment(moduleMethod.description, moduleMethod.additionalTags));
+    utils.extendArray(
+      moduleAPI,
+      utils.wrapComment(moduleMethod.description, moduleMethod.additionalTags),
+    );
     let returnType: string | TypeInformation = returnsThis(moduleMethod) ? 'this' : 'void';
 
     if (moduleMethod.returns) {
@@ -275,7 +284,9 @@ export const generateModuleDeclaration = (
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach(prop => {
         const isOptional = !prop.required ? '?' : '';
-        const isReadonly = prop.additionalTags.includes(DocumentationTag.AVAILABILITY_READONLY) ? 'readonly ' : '';
+        const isReadonly = prop.additionalTags.includes(DocumentationTag.AVAILABILITY_READONLY)
+          ? 'readonly '
+          : '';
         moduleAPI.push(`${isReadonly}${prop.name}${isOptional}: ${utils.typify(prop)};`);
       });
   }
@@ -285,7 +296,9 @@ export const generateModuleDeclaration = (
     module.staticProperties
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach(prop => {
-        const isReadonly = prop.additionalTags.includes(DocumentationTag.AVAILABILITY_READONLY) ? 'readonly ' : '';
+        const isReadonly = prop.additionalTags.includes(DocumentationTag.AVAILABILITY_READONLY)
+          ? 'readonly '
+          : '';
         moduleAPI.push(`static ${isReadonly}${prop.name}: ${utils.typify(prop)};`);
       });
   }
@@ -304,7 +317,9 @@ export const generateModuleDeclaration = (
 
         const isStatic = isStaticVersion ? 'static ' : '';
         const isOptional = utils.isOptional(p) ? '?' : '';
-        const isReadonly = p.additionalTags.includes(DocumentationTag.AVAILABILITY_READONLY) ? 'readonly ' : '';
+        const isReadonly = p.additionalTags.includes(DocumentationTag.AVAILABILITY_READONLY)
+          ? 'readonly '
+          : '';
         type = type || utils.typify(paramType);
 
         utils.extendArray(moduleAPI, utils.wrapComment(p.description, p.additionalTags));

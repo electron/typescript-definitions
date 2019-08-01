@@ -28,9 +28,9 @@
     registry-auth-token "^3.3.1"
 
 "@electron/docs-parser@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@electron/docs-parser/-/docs-parser-0.4.1.tgz#e6557a6a3899ca1168b9f2d70ad24d9ba924e4a9"
-  integrity sha512-mn4ofEvH8HNdzRMb++cUbiTkO88BAKwM0yjED3KrQ07yEl7CU1lK13qSMVSRhDzNkbg4kFTqBDjaJ57fdHlkxQ==
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@electron/docs-parser/-/docs-parser-0.4.2.tgz#1d5feb0376363435b2f6833b60271ee90c26f952"
+  integrity sha512-BdEW2So0Qg7lxIET9q84DceavC1v/EyYF9PXU8vRRiwFebGPyEaJS4uqxhStAxmZslQAT4JjQc9jTd12IbG6BQ==
   dependencies:
     "@types/markdown-it" "^0.0.7"
     chai "^4.2.0"

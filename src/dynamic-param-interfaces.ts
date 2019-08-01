@@ -148,7 +148,10 @@ const flushParamInterfaces = (
         param.properties = param.properties || [];
         param.properties.forEach(paramProperty => {
           if (paramProperty.description) {
-            utils.extendArray(paramAPI, utils.wrapComment(paramProperty.description, paramProperty.additionalTags));
+            utils.extendArray(
+              paramAPI,
+              utils.wrapComment(paramProperty.description, paramProperty.additionalTags),
+            );
           }
 
           if (!Array.isArray(paramProperty.type) && paramProperty.type.toLowerCase() === 'object') {
