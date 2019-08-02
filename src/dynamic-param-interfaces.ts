@@ -37,13 +37,11 @@ const ignoreDescriptions = <T extends EventParameterDocumentation>(
   props: T[],
 ): Pick<T, Exclude<keyof T, 'description'>>[] =>
   _.map(props, p => {
-    const toReturn = {
-      ...p,
-    };
+    const {
+      description,
+      ...toReturn
+    } = p;
 
-    if (toReturn.type) {
-      toReturn.type = utils.typify(toReturn.type as any);
-    }
     return toReturn;
   }).sort((a, b) => a.name.localeCompare(b.name));
 
