@@ -270,10 +270,10 @@ export const isPrimitive = (type: string) => {
   return primitives.indexOf(type.toLowerCase().replace(/\[\]/g, '')) !== -1;
 };
 export const isBuiltIn = (type: string) => {
-  const builtIns = ['promise', 'buffer', 'Int8Array', 'Uint8Array',
-    'Uint8ClampedArray', 'Int16Array', 'Uint16Array', 'Int32Array',
-    'Uint32Array', 'Float32Array', 'Float64Array', 'BigInt64Array',
-    'BigUint64Array'];
+  const builtIns = ['promise', 'buffer', 'int8array', 'uint8array',
+    'uint8clampedarray', 'int16array', 'uint16array', 'int32array',
+    'uint32array', 'float32array', 'float64array', 'bigint64array',
+    'biguint64array'];
   return builtIns.indexOf(type.toLowerCase().replace(/\[\]/g, '')) !== -1;
 };
 export const isOptional = (param: { required?: boolean; name: string; type: any }) => {
