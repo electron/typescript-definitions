@@ -48,7 +48,7 @@ const ignoreDescriptions = <T extends EventParameterDocumentation>(
 // Given a parameter create a new interface and return it's name
 // IName is the proposed interface name prefix
 // backupIName is a slightly longer IName in case IName is already taken
-const createParamInterface = (param: ParamInterface, IName = '', backupIName = ''): string => {
+const createParamInterface = (param: ParamInterface, IName = '', backupIName = '', finalBackupIName = ''): string => {
   let argType = polite(IName) + _.upperFirst(_.camelCase(param.name));
   let argName = param.name;
   // TODO: Note.  It is still possible for even backupIName to be already used
@@ -79,17 +79,15 @@ const createParamInterface = (param: ParamInterface, IName = '', backupIName = '
     )
   ) {
     if (backupIName) {
-      return createParamInterface(param, backupIName);
+      return createParamInterface(param, backupIName, finalBackupIName);
     }
-    // console.log('ISSUE', param.properties)
-    // FIXME: Wut...
-    return argType;
-    // console.error(
-    //   ignoreDescriptions(paramInterfacesToDeclare[argType].properties),
-    //   '\n',
-    //   ignoreDescriptions(param.properties),
-    // );
-    // throw Error(`Interface "${argType}" has already been declared`);
+    console.error(
+      argType, IName, backupIName, finalBackupIName,
+      ignoreDescriptions(paramInterfacesToDeclare[argType].properties),
+      '\n',
+      ignoreDescriptions(param.properties),
+    );
+    throw Error(`Interface "${argType}" has already been declared`);
   }
   // Update the params interfaces we still have to define
   paramInterfacesToDeclare[argType] = param;

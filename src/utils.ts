@@ -295,6 +295,7 @@ export const genMethodString = (
   moduleMethod: MethodDocumentationBlock,
   includeType = true,
   paramTypePrefix = '',
+  topLevelModuleMethod?: MethodDocumentationBlock,
 ): string => {
   const createMethodObjectParamType = (
     objectParam: DetailedObjectType & TypeInformation & DocumentationBlock & { required: boolean },
@@ -304,7 +305,7 @@ export const genMethodString = (
     }
     if (objectParam.name === 'options') {
       if (
-        ['show', 'hide', 'open', 'close', 'start', 'stop', 'constructor'].includes(
+        ['show', 'hide', 'open', 'close', 'start', 'stop', 'constructor', 'print'].includes(
           moduleMethod.name.toLowerCase(),
         )
       ) {
@@ -317,7 +318,18 @@ export const genMethodString = (
       return paramInterfaces.createParamInterface(objectParam, _.upperFirst(moduleMethod.name));
     }
 
-    return paramInterfaces.createParamInterface(objectParam, '', _.upperFirst(moduleMethod.name));
+    if (
+      ['set', 'get'].includes(
+        moduleMethod.name.toLowerCase(),
+      )
+    ) {
+      return paramInterfaces.createParamInterface(
+        objectParam,
+        _.upperFirst(module.name) + _.upperFirst(moduleMethod.name),
+      );
+    }
+
+    return paramInterfaces.createParamInterface(objectParam, '', _.upperFirst(moduleMethod.name), topLevelModuleMethod ? _.upperFirst(topLevelModuleMethod.name) : '');
   };
   return `${includeType ? '(' : ''}${(moduleMethod.parameters || [])
     .map(param => {
@@ -346,6 +358,9 @@ export const genMethodString = (
                   name: _.upperFirst(moduleMethod.name) + _.upperFirst(param.name),
                   ...functionParam,
                 } as any /* FIXME: */,
+                true,
+                '',
+                moduleMethod
               ),
             });
           } else if (paramType.type === 'Object' && objectParam.properties) {
@@ -359,7 +374,9 @@ export const genMethodString = (
       }
       const functionParam = param as DetailedFunctionType;
       if (param.type === 'Function' && functionParam.parameters) {
-        paramType = genMethodString(paramInterfaces, module, functionParam as any /* FIXME: */);
+        paramType = genMethodString(paramInterfaces, module, functionParam as any /* FIXME: */, true,
+          '',
+          moduleMethod);
       }
 
       const name = paramify(param.name);
