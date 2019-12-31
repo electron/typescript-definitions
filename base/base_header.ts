@@ -4,5 +4,8 @@
 // Definitions: https://github.com/electron/electron-typescript-definitions
 
 /// <reference types="node" />
+import events = require('events');
 
 type GlobalEvent = Event;
+
+declare global {

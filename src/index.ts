@@ -9,7 +9,7 @@ import { ParsedDocumentationResult } from '@electron/docs-parser';
 import { DynamicParamInterfaces } from './dynamic-param-interfaces';
 
 // takes the predefined header and footer and wraps them around the generated files
-const wrapWithHeaderAndFooter = (outputLines: string[], electronVersion: string) => {
+const wrapWithHeaderAndFooter = (outputLines: string[], nodeJSOverride: string[], electronVersion: string) => {
   const newOutputLines: string[] = [];
   utils.extendArray(
     newOutputLines,
@@ -19,7 +19,7 @@ const wrapWithHeaderAndFooter = (outputLines: string[], electronVersion: string)
       .split(/\r?\n/),
   );
 
-  newOutputLines.push('declare namespace Electron {');
+  newOutputLines.push('namespace Electron {');
   utils.extendArray(
     newOutputLines,
     fs
@@ -30,6 +30,7 @@ const wrapWithHeaderAndFooter = (outputLines: string[], electronVersion: string)
 
   outputLines.slice(1).forEach(l => newOutputLines.push(`${_.trimEnd(`  ${l}`)}`));
   utils.extendArray(newOutputLines, ['}', '']);
+  utils.extendArray(newOutputLines, nodeJSOverride);
 
   utils.extendArray(
     newOutputLines,
@@ -41,8 +42,8 @@ const wrapWithHeaderAndFooter = (outputLines: string[], electronVersion: string)
   return newOutputLines;
 };
 
-const appendNodeJSOverride = (outputLines: string[]) => {
-  utils.extendArray(outputLines, ['', 'declare namespace NodeJS {']);
+const createNodeJSOverride = () => {
+  let outputLines = ['', 'namespace NodeJS {', '  interface ReadableStream {}'];
 
   const processAPI = getModuleDeclarations().Process;
   processAPI.push('}');
@@ -61,7 +62,7 @@ const appendNodeJSOverride = (outputLines: string[]) => {
 
   utils.extendArray(outputLines, ['}']);
 
-  return outputLines.join('\n');
+  return outputLines;
 };
 
 interface GenerateOptions {
@@ -102,7 +103,5 @@ export async function generateDefinitions({ electronApi: API }: GenerateOptions)
 
   DynamicParamInterfaces.flushParamInterfaces(API, addToOutput);
 
-  const electronOutput = wrapWithHeaderAndFooter(outputLines, API[0].version);
-
-  return appendNodeJSOverride(electronOutput);
+  return wrapWithHeaderAndFooter(outputLines, createNodeJSOverride(), API[0].version).join('\n');
 }

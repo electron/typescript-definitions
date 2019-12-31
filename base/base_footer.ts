@@ -1,6 +1,3 @@
-declare module 'electron' {
-  export = Electron;
-}
 
 interface NodeRequireFunction {
   (moduleName: 'electron'): typeof Electron;
@@ -13,11 +10,18 @@ interface File {
   path: string;
 }
 
+interface Document {
+  createElement(tagName: 'webview'): Electron.WebviewTag;
+}
+
+}
+
+declare module 'electron' {
+  export = Electron;
+}
+
 declare module 'original-fs' {
   import * as fs from 'fs';
   export = fs;
 }
 
-interface Document {
-  createElement(tagName: 'webview'): Electron.WebviewTag;
-}
