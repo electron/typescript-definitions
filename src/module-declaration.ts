@@ -47,7 +47,7 @@ export const generateModuleDeclaration = (
             (module.name === 'remote'
               ? 'MainInterface'
               : isClass
-              ? 'EventEmitter'
+              ? 'NodeEventEmitter'
               : 'NodeJS.EventEmitter')} {`,
         );
         moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '');
