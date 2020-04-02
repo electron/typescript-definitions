@@ -28,7 +28,7 @@ const wrapWithHeaderAndFooter = (outputLines: string[], electronVersion: string)
       .split(/\r?\n/),
   );
 
-  outputLines.slice(1).forEach(l => newOutputLines.push(`${_.trimEnd(`  ${l}`)}`));
+  outputLines.slice(0).forEach(l => newOutputLines.push(`${_.trimEnd(`  ${l}`)}`));
   utils.extendArray(newOutputLines, ['}', '']);
 
   utils.extendArray(
@@ -83,10 +83,13 @@ export async function generateDefinitions({ electronApi: API }: GenerateOptions)
   };
 
   remapOptionals(API);
-  generateMasterInterfaces(API, addToOutput);
 
   // generate module declaration for every class, module, structure, element, etc
+  const declaredStructs: string[] = [];
   API.sort((m1, m2) => m1.name.localeCompare(m2.name)).forEach((module, index) => {
+    if (module.type === 'Structure') {
+      declaredStructs.push(module.name);
+    }
     generateModuleDeclaration(module, index, API);
   });
 
@@ -100,7 +103,8 @@ export async function generateDefinitions({ electronApi: API }: GenerateOptions)
     );
   });
 
-  DynamicParamInterfaces.flushParamInterfaces(API, addToOutput);
+  const keys = DynamicParamInterfaces.flushParamInterfaces(API, addToOutput);
+  generateMasterInterfaces(API, [...keys, ...declaredStructs], addToOutput);
 
   const electronOutput = wrapWithHeaderAndFooter(outputLines, API[0].version);
 

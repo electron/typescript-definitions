@@ -3,18 +3,15 @@ declare module 'electron' {
 }
 
 declare module 'electron/main' {
-  const api: Electron.MainInterface
-  export = api
+  export = Electron.Main
 }
 
 declare module 'electron/common' {
-  const api: Electron.CommonInterface
-  export = api
+  export = Electron.Common
 }
 
 declare module 'electron/renderer' {
-  const api: Electron.RendererInterface
-  export = api
+  export = Electron.Renderer
 }
 
 interface NodeRequireFunction {

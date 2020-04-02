@@ -5,15 +5,14 @@ const debug = d('master-interface');
 
 export const generateMasterInterfaces = (
   API: ParsedDocumentationResult,
+  interfaceKeys: string[],
   addToOutput: (lines: string[], sep?: string) => void,
 ) => {
   // Generate Main / Renderer process interfaces
-  const CommonInterface = ['interface CommonInterface {'];
-  const MainInterface = ['interface MainInterface extends CommonInterface {'];
-  const RendererInterface = ['interface RendererInterface extends CommonInterface {'];
-  const ElectronMainAndRendererInterface = [
-    'interface AllElectron extends MainInterface, RendererInterface {}',
-  ];
+  const CommonNamespace = ['namespace Common {'];
+  const MainNamespace = ['namespace Main {'];
+  const RendererNamespace = ['namespace Renderer {'];
+  const MainInterfaceForRemote = ['interface RemoteMainInterface {'];
   const constDeclarations: string[] = [];
   const EMRI: Record<string, boolean> = {};
 
@@ -32,54 +31,74 @@ export const generateMasterInterfaces = (
 
   API.forEach((module, index) => {
     if (module.name === 'process') return;
-    let TargetInterface;
+    let TargetNamespace;
     const isClass =
       module.type === 'Class' ||
       API.some(
         (tModule, tIndex) =>
           index !== tIndex && tModule.name.toLowerCase() === module.name.toLowerCase(),
       );
-    const moduleString = `  ${classify(module.name)}: ${isClass ? 'typeof ' : ''}${_.upperFirst(
-      module.name,
-    )}`;
+    const moduleString = isClass ? `  class ${_.upperFirst(module.name)} extends Electron.${_.upperFirst(module.name)} {}` : '';
     if (module.type === 'Structure') {
       // We must be a structure or something
       return;
     }
+    const newConstDeclarations: string[] = [];
     if (!isClass || module.name !== classify(module.name)) {
       if (isClass) {
-        constDeclarations.push(
+        newConstDeclarations.push(
           `type ${classify(module.name)} = ${_.upperFirst(module.name)};`,
           `const ${classify(module.name)}: typeof ${_.upperFirst(module.name)};`,
         );
       } else {
-        constDeclarations.push(`const ${classify(module.name)}: ${_.upperFirst(module.name)};`);
+        newConstDeclarations.push(`const ${classify(module.name)}: ${_.upperFirst(module.name)};`);
       }
     }
+    constDeclarations.push(...newConstDeclarations);
     if (module.process.main && module.process.renderer) {
-      TargetInterface = CommonInterface;
+      TargetNamespace = CommonNamespace;
     } else if (module.process.main) {
-      TargetInterface = MainInterface;
+      TargetNamespace = MainNamespace;
     } else if (module.process.renderer) {
-      TargetInterface = RendererInterface;
+      TargetNamespace = RendererNamespace;
     }
-    if (TargetInterface) {
+    if (module.process.main && !EMRI[classify(module.name).toLowerCase()]) {
+      MainInterfaceForRemote.push(`  ${classify(module.name)}: ${isClass ? 'typeof ' : ''}${_.upperFirst(
+        module.name,
+      )};`)
+    }
+    if (TargetNamespace) {
       debug(classify(module.name).toLowerCase(), EMRI[classify(module.name).toLowerCase()]);
       if (!EMRI[classify(module.name).toLowerCase()]) {
-        TargetInterface.push(moduleString);
+        if (moduleString) TargetNamespace.push(moduleString);
       }
       EMRI[classify(module.name).toLowerCase()] = true;
+      TargetNamespace.push(...newConstDeclarations.map(s => `  ${s.substr(0, s.length - 1)}`));
     }
   });
 
-  CommonInterface.push('}');
-  MainInterface.push('}');
-  RendererInterface.push('}');
+  addToOutput([
+    ...MainInterfaceForRemote,
+    '}'
+  ])
 
+  for (const interfaceKey of interfaceKeys) {
+    const alias = `  type ${interfaceKey} = Electron.${interfaceKey}`;
+    CommonNamespace.push(alias);
+    MainNamespace.push(alias);
+    RendererNamespace.push(alias);
+  }
+
+  CommonNamespace.push('}');
+  MainNamespace.push('}');
+  RendererNamespace.push('}');
+
+  const withSemicolons = (lines: string[]) => {
+    return lines.map(l => l.endsWith('{') || l.endsWith('}') ? l : `${l};`);
+  }
   addToOutput(['']);
-  addToOutput(CommonInterface, ';');
-  addToOutput(MainInterface, ';');
-  addToOutput(RendererInterface, ';');
-  addToOutput(ElectronMainAndRendererInterface, ';');
+  addToOutput(withSemicolons(CommonNamespace));
+  addToOutput(withSemicolons(MainNamespace));
+  addToOutput(withSemicolons(RendererNamespace));
   addToOutput(constDeclarations);
 };

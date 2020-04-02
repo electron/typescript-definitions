@@ -221,6 +221,8 @@ const flushParamInterfaces = (
 
     Object.assign(paramInterfacesToDeclare, nestedInterfacesToDeclare);
   }
+
+  return Object.keys(declared);
 };
 
 export class DynamicParamInterfaces {

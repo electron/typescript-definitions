@@ -45,7 +45,7 @@ export const generateModuleDeclaration = (
             module.name,
           )} extends ${module.extends ||
             (module.name === 'remote'
-              ? 'MainInterface'
+              ? 'RemoteMainInterface'
               : isClass
               ? 'NodeEventEmitter'
               : 'NodeJS.EventEmitter')} {`,
