@@ -2,6 +2,21 @@ declare module 'electron' {
   export = Electron;
 }
 
+declare module 'electron/browser' {
+  const api: Electron.MainInterface
+  export = api
+}
+
+declare module 'electron/common' {
+  const api: Electron.CommonInterface
+  export = api
+}
+
+declare module 'electron/renderer' {
+  const api: Electron.RendererInterface
+  export = api
+}
+
 interface NodeRequireFunction {
   (moduleName: 'electron'): typeof Electron;
 }
