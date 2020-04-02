@@ -2,7 +2,7 @@ declare module 'electron' {
   export = Electron;
 }
 
-declare module 'electron/browser' {
+declare module 'electron/main' {
   const api: Electron.MainInterface
   export = api
 }
