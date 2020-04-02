@@ -7,7 +7,7 @@
 			"es6",
 			"es7"
 		],
-		"declaration": true,
+		"declaration": false,
 		"sourceMap": true,
 		"rootDir": "src",
 		"experimentalDecorators": true,
