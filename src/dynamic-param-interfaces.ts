@@ -37,10 +37,7 @@ const ignoreDescriptions = <T extends EventParameterDocumentation>(
   props: T[],
 ): Pick<T, Exclude<keyof T, 'description'>>[] =>
   _.map(props, p => {
-    const {
-      description,
-      ...toReturn
-    } = p;
+    const { description, ...toReturn } = p;
 
     return toReturn;
   }).sort((a, b) => a.name.localeCompare(b.name));
@@ -48,7 +45,12 @@ const ignoreDescriptions = <T extends EventParameterDocumentation>(
 // Given a parameter create a new interface and return it's name
 // IName is the proposed interface name prefix
 // backupIName is a slightly longer IName in case IName is already taken
-const createParamInterface = (param: ParamInterface, IName = '', backupIName = '', finalBackupIName = ''): string => {
+const createParamInterface = (
+  param: ParamInterface,
+  IName = '',
+  backupIName = '',
+  finalBackupIName = '',
+): string => {
   let argType = polite(IName) + _.upperFirst(_.camelCase(param.name));
   let argName = param.name;
   // TODO: Note.  It is still possible for even backupIName to be already used
@@ -82,7 +84,10 @@ const createParamInterface = (param: ParamInterface, IName = '', backupIName = '
       return createParamInterface(param, backupIName, finalBackupIName);
     }
     console.error(
-      argType, IName, backupIName, finalBackupIName,
+      argType,
+      IName,
+      backupIName,
+      finalBackupIName,
       ignoreDescriptions(paramInterfacesToDeclare[argType].properties),
       '\n',
       ignoreDescriptions(param.properties),

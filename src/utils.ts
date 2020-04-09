@@ -270,10 +270,21 @@ export const isPrimitive = (type: string) => {
   return primitives.indexOf(type.toLowerCase().replace(/\[\]/g, '')) !== -1;
 };
 export const isBuiltIn = (type: string) => {
-  const builtIns = ['promise', 'buffer', 'int8array', 'uint8array',
-    'uint8clampedarray', 'int16array', 'uint16array', 'int32array',
-    'uint32array', 'float32array', 'float64array', 'bigint64array',
-    'biguint64array'];
+  const builtIns = [
+    'promise',
+    'buffer',
+    'int8array',
+    'uint8array',
+    'uint8clampedarray',
+    'int16array',
+    'uint16array',
+    'int32array',
+    'uint32array',
+    'float32array',
+    'float64array',
+    'bigint64array',
+    'biguint64array',
+  ];
   return builtIns.indexOf(type.toLowerCase().replace(/\[\]/g, '')) !== -1;
 };
 export const isOptional = (param: { required?: boolean; name: string; type: any }) => {
@@ -318,18 +329,19 @@ export const genMethodString = (
       return paramInterfaces.createParamInterface(objectParam, _.upperFirst(moduleMethod.name));
     }
 
-    if (
-      ['set', 'get'].includes(
-        moduleMethod.name.toLowerCase(),
-      )
-    ) {
+    if (['set', 'get'].includes(moduleMethod.name.toLowerCase())) {
       return paramInterfaces.createParamInterface(
         objectParam,
         _.upperFirst(module.name) + _.upperFirst(moduleMethod.name),
       );
     }
 
-    return paramInterfaces.createParamInterface(objectParam, '', _.upperFirst(moduleMethod.name), topLevelModuleMethod ? _.upperFirst(topLevelModuleMethod.name) : '');
+    return paramInterfaces.createParamInterface(
+      objectParam,
+      '',
+      _.upperFirst(moduleMethod.name),
+      topLevelModuleMethod ? _.upperFirst(topLevelModuleMethod.name) : '',
+    );
   };
   return `${includeType ? '(' : ''}${(moduleMethod.parameters || [])
     .map(param => {
@@ -360,7 +372,7 @@ export const genMethodString = (
                 } as any /* FIXME: */,
                 true,
                 '',
-                moduleMethod
+                moduleMethod,
               ),
             });
           } else if (paramType.type === 'Object' && objectParam.properties) {
@@ -374,9 +386,14 @@ export const genMethodString = (
       }
       const functionParam = param as DetailedFunctionType;
       if (param.type === 'Function' && functionParam.parameters) {
-        paramType = genMethodString(paramInterfaces, module, functionParam as any /* FIXME: */, true,
+        paramType = genMethodString(
+          paramInterfaces,
+          module,
+          functionParam as any /* FIXME: */,
+          true,
           '',
-          moduleMethod);
+          moduleMethod,
+        );
       }
 
       const name = paramify(param.name);

@@ -38,7 +38,9 @@ export const generateMasterInterfaces = (
         (tModule, tIndex) =>
           index !== tIndex && tModule.name.toLowerCase() === module.name.toLowerCase(),
       );
-    const moduleString = isClass ? `  class ${_.upperFirst(module.name)} extends Electron.${_.upperFirst(module.name)} {}` : '';
+    const moduleString = isClass
+      ? `  class ${_.upperFirst(module.name)} extends Electron.${_.upperFirst(module.name)} {}`
+      : '';
     if (module.type === 'Structure') {
       // We must be a structure or something
       return;
@@ -63,9 +65,9 @@ export const generateMasterInterfaces = (
       TargetNamespace = RendererNamespace;
     }
     if (module.process.main && !EMRI[classify(module.name).toLowerCase()]) {
-      MainInterfaceForRemote.push(`  ${classify(module.name)}: ${isClass ? 'typeof ' : ''}${_.upperFirst(
-        module.name,
-      )};`)
+      MainInterfaceForRemote.push(
+        `  ${classify(module.name)}: ${isClass ? 'typeof ' : ''}${_.upperFirst(module.name)};`,
+      );
     }
     if (TargetNamespace) {
       debug(classify(module.name).toLowerCase(), EMRI[classify(module.name).toLowerCase()]);
@@ -77,10 +79,7 @@ export const generateMasterInterfaces = (
     }
   });
 
-  addToOutput([
-    ...MainInterfaceForRemote,
-    '}'
-  ])
+  addToOutput([...MainInterfaceForRemote, '}']);
 
   for (const interfaceKey of interfaceKeys) {
     const alias = `  type ${interfaceKey} = Electron.${interfaceKey}`;
@@ -94,8 +93,8 @@ export const generateMasterInterfaces = (
   RendererNamespace.push('}');
 
   const withSemicolons = (lines: string[]) => {
-    return lines.map(l => l.endsWith('{') || l.endsWith('}') ? l : `${l};`);
-  }
+    return lines.map(l => (l.endsWith('{') || l.endsWith('}') ? l : `${l};`));
+  };
   addToOutput(['']);
   addToOutput(withSemicolons(CommonNamespace));
   addToOutput(withSemicolons(MainNamespace));
