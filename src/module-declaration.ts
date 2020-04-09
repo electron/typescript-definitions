@@ -35,6 +35,17 @@ export const generateModuleDeclaration = (
         index !== tIndex && tModule.name.toLowerCase() === module.name.toLowerCase(),
     );
   const isClass = module.type === 'Class' || isStaticVersion;
+  const parentModules: ParsedDocumentationResult = [];
+  let parentModule:
+    | ModuleDocumentationContainer
+    | ClassDocumentationContainer
+    | StructureDocumentationContainer
+    | ElementDocumentationContainer
+    | undefined = module;
+  while (parentModule && parentModule.extends) {
+    parentModule = API.find(m => m.name === parentModule!.extends);
+    if (parentModule) parentModules.push(parentModule);
+  }
 
   // Interface Declaration
   if (newModule) {
@@ -67,7 +78,14 @@ export const generateModuleDeclaration = (
 
   // Event Declaration
   if (module.type !== 'Element') {
-    _.concat([], module.instanceEvents || [], module.events || [])
+    // To assist with declaration merging we define all parent events in this class too
+    _.concat(
+      [],
+      module.instanceEvents || [],
+      module.events || [],
+      ...parentModules.map(m => m.events || []),
+      ...parentModules.map(m => m.instanceEvents || []),
+    )
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach(moduleEvent => {
         utils.extendArray(
