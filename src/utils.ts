@@ -262,6 +262,7 @@ export const isEmitter = (module: Pick<ModuleDocumentationContainer, 'name'>) =>
     'net',
     'netlog',
     'protocol',
+    'contextbridge'
   ];
   return !nonEventEmitters.includes(module.name.toLowerCase());
 };
