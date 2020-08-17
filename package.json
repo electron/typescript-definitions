@@ -32,7 +32,8 @@
     "husky": "^2.1.0",
     "mocha": "^6.1.4",
     "prettier": "^1.17.0",
-    "semantic-release": "^15.13.3"
+    "semantic-release": "^15.13.3",
+    "typescript": "^3.4.5"
   },
   "dependencies": {
     "@types/node": "^11.13.7",
@@ -45,8 +46,7 @@
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "ora": "^3.4.0",
-    "pretty-ms": "^5.0.0",
-    "typescript": "^3.4.5"
+    "pretty-ms": "^5.0.0"
   },
   "repository": {
     "type": "git",
