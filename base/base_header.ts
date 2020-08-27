@@ -5,4 +5,4 @@
 
 /// <reference types="node" />
 
-type GlobalEvent = Event;
+type GlobalEvent = Event & { returnValue: any };
