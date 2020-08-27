@@ -6,6 +6,7 @@ import {
   DetailedObjectType,
   ParsedDocumentationResult,
   DetailedFunctionType,
+  DocumentationTag,
 } from '@electron/docs-parser';
 import chalk from 'chalk';
 const debug = d('dynamic-param');
@@ -194,13 +195,16 @@ const flushParamInterfaces = (
               return paramPropertyType;
             });
           }
+          const isReadonly = (paramProperty.additionalTags || []).includes(DocumentationTag.AVAILABILITY_READONLY)
+            ? 'readonly '
+            : '';
           if (
             !Array.isArray(paramProperty.type) &&
             paramProperty.type.toLowerCase() === 'function'
           ) {
             // FIXME: functionProp should slot in here perfectly
             paramAPI.push(
-              `${paramProperty.name}${
+              `${isReadonly}${paramProperty.name}${
                 utils.isOptional(paramProperty) ? '?' : ''
               }: ${utils.genMethodString(
                 DynamicParamInterfaces,
@@ -211,7 +215,7 @@ const flushParamInterfaces = (
             );
           } else {
             paramAPI.push(
-              `${paramProperty.name}${utils.isOptional(paramProperty) ? '?' : ''}: ${utils.typify(
+              `${isReadonly}${paramProperty.name}${utils.isOptional(paramProperty) ? '?' : ''}: ${utils.typify(
                 paramProperty,
               )};`,
             );

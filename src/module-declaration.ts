@@ -335,6 +335,14 @@ export const generateModuleDeclaration = (
         let type: string = '';
         if (paramType.type === 'Object') {
           type = DynamicParamInterfaces.createParamInterface(p as any, '');
+        } else if (Array.isArray(paramType.type)) {
+          paramType.type = paramType.type.map(t => t.type !== 'Object' ? t : ({
+            ...t,
+            type: DynamicParamInterfaces.createParamInterface({
+              ...p,
+              type: t,
+            } as any, ''),
+          }))
         }
 
         const isStatic = isStaticVersion ? 'static ' : '';
