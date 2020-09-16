@@ -16,6 +16,16 @@ declare module 'electron/renderer' {
 
 interface NodeRequireFunction {
   (moduleName: 'electron'): typeof Electron;
+  (moduleName: 'electron/main'): typeof Electron.Main;
+  (moduleName: 'electron/common'): typeof Electron.Common;
+  (moduleName: 'electron/renderer'): typeof Electron.Renderer;
+}
+
+interface NodeRequire {
+  (moduleName: 'electron'): typeof Electron;
+  (moduleName: 'electron/main'): typeof Electron.Main;
+  (moduleName: 'electron/common'): typeof Electron.Common;
+  (moduleName: 'electron/renderer'): typeof Electron.Renderer;
 }
 
 interface File {
