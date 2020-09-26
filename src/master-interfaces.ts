@@ -24,6 +24,8 @@ export const generateMasterInterfaces = (
         return 'nativeImage';
       case 'webcontents':
         return 'webContents';
+      case 'webframemain':
+        return 'webFrameMain';
       default:
         return moduleName;
     }
