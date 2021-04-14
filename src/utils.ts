@@ -301,6 +301,23 @@ export const isOptional = (param: { required?: boolean; name: string; type: any 
   return param.type !== 'Function';
 };
 
+export const isPlatformSpecificMethod = (moduleMethod: MethodDocumentationBlock) => {
+  for (const tag of moduleMethod.additionalTags) {
+    // prettier-ignore
+    switch (tag) {
+      case DocumentationTag.OS_MACOS: return true;
+      case DocumentationTag.OS_MAS: return true;
+      case DocumentationTag.OS_WINDOWS: return true;
+      case DocumentationTag.OS_LINUX: return true;
+      case DocumentationTag.STABILITY_EXPERIMENTAL: continue;
+      case DocumentationTag.STABILITY_DEPRECATED: continue;
+      case DocumentationTag.AVAILABILITY_READONLY: continue;
+    }
+    throw new Error(`Unhandled documentation tag ${tag}`);
+  }
+  return false;
+};
+
 export const genMethodString = (
   paramInterfaces: typeof DynamicParamInterfaces,
   module: { name: string },

@@ -120,4 +120,14 @@ describe('utils', () => {
       expect(utils.isOptional({ type: 'Function' })).to.eq(false)
     })
   })
+
+  describe('isPlatformSpecificMethod', () => {
+    it('should return false if no tags are specified', () => {
+      expect(utils.isPlatformSpecificMethod({ additionalTags: [] })).to.eq(false)
+    })
+
+    it('should return true if OS tags are present', () => {
+      expect(utils.isPlatformSpecificMethod({ additionalTags: ["os_macos"] })).to.eq(true)
+    })
+  })
 })

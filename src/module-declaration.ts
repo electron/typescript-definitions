@@ -259,7 +259,9 @@ export const generateModuleDeclaration = (
     );
 
     moduleAPI.push(
-      `${prefix}${moduleMethod.name}(${paramString})${
+      `${prefix}${moduleMethod.name}${
+        utils.isPlatformSpecificMethod(moduleMethod) ? '?' : ''
+      }(${paramString})${
         moduleMethod.name === 'constructor'
           ? ''
           : `: ${utils.typify(
