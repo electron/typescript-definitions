@@ -21,8 +21,8 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@electron/docs-parser": "^0.7.2",
     "@continuous-auth/semantic-release-npm": "2.0.0",
+    "@electron/docs-parser": "^0.11.0",
     "@types/debug": "^4.1.4",
     "@types/fs-extra": "^5.0.5",
     "@types/lodash": "^4.14.123",
