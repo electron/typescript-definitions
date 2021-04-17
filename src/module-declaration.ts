@@ -309,6 +309,12 @@ export const generateModuleDeclaration = (
         const isReadonly = prop.additionalTags.includes(DocumentationTag.AVAILABILITY_READONLY)
           ? 'readonly '
           : '';
+        if (prop.description) {
+          utils.extendArray(
+            moduleAPI,
+            utils.wrapComment(prop.description, prop.additionalTags),
+          );
+        }
         moduleAPI.push(`${isReadonly}${prop.name}${isOptional}: ${utils.typify(prop)};`);
       });
   }
@@ -321,6 +327,12 @@ export const generateModuleDeclaration = (
         const isReadonly = prop.additionalTags.includes(DocumentationTag.AVAILABILITY_READONLY)
           ? 'readonly '
           : '';
+        if (prop.description) {
+          utils.extendArray(
+            moduleAPI,
+            utils.wrapComment(prop.description, prop.additionalTags),
+          );
+        }
         moduleAPI.push(`static ${isReadonly}${prop.name}: ${utils.typify(prop)};`);
       });
   }
