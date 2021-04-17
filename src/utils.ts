@@ -29,10 +29,10 @@ export const extendArray = <T>(arr1: T[], arr2: T[]): T[] => {
 
 export const wrapComment = (comment: string, additionalTags: DocumentationTag[] = []): string[] => {
   if (!comment) return [];
-  comment = comment.replace(/^\(optional\)(?: - )?/gi, '').trim();
+  comment = comment.replace(/^\(optional\)(?: - )?/gi, '');
   if (!comment) return [];
   const result = ['/**'];
-  while (comment.trim().length > 0) {
+  while (comment.length > 0) {
     let index = 0;
     for (let i = 0; i <= 80; i++) {
       if (comment[i] === ' ') index = i;
@@ -41,7 +41,7 @@ export const wrapComment = (comment: string, additionalTags: DocumentationTag[] 
         break;
       }
     }
-    if (comment.length <= 80) {
+    if (comment.length <= 80 && !comment.includes('\n')) {
       index = 80;
     }
     result.push(` * ${comment.substring(0, index)}`);
