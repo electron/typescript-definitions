@@ -45,6 +45,13 @@ export const generateMasterInterfaces = (
         ? `  class ${_.upperFirst(module.name)} extends Electron.${_.upperFirst(module.name)} {}`
         : '';
     const newConstDeclarations: string[] = [];
+    // In the case where this module is actually the static methods on a Class type
+    const isModuleButActuallyStaticClass = API.some(
+      (tModule, tIndex) =>
+        index !== tIndex &&
+        tModule.name.toLowerCase() === module.name.toLowerCase() &&
+        tModule.type === 'Class',
+    );
     if ((!isClass || module.name !== classify(module.name)) && module.process.exported) {
       if (isClass) {
         newConstDeclarations.push(
@@ -52,16 +59,7 @@ export const generateMasterInterfaces = (
           `const ${classify(module.name)}: typeof ${_.upperFirst(module.name)};`,
         );
       } else {
-        // In the case where this module is actually the static methods on a Class type
-        if (
-          API.some(
-            (tModule, tIndex) =>
-              index !== tIndex &&
-              tModule.name.toLowerCase() === module.name.toLowerCase() &&
-              tModule.type === 'Class',
-          ) &&
-          !isClass
-        ) {
+        if (isModuleButActuallyStaticClass && !isClass) {
           newConstDeclarations.push(
             `const ${classify(module.name)}: typeof ${_.upperFirst(module.name)};`,
           );
@@ -88,7 +86,7 @@ export const generateMasterInterfaces = (
       !EMRI[classify(module.name).toLowerCase()]
     ) {
       MainInterfaceForRemote.push(
-        `  ${classify(module.name)}: ${isClass ? 'typeof ' : ''}${_.upperFirst(module.name)};`,
+        `  ${classify(module.name)}: ${isClass || isModuleButActuallyStaticClass ? 'typeof ' : ''}${_.upperFirst(module.name)};`,
       );
     }
     if (TargetNamespace) {
