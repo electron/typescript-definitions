@@ -13,6 +13,7 @@ export const generateMasterInterfaces = (
   const MainNamespace = ['namespace Main {'];
   const RendererNamespace = ['namespace Renderer {'];
   const MainInterfaceForRemote = ['interface RemoteMainInterface {'];
+  const CrossProcessExportsNamespace = ['namespace CrossProcessExports {'];
   const constDeclarations: string[] = [];
   const EMRI: Record<string, boolean> = {};
 
@@ -34,39 +35,58 @@ export const generateMasterInterfaces = (
   API.forEach((module, index) => {
     if (module.name === 'process') return;
     let TargetNamespace;
-    const isClass =
-      module.type === 'Class' ||
-      API.some(
-        (tModule, tIndex) =>
-          index !== tIndex && tModule.name.toLowerCase() === module.name.toLowerCase(),
-      );
-    const moduleString = isClass
-      ? `  class ${_.upperFirst(module.name)} extends Electron.${_.upperFirst(module.name)} {}`
-      : '';
+    const isClass = module.type === 'Class';
     if (module.type === 'Structure') {
       // We must be a structure or something
       return;
     }
+    const moduleString =
+      isClass && module.process.exported
+        ? `  class ${_.upperFirst(module.name)} extends Electron.${_.upperFirst(module.name)} {}`
+        : '';
     const newConstDeclarations: string[] = [];
-    if (!isClass || module.name !== classify(module.name)) {
+    if ((!isClass || module.name !== classify(module.name)) && module.process.exported) {
       if (isClass) {
         newConstDeclarations.push(
           `type ${classify(module.name)} = ${_.upperFirst(module.name)};`,
           `const ${classify(module.name)}: typeof ${_.upperFirst(module.name)};`,
         );
       } else {
-        newConstDeclarations.push(`const ${classify(module.name)}: ${_.upperFirst(module.name)};`);
+        // In the case where this module is actually the static methods on a Class type
+        if (
+          API.some(
+            (tModule, tIndex) =>
+              index !== tIndex &&
+              tModule.name.toLowerCase() === module.name.toLowerCase() &&
+              tModule.type === 'Class',
+          ) &&
+          !isClass
+        ) {
+          newConstDeclarations.push(
+            `const ${classify(module.name)}: typeof ${_.upperFirst(module.name)};`,
+          );
+        } else {
+          newConstDeclarations.push(
+            `const ${classify(module.name)}: ${_.upperFirst(module.name)};`,
+          );
+        }
       }
     }
     constDeclarations.push(...newConstDeclarations);
-    if (module.process.main && module.process.renderer) {
-      TargetNamespace = CommonNamespace;
-    } else if (module.process.main) {
-      TargetNamespace = MainNamespace;
-    } else if (module.process.renderer) {
-      TargetNamespace = RendererNamespace;
+    if (module.process.exported) {
+      if (module.process.main && module.process.renderer) {
+        TargetNamespace = CommonNamespace;
+      } else if (module.process.main) {
+        TargetNamespace = MainNamespace;
+      } else if (module.process.renderer) {
+        TargetNamespace = RendererNamespace;
+      }
     }
-    if (module.process.main && !EMRI[classify(module.name).toLowerCase()]) {
+    if (
+      module.process.main &&
+      module.process.exported &&
+      !EMRI[classify(module.name).toLowerCase()]
+    ) {
       MainInterfaceForRemote.push(
         `  ${classify(module.name)}: ${isClass ? 'typeof ' : ''}${_.upperFirst(module.name)};`,
       );
@@ -75,9 +95,12 @@ export const generateMasterInterfaces = (
       debug(classify(module.name).toLowerCase(), EMRI[classify(module.name).toLowerCase()]);
       if (!EMRI[classify(module.name).toLowerCase()]) {
         if (moduleString) TargetNamespace.push(moduleString);
+        if (moduleString) CrossProcessExportsNamespace.push(moduleString);
       }
       EMRI[classify(module.name).toLowerCase()] = true;
-      TargetNamespace.push(...newConstDeclarations.map(s => `  ${s.substr(0, s.length - 1)}`));
+      const declarations = newConstDeclarations.map(s => `  ${s.substr(0, s.length - 1)}`);
+      TargetNamespace.push(...declarations);
+      CrossProcessExportsNamespace.push(...declarations);
     }
   });
 
@@ -88,11 +111,13 @@ export const generateMasterInterfaces = (
     CommonNamespace.push(alias);
     MainNamespace.push(alias);
     RendererNamespace.push(alias);
+    CrossProcessExportsNamespace.push(alias);
   }
 
   CommonNamespace.push('}');
   MainNamespace.push('}');
   RendererNamespace.push('}');
+  CrossProcessExportsNamespace.push('}');
 
   const withSemicolons = (lines: string[]) => {
     return lines.map(l => (l.endsWith('{') || l.endsWith('}') ? l : `${l};`));
@@ -101,5 +126,6 @@ export const generateMasterInterfaces = (
   addToOutput(withSemicolons(CommonNamespace));
   addToOutput(withSemicolons(MainNamespace));
   addToOutput(withSemicolons(RendererNamespace));
+  addToOutput(withSemicolons(CrossProcessExportsNamespace));
   addToOutput(constDeclarations);
 };

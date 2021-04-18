@@ -1,5 +1,5 @@
 declare module 'electron' {
-  export = Electron;
+  export = Electron.CrossProcessExports;
 }
 
 declare module 'electron/main' {
@@ -15,14 +15,14 @@ declare module 'electron/renderer' {
 }
 
 interface NodeRequireFunction {
-  (moduleName: 'electron'): typeof Electron;
+  (moduleName: 'electron'): typeof Electron.CrossProcessExports;
   (moduleName: 'electron/main'): typeof Electron.Main;
   (moduleName: 'electron/common'): typeof Electron.Common;
   (moduleName: 'electron/renderer'): typeof Electron.Renderer;
 }
 
 interface NodeRequire {
-  (moduleName: 'electron'): typeof Electron;
+  (moduleName: 'electron'): typeof Electron.CrossProcessExports;
   (moduleName: 'electron/main'): typeof Electron.Main;
   (moduleName: 'electron/common'): typeof Electron.Common;
   (moduleName: 'electron/renderer'): typeof Electron.Renderer;
