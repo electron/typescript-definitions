@@ -86,7 +86,9 @@ export const generateMasterInterfaces = (
       !EMRI[classify(module.name).toLowerCase()]
     ) {
       MainInterfaceForRemote.push(
-        `  ${classify(module.name)}: ${isClass || isModuleButActuallyStaticClass ? 'typeof ' : ''}${_.upperFirst(module.name)};`,
+        `  ${classify(module.name)}: ${
+          isClass || isModuleButActuallyStaticClass ? 'typeof ' : ''
+        }${_.upperFirst(module.name)};`,
       );
     }
     if (TargetNamespace) {

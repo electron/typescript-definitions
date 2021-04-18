@@ -310,10 +310,7 @@ export const generateModuleDeclaration = (
           ? 'readonly '
           : '';
         if (prop.description) {
-          utils.extendArray(
-            moduleAPI,
-            utils.wrapComment(prop.description, prop.additionalTags),
-          );
+          utils.extendArray(moduleAPI, utils.wrapComment(prop.description, prop.additionalTags));
         }
         moduleAPI.push(`${isReadonly}${prop.name}${isOptional}: ${utils.typify(prop)};`);
       });
@@ -328,10 +325,7 @@ export const generateModuleDeclaration = (
           ? 'readonly '
           : '';
         if (prop.description) {
-          utils.extendArray(
-            moduleAPI,
-            utils.wrapComment(prop.description, prop.additionalTags),
-          );
+          utils.extendArray(moduleAPI, utils.wrapComment(prop.description, prop.additionalTags));
         }
         moduleAPI.push(`static ${isReadonly}${prop.name}: ${utils.typify(prop)};`);
       });
@@ -348,13 +342,20 @@ export const generateModuleDeclaration = (
         if (paramType.type === 'Object') {
           type = DynamicParamInterfaces.createParamInterface(p as any, '');
         } else if (Array.isArray(paramType.type)) {
-          paramType.type = paramType.type.map(t => t.type !== 'Object' ? t : ({
-            ...t,
-            type: DynamicParamInterfaces.createParamInterface({
-              ...p,
-              type: t,
-            } as any, ''),
-          }))
+          paramType.type = paramType.type.map(t =>
+            t.type !== 'Object'
+              ? t
+              : {
+                  ...t,
+                  type: DynamicParamInterfaces.createParamInterface(
+                    {
+                      ...p,
+                      type: t,
+                    } as any,
+                    '',
+                  ),
+                },
+          );
         }
 
         const isStatic = isStaticVersion ? 'static ' : '';

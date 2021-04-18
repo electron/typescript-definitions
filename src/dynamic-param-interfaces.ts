@@ -195,7 +195,9 @@ const flushParamInterfaces = (
               return paramPropertyType;
             });
           }
-          const isReadonly = (paramProperty.additionalTags || []).includes(DocumentationTag.AVAILABILITY_READONLY)
+          const isReadonly = (paramProperty.additionalTags || []).includes(
+            DocumentationTag.AVAILABILITY_READONLY,
+          )
             ? 'readonly '
             : '';
           if (
@@ -215,9 +217,9 @@ const flushParamInterfaces = (
             );
           } else {
             paramAPI.push(
-              `${isReadonly}${paramProperty.name}${utils.isOptional(paramProperty) ? '?' : ''}: ${utils.typify(
-                paramProperty,
-              )};`,
+              `${isReadonly}${paramProperty.name}${
+                utils.isOptional(paramProperty) ? '?' : ''
+              }: ${utils.typify(paramProperty)};`,
             );
           }
         });
