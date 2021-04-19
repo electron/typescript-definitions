@@ -40,11 +40,13 @@ export const generateMasterInterfaces = (
       // We must be a structure or something
       return;
     }
-    const moduleString =
-      isClass && module.process.exported
+    const moduleString = isClass
+      ? module.process.exported
         ? `  class ${_.upperFirst(module.name)} extends Electron.${_.upperFirst(module.name)} {}`
-        : '';
+        : `  type ${_.upperFirst(module.name)} = Electron.${_.upperFirst(module.name)}`
+      : '';
     const newConstDeclarations: string[] = [];
+    const newTypeAliases: string[] = [];
     // In the case where this module is actually the static methods on a Class type
     const isModuleButActuallyStaticClass = API.some(
       (tModule, tIndex) =>
@@ -63,6 +65,9 @@ export const generateMasterInterfaces = (
           newConstDeclarations.push(
             `const ${classify(module.name)}: typeof ${_.upperFirst(module.name)};`,
           );
+          newTypeAliases.push(
+            `type ${_.upperFirst(module.name)} = Electron.${_.upperFirst(module.name)};`,
+          );
         } else {
           newConstDeclarations.push(
             `const ${classify(module.name)}: ${_.upperFirst(module.name)};`,
@@ -71,14 +76,12 @@ export const generateMasterInterfaces = (
       }
     }
     constDeclarations.push(...newConstDeclarations);
-    if (module.process.exported) {
-      if (module.process.main && module.process.renderer) {
-        TargetNamespace = CommonNamespace;
-      } else if (module.process.main) {
-        TargetNamespace = MainNamespace;
-      } else if (module.process.renderer) {
-        TargetNamespace = RendererNamespace;
-      }
+    if (module.process.main && module.process.renderer) {
+      TargetNamespace = CommonNamespace;
+    } else if (module.process.main) {
+      TargetNamespace = MainNamespace;
+    } else if (module.process.renderer) {
+      TargetNamespace = RendererNamespace;
     }
     if (
       module.process.main &&
@@ -98,7 +101,9 @@ export const generateMasterInterfaces = (
         if (moduleString) CrossProcessExportsNamespace.push(moduleString);
       }
       EMRI[classify(module.name).toLowerCase()] = true;
-      const declarations = newConstDeclarations.map(s => `  ${s.substr(0, s.length - 1)}`);
+      const declarations = [...newConstDeclarations, ...newTypeAliases].map(
+        s => `  ${s.substr(0, s.length - 1)}`,
+      );
       TargetNamespace.push(...declarations);
       CrossProcessExportsNamespace.push(...declarations);
     }
