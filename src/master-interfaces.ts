@@ -65,14 +65,14 @@ export const generateMasterInterfaces = (
           newConstDeclarations.push(
             `const ${classify(module.name)}: typeof ${_.upperFirst(module.name)};`,
           );
-          newTypeAliases.push(
-            `type ${_.upperFirst(module.name)} = Electron.${_.upperFirst(module.name)};`,
-          );
         } else {
           newConstDeclarations.push(
             `const ${classify(module.name)}: ${_.upperFirst(module.name)};`,
           );
         }
+        newTypeAliases.push(
+          `type ${_.upperFirst(module.name)} = Electron.${_.upperFirst(module.name)};`,
+        );
       }
     }
     constDeclarations.push(...newConstDeclarations);
