@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import d from 'debug';
 import { ParsedDocumentationResult } from '@electron/docs-parser';
-const debug = d('master-interface');
+const debug = d('main-interface');
 
-export const generateMasterInterfaces = (
+export const generateMainInterfaces = (
   API: ParsedDocumentationResult,
   interfaceKeys: string[],
   addToOutput: (lines: string[], sep?: string) => void,
