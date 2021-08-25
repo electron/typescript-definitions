@@ -5,7 +5,7 @@ const path = require('path')
 
 const utils = require('./lib/utils')
 const paramInterfaces = require('./lib/dynamic-param-interfaces')
-const generateMasterInterfaces = require('./lib/master-interfaces')
+const generatePrimaryInterfaces = require('./lib/primary-interfaces')
 const moduleDeclaration = require('./lib/module-declaration')
 const remapOptionals = require('./lib/remap-optionals')
 
@@ -51,7 +51,7 @@ module.exports = (API) => {
   }
 
   remapOptionals(API)
-  generateMasterInterfaces(API, addToOutput)
+  generatePrimaryInterfaces(API, addToOutput)
 
   // generate module declaration for every class, module, structure, element, etc
   API.sort((m1, m2) => m1.name.localeCompare(m2.name)).forEach((module, index) => {
