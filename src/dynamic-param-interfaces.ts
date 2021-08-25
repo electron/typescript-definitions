@@ -190,18 +190,28 @@ const flushParamInterfaces = (
                     true,
                   ),
                 };
-              } else if (typeof paramPropertyType.type === 'string' && paramPropertyType.type.toLowerCase() === 'object') {
-                let argType = (paramProperty as any).__type || _.upperFirst(_.camelCase(paramProperty.name));
+              } else if (
+                typeof paramPropertyType.type === 'string' &&
+                paramPropertyType.type.toLowerCase() === 'object'
+              ) {
+                let argType =
+                  (paramProperty as any).__type || _.upperFirst(_.camelCase(paramProperty.name));
                 if (API.some(a => a.name === argType)) {
-                    paramPropertyType.type = argType;
-                    debug(chalk.red(`Auto-correcting type from Object --> ${argType} in Interface: ${_.upperFirst(param.tName)} --- This should be fixed in the docs`));
+                  paramPropertyType.type = argType;
+                  debug(
+                    chalk.red(
+                      `Auto-correcting type from Object --> ${argType} in Interface: ${_.upperFirst(
+                        param.tName,
+                      )} --- This should be fixed in the docs`,
+                    ),
+                  );
                 } else {
-                    nestedInterfacesToDeclare[argType] = paramPropertyType as ParamInterface;
-                    nestedInterfacesToDeclare[argType].name = paramProperty.name;
-                    nestedInterfacesToDeclare[argType].tName = argType;
-                    paramPropertyType.type = argType;
+                  nestedInterfacesToDeclare[argType] = paramPropertyType as ParamInterface;
+                  nestedInterfacesToDeclare[argType].name = paramProperty.name;
+                  nestedInterfacesToDeclare[argType].tName = argType;
+                  paramPropertyType.type = argType;
                 }
-            }
+              }
               return paramPropertyType;
             });
           }
