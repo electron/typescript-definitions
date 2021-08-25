@@ -43,7 +43,7 @@ const ignoreDescriptions = <T extends EventParameterDocumentation>(
     return toReturn;
   }).sort((a, b) => a.name.localeCompare(b.name));
 
-// Given a parameter create a new interface and return it's name
+// Given a parameter create a new interface and return it's name + array modifier
 // IName is the proposed interface name prefix
 // backupIName is a slightly longer IName in case IName is already taken
 const createParamInterface = (
@@ -52,6 +52,7 @@ const createParamInterface = (
   backupIName = '',
   finalBackupIName = '',
 ): string => {
+  const maybeArray = (type: string) => (param.collection ? `Array<${type}>` : type);
   let argType = polite(IName) + _.upperFirst(_.camelCase(param.name));
   let argName = param.name;
   // TODO: Note.  It is still possible for even backupIName to be already used
@@ -72,7 +73,7 @@ const createParamInterface = (
     }
   });
   if (usingExistingParamInterface) {
-    return argType;
+    return maybeArray(argType);
   }
   if (
     paramInterfacesToDeclare[argType] &&
@@ -99,7 +100,7 @@ const createParamInterface = (
   paramInterfacesToDeclare[argType] = param;
   paramInterfacesToDeclare[argType].name = argName;
   paramInterfacesToDeclare[argType].tName = argType;
-  return argType;
+  return maybeArray(argType);
 };
 
 const flushParamInterfaces = (
