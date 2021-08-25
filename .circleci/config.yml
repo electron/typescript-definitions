@@ -14,6 +14,7 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "yarn.lock" }}
+      - run: yarn prettier:check
       - run: yarn test
   release:
     docker:
@@ -25,7 +26,6 @@ jobs:
             - v1-dependencies-{{ checksum "yarn.lock" }}
             - v1-dependencies-
       - run: yarn install
-      - run: yarn prettier:check
       - run: yarn build
       - run: npx semantic-release
 workflows:

@@ -50,5 +50,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/electron/electron-typescript-definitions.git"
-  }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "base"
+  ]
 }
