@@ -189,27 +189,34 @@ export const generateModuleDeclaration = (
           );
         }
 
-        for (let method of ['addEventListener', 'removeEventListener']) {
-          moduleAPI.push(
-            `${method}(event: '${domEvent.name}', listener: (event: ${eventType}) => void${
-              method === 'addEventListener' ? ', useCapture?: boolean' : ''
-            }): this;`,
-          );
-        }
+        moduleAPI.push(
+          `addEventListener(event: '${domEvent.name}', listener: (this: ${_.upperFirst(
+            module.name,
+          )}, event: ${eventType}) => void, options?: boolean | AddEventListenerOptions): void;`,
+        );
+        moduleAPI.push(
+          `removeEventListener(event: '${domEvent.name}', listener: (this: ${_.upperFirst(
+            module.name,
+          )}, event: ${eventType}) => void, options?: boolean | EventListenerOptions): void;`,
+        );
       });
 
       // original overloads copied from HTMLElement, because they are not inherited
       moduleAPI.push(
-        `addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, useCapture?: boolean): void;`,
+        `addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: ${_.upperFirst(
+          module.name,
+        )}, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;`,
       );
       moduleAPI.push(
-        `addEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void;`,
+        `addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;`,
       );
       moduleAPI.push(
-        `removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, useCapture?: boolean): void;`,
+        `removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: ${_.upperFirst(
+          module.name,
+        )}, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;`,
       );
       moduleAPI.push(
-        `removeEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void;`,
+        `removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;`,
       );
     }
   }
