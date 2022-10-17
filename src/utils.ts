@@ -379,7 +379,10 @@ export const genMethodString = (
           } else if (paramType.type === 'Object' && objectParam.properties) {
             return {
               ...objectParam,
-              type: createMethodObjectParamType(objectParam),
+              type: createMethodObjectParamType({
+                ...objectParam,
+                name: param.name,
+              }),
             };
           }
           return paramType;
