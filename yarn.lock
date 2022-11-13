@@ -48,10 +48,10 @@
     read-pkg "^4.0.0"
     registry-auth-token "^3.3.1"
 
-"@electron/docs-parser@^0.12.0":
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/@electron/docs-parser/-/docs-parser-0.12.0.tgz#a1ae37164bf93f9cabcb1d51f19146a0a7f07168"
-  integrity sha512-/z9XUi5z752tpNa+fC+STtGKKOT9lQ9PgU15MMSUtOHRVbNfoQfGoFQaiUKi5uqH+UnAwBZ+p8PHId30KtVxCA==
+"@electron/docs-parser@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@electron/docs-parser/-/docs-parser-1.0.0.tgz#1844ed2e18528ea56aaef0ace1cfa0633a6fa1b1"
+  integrity sha512-nIqEO8Ga6LavdaY2aJMPfq2vSOPVlgOvNv7jpiyaoqsAz5vYnWNUnxeCyaalCaDyFiKhVeHbKwP8Kt2TENwneg==
   dependencies:
     "@types/markdown-it" "^10.0.0"
     chai "^4.2.0"

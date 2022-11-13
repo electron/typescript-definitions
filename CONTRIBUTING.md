@@ -23,7 +23,7 @@ From a [electron/docs-parser](https://github.com/electron/docs-parser) repo (sin
 ```sh
 $ cd docs-parser
 $ yarn install
-$ yarn build && node dist/bin.js --dir /path/to/electron-gn/src/electron
+$ yarn build && node dist/bin.js --dir /path/to/electron-gn/src/electron --moduleVersion 1.2.3
 ```
 
 From a [electron/electron](https://github.com/electron/electron/) repo:
