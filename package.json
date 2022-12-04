@@ -11,7 +11,8 @@
     "prettier:check": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "prettier:write": "prettier --write \"src/**/*.{ts,tsx}\"",
     "test": "yarn build && mocha",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "prepare": "husky install"
   },
   "author": {
     "name": "Samuel Attard",
@@ -26,6 +27,8 @@
     "@types/lodash": "^4.14.123",
     "@types/minimist": "^1.2.0",
     "chai": "^4.2.0",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.0.4",
     "mocha": "^10.1.0",
     "prettier": "^1.17.0",
     "typescript": "^3.4.5"
@@ -50,5 +53,8 @@
     "dist",
     "README.md",
     "base"
-  ]
+  ],
+  "lint-staged": {
+    "*.{js,ts}": "prettier --write"
+  }
 }
