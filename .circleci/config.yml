@@ -27,7 +27,7 @@ jobs:
             - v1-dependencies-
       - run: yarn install
       - run: yarn build
-      - run: npx semantic-release
+      - run: npx semantic-release@17.4.5
 workflows:
   version: 2
   test_and_release:
