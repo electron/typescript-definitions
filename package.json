@@ -8,11 +8,11 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
+    "prepare": "husky install",
+    "prepublishOnly": "yarn build",
     "prettier:check": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "prettier:write": "prettier --write \"src/**/*.{ts,tsx}\"",
-    "test": "yarn build && mocha",
-    "semantic-release": "semantic-release",
-    "prepare": "husky install"
+    "test": "yarn build && mocha"
   },
   "author": {
     "name": "Samuel Attard",
