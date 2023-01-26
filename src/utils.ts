@@ -285,6 +285,7 @@ export const isBuiltIn = (type: string) => {
     'float64array',
     'bigint64array',
     'biguint64array',
+    'globalresponse',
   ];
   return builtIns.indexOf(type.toLowerCase().replace(/\[\]/g, '')) !== -1;
 };

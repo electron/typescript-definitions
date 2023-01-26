@@ -6,3 +6,4 @@
 /// <reference types="node" />
 
 type GlobalEvent = Event & { returnValue: any };
+type GlobalResponse = Response;
