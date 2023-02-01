@@ -28,9 +28,9 @@ export const extendArray = <T>(arr1: T[], arr2: T[]): T[] => {
 };
 
 export const wrapComment = (comment: string, additionalTags: DocumentationTag[] = []): string[] => {
-  if (!comment) return [];
+  if (!comment && !additionalTags.length) return [];
   comment = comment.replace(/^\(optional\)(?: - )?/gi, '');
-  if (!comment) return [];
+  if (!comment && !additionalTags.length) return [];
   const result = ['/**'];
   while (comment.length > 0) {
     let index = 0;
@@ -48,7 +48,7 @@ export const wrapComment = (comment: string, additionalTags: DocumentationTag[] 
     comment = comment.substring(index + 1);
   }
   if (additionalTags.length) {
-    result.push(' *');
+    if (result.length > 1) result.push(' *');
     const nodePlatforms: string[] = [];
     result.push(
       ...additionalTags
@@ -241,7 +241,6 @@ export const paramify = (paramName: string) => {
 // TODO: Infer through electron-docs-linter/parser
 export const isEmitter = (module: Pick<ModuleDocumentationContainer, 'name'>) => {
   const nonEventEmitters = [
-    'menu',
     'menuitem',
     'nativeimage',
     'shell',

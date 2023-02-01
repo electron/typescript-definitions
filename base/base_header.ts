@@ -5,5 +5,5 @@
 
 /// <reference types="node" />
 
-type GlobalEvent = Event & { returnValue: any };
+type DOMEvent = Event;
 type GlobalResponse = Response;

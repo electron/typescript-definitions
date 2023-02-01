@@ -13,6 +13,9 @@ import {
   DetailedFunctionType,
   ElementDocumentationContainer,
   DocumentationTag,
+  PropertyDocumentationBlock,
+  DetailedEventType,
+  DetailedEventReferenceType,
 } from '@electron/docs-parser';
 
 const modules: Record<string, string[]> = {};
@@ -100,16 +103,17 @@ export const generateModuleDeclaration = (
 
           moduleEvent.parameters.forEach((eventListenerArg, index) => {
             let argString = '';
-            if (eventListenerArg.description) {
+            const additionalTags = (eventListenerArg as any).additionalTags || [];
+            if (eventListenerArg.description || additionalTags.length) {
               if (index === 0) argString += `\n${indent}`;
               argString += utils
-                .wrapComment(eventListenerArg.description)
+                .wrapComment(eventListenerArg.description, additionalTags)
                 .map((l, i) => `${l}\n${indent}`)
                 .join('');
             }
 
             let argType: string | null = null;
-            const objectListenerArg = eventListenerArg as DetailedObjectType &
+            const objectListenerArg = eventListenerArg as (DetailedObjectType) &
               DocumentationBlock &
               TypeInformation & { required: boolean };
             if (
@@ -125,6 +129,38 @@ export const generateModuleDeclaration = (
                   : undefined,
                 _.upperFirst(_.camelCase(moduleEvent.name)),
               );
+            }
+
+            const eventGenericListenerArg = eventListenerArg as (DetailedEventType) &
+              DocumentationBlock &
+              TypeInformation & { required: boolean };
+            const eventReferenceListenerArg = eventListenerArg as (DetailedEventReferenceType) &
+              DocumentationBlock &
+              TypeInformation & { required: boolean };
+
+            if (eventGenericListenerArg.type === 'Event') {
+              let eventParamsType = 'EmptyParams';
+              if (
+                eventGenericListenerArg.eventProperties &&
+                eventGenericListenerArg.eventProperties.length
+              ) {
+                const fakeObject: any = {
+                  name: 'EventParams',
+                  type: 'Object',
+                  collection: false,
+                  properties: eventGenericListenerArg.eventProperties,
+                };
+                eventParamsType = DynamicParamInterfaces.createParamInterface(
+                  fakeObject,
+                  `${_.upperFirst(_.camelCase(module.name))}${_.upperFirst(
+                    _.camelCase(moduleEvent.name),
+                  )}`,
+                );
+              }
+              if (eventReferenceListenerArg.eventPropertiesReference) {
+                eventParamsType = utils.typify(eventReferenceListenerArg.eventPropertiesReference);
+              }
+              argType = `Event<${eventParamsType}, Electron.${_.upperFirst(module.name)}>`;
             }
 
             let newType = argType || utils.typify(eventListenerArg);
@@ -163,7 +199,7 @@ export const generateModuleDeclaration = (
           moduleAPI,
           utils.wrapComment(domEvent.description, domEvent.additionalTags),
         );
-        let eventType = 'Event';
+        let eventType = 'DOMEvent';
 
         if (domEvent.parameters && domEvent.parameters.length) {
           const fakeObject: any = {
@@ -171,7 +207,7 @@ export const generateModuleDeclaration = (
             type: 'Object',
             collection: false,
             properties: [],
-            extends: 'Event',
+            extends: 'DOMEvent',
           };
 
           domEvent.parameters.forEach((eventListenerProp, index) => {
@@ -364,6 +400,15 @@ export const generateModuleDeclaration = (
           ? 'readonly '
           : '';
         type = type || utils.typify(paramType);
+
+        if (type === 'Function') {
+          type = utils.genMethodString(
+            DynamicParamInterfaces,
+            module,
+            p as any, // FIXME: <--
+            undefined,
+          );
+        }
 
         utils.extendArray(moduleAPI, utils.wrapComment(p.description, p.additionalTags));
         if (module.name === 'process' && p.name === 'versions') return;
