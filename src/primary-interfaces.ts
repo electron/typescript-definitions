@@ -75,6 +75,11 @@ export const generatePrimaryInterfaces = (
         );
       }
     }
+    if (module.type === 'Element') {
+      newTypeAliases.push(
+        `type ${_.upperFirst(module.name)} = Electron.${_.upperFirst(module.name)};`,
+      );
+    }
     constDeclarations.push(...newConstDeclarations);
     if (module.process.main && module.process.renderer) {
       TargetNamespace = CommonNamespace;
