@@ -118,8 +118,7 @@ const flushParamInterfaces = (
       )
       .forEach(paramKey => {
         if (paramKey === 'Event') {
-          delete paramInterfacesToDeclare[paramKey];
-          return;
+          throw 'Unexpected dynamic Event type, should be routed through the Event handler';
         }
         if (declared[paramKey]) {
           const toDeclareCheck: ParamInterface = Object.assign(
