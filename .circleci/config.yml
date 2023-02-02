@@ -1,8 +1,10 @@
-version: 2
+version: 2.1
+orbs:
+  cfa: continuousauth/npm@1.0.2
 jobs:
   test:
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:14
     steps:
       - checkout
       - restore_cache:
@@ -14,29 +16,18 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "yarn.lock" }}
+      - run: yarn prettier:check
       - run: yarn test
-  release:
-    docker:
-      - image: circleci/node:10.15
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "yarn.lock" }}
-            - v1-dependencies-
-      - run: yarn install
-      - run: yarn build
-      - run: npx semantic-release
 workflows:
-  version: 2
   test_and_release:
     # Run the test jobs first, then the release only when all the test jobs are successful
     jobs:
       - test
-      - release:
+      - cfa/release:
           requires:
             - test
           filters:
             branches:
               only:
-                - master
+                - main
+          context: cfa-release

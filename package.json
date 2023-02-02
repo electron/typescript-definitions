@@ -8,12 +8,11 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
+    "prepare": "husky install",
+    "prepublishOnly": "yarn build",
     "prettier:check": "prettier --list-different \"src/**/*.{ts,tsx}\"",
     "prettier:write": "prettier --write \"src/**/*.{ts,tsx}\"",
-    "test": "yarn build && mocha",
-    "prepack": "check-for-leaks",
-    "prepush": "check-for-leaks",
-    "semantic-release": "semantic-release"
+    "test": "yarn build && mocha"
   },
   "author": {
     "name": "Samuel Attard",
@@ -21,18 +20,17 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@electron/docs-parser": "^0.7.2",
-    "@continuous-auth/semantic-release-npm": "2.0.0",
+    "@continuous-auth/semantic-release-npm": "^3.0.0",
+    "@electron/docs-parser": "^1.1.0",
     "@types/debug": "^4.1.4",
     "@types/fs-extra": "^5.0.5",
     "@types/lodash": "^4.14.123",
     "@types/minimist": "^1.2.0",
     "chai": "^4.2.0",
-    "check-for-leaks": "^1.2.0",
-    "husky": "^2.1.0",
-    "mocha": "^6.1.4",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.0.4",
+    "mocha": "^10.1.0",
     "prettier": "^1.17.0",
-    "semantic-release": "^15.13.3",
     "typescript": "^3.4.5"
   },
   "dependencies": {
@@ -49,6 +47,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/electron/electron-typescript-definitions.git"
+    "url": "https://github.com/electron/typescript-definitions.git"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "base"
+  ],
+  "lint-staged": {
+    "*.{js,ts}": "prettier --write"
   }
 }

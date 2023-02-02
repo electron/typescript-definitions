@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as utils from './utils';
 import { getModuleDeclarations, generateModuleDeclaration } from './module-declaration';
 import { remapOptionals } from './remap-optionals';
-import { generateMasterInterfaces } from './master-interfaces';
+import { generatePrimaryInterfaces } from './primary-interfaces';
 import { ParsedDocumentationResult } from '@electron/docs-parser';
 import { DynamicParamInterfaces } from './dynamic-param-interfaces';
 
@@ -104,7 +104,7 @@ export async function generateDefinitions({ electronApi: API }: GenerateOptions)
   });
 
   const keys = DynamicParamInterfaces.flushParamInterfaces(API, addToOutput);
-  generateMasterInterfaces(API, [...keys, ...declaredStructs], addToOutput);
+  generatePrimaryInterfaces(API, [...keys, ...declaredStructs], addToOutput);
 
   const electronOutput = wrapWithHeaderAndFooter(outputLines, API[0].version);
 

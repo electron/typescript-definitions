@@ -28,11 +28,11 @@ export const extendArray = <T>(arr1: T[], arr2: T[]): T[] => {
 };
 
 export const wrapComment = (comment: string, additionalTags: DocumentationTag[] = []): string[] => {
-  if (!comment) return [];
-  comment = comment.replace(/^\(optional\)(?: - )?/gi, '').trim();
-  if (!comment) return [];
+  if (!comment && !additionalTags.length) return [];
+  comment = comment.replace(/^\(optional\)(?: - )?/gi, '');
+  if (!comment && !additionalTags.length) return [];
   const result = ['/**'];
-  while (comment.trim().length > 0) {
+  while (comment.length > 0) {
     let index = 0;
     for (let i = 0; i <= 80; i++) {
       if (comment[i] === ' ') index = i;
@@ -41,14 +41,14 @@ export const wrapComment = (comment: string, additionalTags: DocumentationTag[] 
         break;
       }
     }
-    if (comment.length <= 80) {
+    if (comment.length <= 80 && !comment.includes('\n')) {
       index = 80;
     }
     result.push(` * ${comment.substring(0, index)}`);
     comment = comment.substring(index + 1);
   }
   if (additionalTags.length) {
-    result.push(' *');
+    if (result.length > 1) result.push(' *');
     const nodePlatforms: string[] = [];
     result.push(
       ...additionalTags
@@ -241,7 +241,6 @@ export const paramify = (paramName: string) => {
 // TODO: Infer through electron-docs-linter/parser
 export const isEmitter = (module: Pick<ModuleDocumentationContainer, 'name'>) => {
   const nonEventEmitters = [
-    'menu',
     'menuitem',
     'nativeimage',
     'shell',
@@ -262,7 +261,7 @@ export const isEmitter = (module: Pick<ModuleDocumentationContainer, 'name'>) =>
     'net',
     'netlog',
     'protocol',
-    'contextbridge'
+    'contextbridge',
   ];
   return !nonEventEmitters.includes(module.name.toLowerCase());
 };
@@ -285,6 +284,7 @@ export const isBuiltIn = (type: string) => {
     'float64array',
     'bigint64array',
     'biguint64array',
+    'globalresponse',
   ];
   return builtIns.indexOf(type.toLowerCase().replace(/\[\]/g, '')) !== -1;
 };
@@ -379,7 +379,10 @@ export const genMethodString = (
           } else if (paramType.type === 'Object' && objectParam.properties) {
             return {
               ...objectParam,
-              type: createMethodObjectParamType(objectParam),
+              type: createMethodObjectParamType({
+                ...objectParam,
+                name: param.name,
+              }),
             };
           }
           return paramType;

@@ -1,8 +1,8 @@
-# Contributing to electron-typescript-definitions
+# Contributing to electron/typescript-definitions
 
 ## Code of Conduct
 
-This project adheres to Electron's [code of conduct](https://github.com/electron/electron/blob/master/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to coc@electronjs.org.
+This project adheres to Electron's [code of conduct](https://github.com/electron/electron/blob/main/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to coc@electronjs.org.
 
 ## Developing Locally
 
@@ -23,7 +23,7 @@ From a [electron/docs-parser](https://github.com/electron/docs-parser) repo (sin
 ```sh
 $ cd docs-parser
 $ yarn install
-$ yarn build && node dist/bin.js --dir /path/to/electron-gn/src/electron
+$ yarn build && node dist/bin.js --dir /path/to/electron-gn/src/electron --moduleVersion 1.2.3
 ```
 
 From a [electron/electron](https://github.com/electron/electron/) repo:
