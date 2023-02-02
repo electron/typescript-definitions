@@ -9,11 +9,13 @@ export const generatePrimaryInterfaces = (
   addToOutput: (lines: string[], sep?: string) => void,
 ) => {
   // Generate Main / Renderer process interfaces
-  const CommonNamespace = ['namespace Common {'];
-  const MainNamespace = ['namespace Main {'];
-  const RendererNamespace = ['namespace Renderer {'];
+  const eventExport =
+    '  type Event<Params extends object, Sender extends NodeJS.EventEmitter> = Electron.Event<Params, Sender>';
+  const CommonNamespace = ['namespace Common {', eventExport];
+  const MainNamespace = ['namespace Main {', eventExport];
+  const RendererNamespace = ['namespace Renderer {', eventExport];
   const MainInterfaceForRemote = ['interface RemoteMainInterface {'];
-  const CrossProcessExportsNamespace = ['namespace CrossProcessExports {'];
+  const CrossProcessExportsNamespace = ['namespace CrossProcessExports {', eventExport];
   const constDeclarations: string[] = [];
   const EMRI: Record<string, boolean> = {};
 
