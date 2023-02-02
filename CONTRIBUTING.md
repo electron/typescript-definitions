@@ -1,4 +1,4 @@
-# Contributing to electron-typescript-definitions
+# Contributing to electron/typescript-definitions
 
 ## Code of Conduct
 
