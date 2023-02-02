@@ -262,6 +262,7 @@ export const isEmitter = (module: Pick<ModuleDocumentationContainer, 'name'>) =>
     'netlog',
     'protocol',
     'contextbridge',
+    'webframe',
   ];
   return !nonEventEmitters.includes(module.name.toLowerCase());
 };
