@@ -7,3 +7,4 @@
 
 type DOMEvent = Event;
 type GlobalResponse = Response;
+type GlobalRequest = Request;
