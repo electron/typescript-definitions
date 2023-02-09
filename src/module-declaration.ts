@@ -139,7 +139,7 @@ export const generateModuleDeclaration = (
               TypeInformation & { required: boolean };
 
             if (eventGenericListenerArg.type === 'Event') {
-              let eventParamsType = 'EmptyParams';
+              let eventParamsType = '';
               if (
                 eventGenericListenerArg.eventProperties &&
                 eventGenericListenerArg.eventProperties.length
@@ -160,7 +160,7 @@ export const generateModuleDeclaration = (
               if (eventReferenceListenerArg.eventPropertiesReference) {
                 eventParamsType = utils.typify(eventReferenceListenerArg.eventPropertiesReference);
               }
-              argType = `Event<${eventParamsType}, Electron.${_.upperFirst(module.name)}>`;
+              argType = eventParamsType ? `Event<${eventParamsType}>` : 'Event';
             }
 
             let newType = argType || utils.typify(eventListenerArg);

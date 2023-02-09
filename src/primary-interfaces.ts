@@ -9,8 +9,7 @@ export const generatePrimaryInterfaces = (
   addToOutput: (lines: string[], sep?: string) => void,
 ) => {
   // Generate Main / Renderer process interfaces
-  const eventExport =
-    '  type Event<Params extends object, Sender extends NodeJS.EventEmitter> = Electron.Event<Params, Sender>';
+  const eventExport = '  type Event<Params extends object = {}> = Electron.Event<Params>';
   const CommonNamespace = ['namespace Common {', eventExport];
   const MainNamespace = ['namespace Main {', eventExport];
   const RendererNamespace = ['namespace Renderer {', eventExport];
