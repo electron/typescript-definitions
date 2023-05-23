@@ -40,6 +40,10 @@ declare module 'original-fs' {
   export = fs;
 }
 
+declare module 'node:original-fs' {
+  export * from 'original-fs';
+}
+
 interface Document {
   createElement(tagName: 'webview'): Electron.WebviewTag;
 }
