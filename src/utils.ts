@@ -27,13 +27,21 @@ export const extendArray = <T>(arr1: T[], arr2: T[]): T[] => {
   return arr1;
 };
 
+const earliest = (a: number, b: number) => {
+  if (a === -1 && b === -1) return 0;
+  if (a === -1) return b;
+  if (b === -1) return a;
+  return Math.min(a, b);
+};
+
 export const wrapComment = (comment: string, additionalTags: DocumentationTag[] = []): string[] => {
   if (!comment && !additionalTags.length) return [];
   comment = comment.replace(/^\(optional\)(?: - )?/gi, '');
   if (!comment && !additionalTags.length) return [];
   const result = ['/**'];
   while (comment.length > 0) {
-    let index = 0;
+    // Default the cut point to be the first "space" or "newline" character
+    let index = earliest(comment.indexOf(' '), comment.indexOf('\n'));
     for (let i = 0; i <= 80; i++) {
       if (comment[i] === ' ') index = i;
       if (comment[i] === '\n') {
@@ -43,6 +51,11 @@ export const wrapComment = (comment: string, additionalTags: DocumentationTag[] 
     }
     if (comment.length <= 80 && !comment.includes('\n')) {
       index = 80;
+    }
+    // If we didn't find a good cut point (i.e. there isn't a good cut point anywhere)
+    // then let's just take the whole thing it's probably one long word
+    if (index === 0) {
+      index = comment.length;
     }
     result.push(` * ${comment.substring(0, index)}`);
     comment = comment.substring(index + 1);
