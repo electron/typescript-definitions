@@ -3,15 +3,15 @@ declare module 'electron' {
 }
 
 declare module 'electron/main' {
-  export = Electron.Main
+  export = Electron.Main;
 }
 
 declare module 'electron/common' {
-  export = Electron.Common
+  export = Electron.Common;
 }
 
 declare module 'electron/renderer' {
-  export = Electron.Renderer
+  export = Electron.Renderer;
 }
 
 interface NodeRequireFunction {
@@ -29,9 +29,9 @@ interface NodeRequire {
 }
 
 interface File {
- /**
-  * The real path to the file on the users filesystem
-  */
+  /**
+   * The real path to the file on the users filesystem
+   */
   path: string;
 }
 
@@ -41,7 +41,8 @@ declare module 'original-fs' {
 }
 
 declare module 'node:original-fs' {
-  export * from 'original-fs';
+  import * as fs from 'fs';
+  export = fs;
 }
 
 interface Document {
