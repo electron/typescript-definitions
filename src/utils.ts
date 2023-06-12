@@ -42,10 +42,6 @@ export const wrapComment = (comment: string, additionalTags: DocumentationTag[] 
   while (comment.length > 0) {
     // Default the cut point to be the first "space" or "newline" character
     let index = earliest(comment.indexOf(' '), comment.indexOf('\n'));
-    console.log({
-      comment,
-      index,
-    });
     for (let i = 0; i <= 80; i++) {
       if (comment[i] === ' ') index = i;
       if (comment[i] === '\n') {
