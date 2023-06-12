@@ -28,7 +28,7 @@ export const extendArray = <T>(arr1: T[], arr2: T[]): T[] => {
 };
 
 const earliest = (a: number, b: number) => {
-  if (a === -1 && b === -1) return 0;
+  if (a === -1 && b === -1) return -2;
   if (a === -1) return b;
   if (b === -1) return a;
   return Math.min(a, b);
@@ -54,7 +54,7 @@ export const wrapComment = (comment: string, additionalTags: DocumentationTag[] 
     }
     // If we didn't find a good cut point (i.e. there isn't a good cut point anywhere)
     // then let's just take the whole thing it's probably one long word
-    if (index === 0) {
+    if (index === -2) {
       index = comment.length;
     }
     result.push(` * ${comment.substring(0, index)}`);
