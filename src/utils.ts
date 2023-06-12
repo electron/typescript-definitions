@@ -96,7 +96,13 @@ export const wrapComment = (comment: string, additionalTags: DocumentationTag[] 
 };
 
 const prefixTypeForSafety = (type: string) => {
-  if (type !== 'Object' && typeof type === 'string' && !isPrimitive(type) && !isBuiltIn(type)) {
+  if (
+    type !== 'Object' &&
+    typeof type === 'string' &&
+    !isPrimitive(type) &&
+    !isBuiltIn(type) &&
+    !/\(\| /gi.test(type)
+  ) {
     return `Electron.${type}`;
   }
   return type;
