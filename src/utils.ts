@@ -95,6 +95,13 @@ export const wrapComment = (comment: string, additionalTags: DocumentationTag[] 
   return result.concat(' */');
 };
 
+const prefixTypeForSafety = (type: string) => {
+  if (type !== 'Object' && typeof type === 'string' && !isPrimitive(type) && !isBuiltIn(type)) {
+    return `Electron.${type}`;
+  }
+  return type;
+};
+
 export const typify = (
   type: TypeInformation | TypeInformation[],
   maybeInnerReturnTypeName?: string,
@@ -211,7 +218,7 @@ export const typify = (
       return '(() => void)';
     case 'promise':
       if (innerTypes) {
-        return `Promise<${typify(innerTypes[0])}>`;
+        return `Promise<${prefixTypeForSafety(typify(innerTypes[0]))}>`;
       }
       throw new Error('Promise with missing inner type');
     case 'record':
