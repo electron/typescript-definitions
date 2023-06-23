@@ -19,6 +19,7 @@ import {
 } from '@electron/docs-parser';
 
 const modules: Record<string, string[]> = {};
+const moduleEventTypeInterfaces: Record<string, string[]> = {};
 
 export const generateModuleDeclaration = (
   module:
@@ -79,6 +80,9 @@ export const generateModuleDeclaration = (
     }
   }
 
+  // Easy interface to extract types of events
+  const eventTypeInterface = ['interface _EventParams {'];
+
   // Event Declaration
   if (module.type !== 'Element') {
     // To assist with declaration merging we define all parent events in this class too
@@ -96,9 +100,10 @@ export const generateModuleDeclaration = (
           utils.wrapComment(moduleEvent.description, moduleEvent.additionalTags),
         );
         let listener = 'Function';
+        const args: string[] = [];
+        const argsNoComment: string[] = [];
 
         if (moduleEvent.parameters && moduleEvent.parameters.length) {
-          const args: string[] = [];
           const indent = _.repeat(' ', moduleEvent.name.length + 29);
 
           moduleEvent.parameters.forEach((eventListenerArg, index) => {
@@ -181,15 +186,24 @@ export const generateModuleDeclaration = (
                 utils.isOptional(eventListenerArg) ? '?' : ''
               }: ${newType}`,
             );
+            argsNoComment.push(
+              `${utils.paramify(eventListenerArg.name)}${
+                utils.isOptional(eventListenerArg) ? '?' : ''
+              }: ${newType}`,
+            );
           });
           listener = `(${args.join(`,\n${indent}`)}) => void`;
         }
+
+        eventTypeInterface.push(`  '${moduleEvent.name}': [${argsNoComment.join(', ')}];`);
 
         for (let method of ['on', 'once', 'addListener', 'removeListener']) {
           moduleAPI.push(`${method}(event: '${moduleEvent.name}', listener: ${listener}): this;`);
         }
       });
   }
+
+  eventTypeInterface.push('}');
 
   // Dom Element Events
   if (module.type === 'Element') {
@@ -424,6 +438,10 @@ export const generateModuleDeclaration = (
 
   // Save moduleAPI for later reuse
   modules[_.upperFirst(module.name)] = moduleAPI;
+  if (eventTypeInterface.length > 2) {
+    moduleEventTypeInterfaces[_.upperFirst(module.name)] = eventTypeInterface;
+  }
 };
 
 export const getModuleDeclarations = () => modules;
+export const getModuleEventTypeInterfaces = () => moduleEventTypeInterfaces;

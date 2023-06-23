@@ -2,7 +2,11 @@ import _ from 'lodash';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as utils from './utils';
-import { getModuleDeclarations, generateModuleDeclaration } from './module-declaration';
+import {
+  getModuleDeclarations,
+  getModuleEventTypeInterfaces,
+  generateModuleDeclaration,
+} from './module-declaration';
 import { remapOptionals } from './remap-optionals';
 import { generatePrimaryInterfaces } from './primary-interfaces';
 import { ParsedDocumentationResult } from '@electron/docs-parser';
@@ -101,6 +105,15 @@ export async function generateDefinitions({ electronApi: API }: GenerateOptions)
     addToOutput(
       moduleAPI.map((l, index) => (index === 0 || index === moduleAPI.length - 1 ? l : `  ${l}`)),
     );
+  });
+
+  // Fetch the event type interfaces, these are non-standard but allow end-users
+  // and internal TS code to extract the types for a specific event by event name
+  Object.keys(getModuleEventTypeInterfaces()).forEach(moduleKey => {
+    if (moduleKey === 'Process') return;
+
+    const moduleEventTypeInterface = getModuleEventTypeInterfaces()[moduleKey];
+    addToOutput([`namespace ${moduleKey} {`, ...moduleEventTypeInterface.map(l => `  ${l}`), '}']);
   });
 
   const keys = DynamicParamInterfaces.flushParamInterfaces(API, addToOutput);
