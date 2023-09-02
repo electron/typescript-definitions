@@ -185,7 +185,7 @@ export const generateModuleDeclaration = (
           listener = `(${args.join(`,\n${indent}`)}) => void`;
         }
 
-        for (let method of ['on', 'once', 'addListener', 'removeListener']) {
+        for (let method of ['on', 'off', 'once', 'addListener', 'removeListener']) {
           moduleAPI.push(`${method}(event: '${moduleEvent.name}', listener: ${listener}): this;`);
         }
       });
@@ -251,7 +251,9 @@ export const generateModuleDeclaration = (
   }
 
   const returnsThis = (moduleMethod: Pick<DocumentationBlock, 'name'>) =>
-    ['on', 'once', 'removeAllListeners', 'removeListener'].includes(moduleMethod.name);
+    ['on', 'off', 'once', 'addListener', 'removeAllListeners', 'removeListener'].includes(
+      moduleMethod.name,
+    );
 
   const addMethod = (moduleMethod: MethodDocumentationBlock, prefix = '') => {
     utils.extendArray(
