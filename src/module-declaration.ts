@@ -386,7 +386,7 @@ export const generateModuleDeclaration = (
                   type: DynamicParamInterfaces.createParamInterface(
                     {
                       ...p,
-                      type: t,
+                      ...t,
                     } as any,
                     '',
                   ),
