@@ -43,6 +43,21 @@ const ignoreDescriptions = <T extends EventParameterDocumentation>(
     return toReturn;
   }).sort((a, b) => a.name.localeCompare(b.name));
 
+const noDescriptionCache = new WeakMap();
+const unsetDescriptions = (o: any): any => {
+  if (noDescriptionCache.has(o)) return noDescriptionCache.get(o);
+  if (typeof o !== 'object' || !o) return o;
+  const val = Array.isArray(o)
+    ? o.map(item => unsetDescriptions(item))
+    : Object.keys(o).reduce((accum: any, key: string) => {
+        if (key === 'description') return accum;
+        accum[key] = unsetDescriptions(o[key]);
+        return accum;
+      }, {});
+  noDescriptionCache.set(o, val);
+  return val;
+};
+
 // Given a parameter create a new interface and return it's name + array modifier
 // IName is the proposed interface name prefix
 // backupIName is a slightly longer IName in case IName is already taken
@@ -53,13 +68,31 @@ const createParamInterface = (
   finalBackupIName = '',
 ): string => {
   const maybeArray = (type: string) => (param.collection ? `Array<${type}>` : type);
+  const potentialExistingArgType = polite(IName);
+  const potentialExistingArgName = _.lowerFirst(polite(IName));
   let argType = polite(IName) + _.upperFirst(_.camelCase(param.name));
   let argName = param.name;
   // TODO: Note.  It is still possible for even backupIName to be already used
   let usingExistingParamInterface = false;
   _.forIn(paramInterfacesToDeclare, (value, key) => {
-    const test = _.assign({}, param, { name: argName, tName: argType });
-    if (_.isEqual(test, value)) {
+    const test = unsetDescriptions(
+      _.assign({}, param, {
+        name: argName,
+        tName: argType,
+        required: value.required,
+        additionalTags: (param as any).additionalTags || [],
+      }),
+    );
+    const potentialTest = unsetDescriptions(
+      _.assign({}, param, {
+        name: potentialExistingArgName,
+        tName: potentialExistingArgType,
+        required: value.required,
+        additionalTags: (param as any).additionalTags || [],
+      }),
+    );
+    const unsetValue = unsetDescriptions(value);
+    if (_.isEqual(test, unsetValue) || _.isEqual(potentialTest, unsetValue)) {
       usingExistingParamInterface = true;
       debug(
         chalk.cyan(
