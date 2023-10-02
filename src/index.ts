@@ -86,7 +86,17 @@ export async function generateDefinitions({ electronApi: API }: GenerateOptions)
 
   // generate module declaration for every class, module, structure, element, etc
   const declaredStructs: string[] = [];
-  API.sort((m1, m2) => m1.name.localeCompare(m2.name)).forEach((module, index) => {
+  API.sort((m1, m2) => {
+    // Ensure constructor options are declared first so as to ensure that
+    // setters and getters for constructor options have de-duped types
+    if (m1.name.endsWith('ConstructorOptions') && !m2.name.endsWith('ConstructorOptions')) {
+      return -1;
+    }
+    if (!m1.name.endsWith('ConstructorOptions') && m2.name.endsWith('ConstructorOptions')) {
+      return 1;
+    }
+    return m1.name.localeCompare(m2.name);
+  }).forEach((module, index) => {
     if (module.type === 'Structure') {
       declaredStructs.push(module.name);
     }
@@ -94,14 +104,16 @@ export async function generateDefinitions({ electronApi: API }: GenerateOptions)
   });
 
   // fetch everything that's been made and pop it into the actual API
-  Object.keys(getModuleDeclarations()).forEach(moduleKey => {
-    if (moduleKey === 'Process') return;
-    const moduleAPI = getModuleDeclarations()[moduleKey];
-    moduleAPI.push('}');
-    addToOutput(
-      moduleAPI.map((l, index) => (index === 0 || index === moduleAPI.length - 1 ? l : `  ${l}`)),
-    );
-  });
+  Object.keys(getModuleDeclarations())
+    .sort((m1, m2) => m1.localeCompare(m2))
+    .forEach(moduleKey => {
+      if (moduleKey === 'Process') return;
+      const moduleAPI = getModuleDeclarations()[moduleKey];
+      moduleAPI.push('}');
+      addToOutput(
+        moduleAPI.map((l, index) => (index === 0 || index === moduleAPI.length - 1 ? l : `  ${l}`)),
+      );
+    });
 
   const keys = DynamicParamInterfaces.flushParamInterfaces(API, addToOutput);
   generatePrimaryInterfaces(API, [...keys, ...declaredStructs], addToOutput);
