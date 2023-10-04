@@ -13,6 +13,7 @@ export const generatePrimaryInterfaces = (
   const CommonNamespace = ['namespace Common {', eventExport];
   const MainNamespace = ['namespace Main {', eventExport];
   const RendererNamespace = ['namespace Renderer {', eventExport];
+  const UtilityNamespace = ['namespace Utility {', eventExport];
   const MainInterfaceForRemote = ['interface RemoteMainInterface {'];
   const CrossProcessExportsNamespace = ['namespace CrossProcessExports {', eventExport];
   const constDeclarations: string[] = [];
@@ -102,9 +103,10 @@ export const generatePrimaryInterfaces = (
     }
     if (TargetNamespace) {
       debug(classify(module.name).toLowerCase(), EMRI[classify(module.name).toLowerCase()]);
-      if (!EMRI[classify(module.name).toLowerCase()]) {
-        if (moduleString) TargetNamespace.push(moduleString);
-        if (moduleString) CrossProcessExportsNamespace.push(moduleString);
+      if (!EMRI[classify(module.name).toLowerCase()] && moduleString) {
+        TargetNamespace.push(moduleString);
+        CrossProcessExportsNamespace.push(moduleString);
+        if (module.process.utility) UtilityNamespace.push(moduleString);
       }
       EMRI[classify(module.name).toLowerCase()] = true;
       const declarations = [...newConstDeclarations, ...newTypeAliases].map(
@@ -112,6 +114,7 @@ export const generatePrimaryInterfaces = (
       );
       TargetNamespace.push(...declarations);
       CrossProcessExportsNamespace.push(...declarations);
+      if (module.process.utility) UtilityNamespace.push(...declarations);
     }
   });
 
@@ -122,12 +125,14 @@ export const generatePrimaryInterfaces = (
     CommonNamespace.push(alias);
     MainNamespace.push(alias);
     RendererNamespace.push(alias);
+    UtilityNamespace.push(alias);
     CrossProcessExportsNamespace.push(alias);
   }
 
   CommonNamespace.push('}');
   MainNamespace.push('}');
   RendererNamespace.push('}');
+  UtilityNamespace.push('}');
   CrossProcessExportsNamespace.push('}');
 
   const withSemicolons = (lines: string[]) => {
@@ -137,6 +142,7 @@ export const generatePrimaryInterfaces = (
   addToOutput(withSemicolons(CommonNamespace));
   addToOutput(withSemicolons(MainNamespace));
   addToOutput(withSemicolons(RendererNamespace));
+  addToOutput(withSemicolons(UtilityNamespace));
   addToOutput(withSemicolons(CrossProcessExportsNamespace));
   addToOutput(constDeclarations);
 };

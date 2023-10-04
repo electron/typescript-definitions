@@ -14,11 +14,16 @@ declare module 'electron/renderer' {
   export = Electron.Renderer;
 }
 
+declare module 'electron/utility' {
+  export = Electron.Utility;
+}
+
 interface NodeRequireFunction {
   (moduleName: 'electron'): typeof Electron.CrossProcessExports;
   (moduleName: 'electron/main'): typeof Electron.Main;
   (moduleName: 'electron/common'): typeof Electron.Common;
   (moduleName: 'electron/renderer'): typeof Electron.Renderer;
+  (moduleName: 'electron/utility'): typeof Electron.Utility;
 }
 
 interface NodeRequire {
@@ -26,6 +31,7 @@ interface NodeRequire {
   (moduleName: 'electron/main'): typeof Electron.Main;
   (moduleName: 'electron/common'): typeof Electron.Common;
   (moduleName: 'electron/renderer'): typeof Electron.Renderer;
+  (moduleName: 'electron/utility'): typeof Electron.Utility;
 }
 
 interface File {
