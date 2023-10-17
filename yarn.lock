@@ -34,10 +34,10 @@
     semver "^7.1.2"
     tempy "^1.0.0"
 
-"@electron/docs-parser@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@electron/docs-parser/-/docs-parser-1.1.0.tgz#ba095def41746bde56bee731feaf22272bf0b765"
-  integrity sha512-qrjIKJk8t4/xAYldDVNQgcF8zdAAuG260bzPxdh/xI3p/yddm61bftoct+Tx2crnWFnOfOkr6nGERsDknNiT8A==
+"@electron/docs-parser@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@electron/docs-parser/-/docs-parser-1.2.0.tgz#dc3032012dd270c667777e097e185d92e7ff86ef"
+  integrity sha512-Rz/lMLRDSvEshYNmSC30v/3rk7Mj6EL/76wraKvfM5XvYPHsmApo9CedvcJNNMm7+Rc29NOohoqA4B2/XtFm1Q==
   dependencies:
     "@types/markdown-it" "^12.0.0"
     chai "^4.2.0"
