@@ -106,6 +106,8 @@ export const generatePrimaryInterfaces = (
     }
   });
 
+  constDeclarations.push('const Utility: {};');
+
   for (const interfaceKey of interfaceKeys) {
     const alias = `  type ${interfaceKey} = Electron.${interfaceKey}`;
     CommonNamespace.push(alias);
