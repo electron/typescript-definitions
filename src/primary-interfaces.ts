@@ -14,7 +14,6 @@ export const generatePrimaryInterfaces = (
   const MainNamespace = ['namespace Main {', eventExport];
   const RendererNamespace = ['namespace Renderer {', eventExport];
   const UtilityNamespace = ['namespace Utility {', eventExport];
-  const MainInterfaceForRemote = ['interface RemoteMainInterface {'];
   const CrossProcessExportsNamespace = ['namespace CrossProcessExports {', eventExport];
   const constDeclarations: string[] = [];
   const EMRI: Record<string, boolean> = {};
@@ -90,17 +89,6 @@ export const generatePrimaryInterfaces = (
     } else if (module.process.renderer) {
       TargetNamespace = RendererNamespace;
     }
-    if (
-      module.process.main &&
-      module.process.exported &&
-      !EMRI[classify(module.name).toLowerCase()]
-    ) {
-      MainInterfaceForRemote.push(
-        `  ${classify(module.name)}: ${
-          isClass || isModuleButActuallyStaticClass ? 'typeof ' : ''
-        }${_.upperFirst(module.name)};`,
-      );
-    }
     if (TargetNamespace) {
       debug(classify(module.name).toLowerCase(), EMRI[classify(module.name).toLowerCase()]);
       if (!EMRI[classify(module.name).toLowerCase()] && moduleString) {
@@ -117,8 +105,6 @@ export const generatePrimaryInterfaces = (
       if (module.process.utility) UtilityNamespace.push(...declarations);
     }
   });
-
-  addToOutput([...MainInterfaceForRemote, '}']);
 
   for (const interfaceKey of interfaceKeys) {
     const alias = `  type ${interfaceKey} = Electron.${interfaceKey}`;

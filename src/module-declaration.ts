@@ -57,12 +57,7 @@ export const generateModuleDeclaration = (
         moduleAPI.push(
           `${isClass ? 'class' : 'interface'} ${_.upperFirst(
             module.name,
-          )} extends ${module.extends ||
-            (module.name === 'remote'
-              ? 'RemoteMainInterface'
-              : isClass
-              ? 'NodeEventEmitter'
-              : 'NodeJS.EventEmitter')} {`,
+          )} extends ${module.extends || (isClass ? 'NodeEventEmitter' : 'NodeJS.EventEmitter')} {`,
         );
         moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '');
       } else {
