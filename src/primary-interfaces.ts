@@ -33,6 +33,8 @@ export const generatePrimaryInterfaces = (
     }
   };
 
+  let utilityNamespaceHasValues = false;
+
   API.forEach((module, index) => {
     if (module.name === 'process') return;
     let TargetNamespace;
@@ -102,9 +104,18 @@ export const generatePrimaryInterfaces = (
       );
       TargetNamespace.push(...declarations);
       CrossProcessExportsNamespace.push(...declarations);
-      if (module.process.utility) UtilityNamespace.push(...declarations);
+      if (module.process.utility) {
+        UtilityNamespace.push(...declarations);
+        if (newConstDeclarations.length > 0) {
+          utilityNamespaceHasValues = true;
+        }
+      }
     }
   });
+
+  if (!utilityNamespaceHasValues) {
+    constDeclarations.push('const Utility: {};');
+  }
 
   for (const interfaceKey of interfaceKeys) {
     const alias = `  type ${interfaceKey} = Electron.${interfaceKey}`;
