@@ -20,7 +20,6 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@continuous-auth/semantic-release-npm": "^3.0.0",
     "@electron/docs-parser": "^1.2.0",
     "@types/debug": "^4.1.4",
     "@types/fs-extra": "^5.0.5",
