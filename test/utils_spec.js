@@ -1,5 +1,6 @@
 const expect = require('chai').expect;
 const utils = require('../dist/utils');
+const { DocumentationTag } = require('@electron/docs-parser');
 
 describe('utils', () => {
   describe('extendArray', () => {
@@ -55,6 +56,14 @@ describe('utils', () => {
         'Unregisters the app from notifications received from APNS. See: https://developer.apple.com/documentation/appkit/nsapplication/1428747-unregisterforremotenotifications?language=objc',
       );
       expect(wrapped.length).equal(4);
+    });
+
+    it('should create a tag-only comment', () => {
+      const wrapped = utils.wrapComment('', [DocumentationTag.STABILITY_DEPRECATED]);
+      expect(wrapped.length).equal(3);
+      expect(wrapped[0]).to.be.equal('/**');
+      expect(wrapped[1].endsWith('@deprecated')).to.eq(true);
+      expect(wrapped[wrapped.length - 1]).to.be.equal(' */');
     });
   });
 
