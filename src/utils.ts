@@ -282,6 +282,7 @@ export const isEmitter = (module: Pick<ModuleDocumentationContainer, 'name'>) =>
     'protocol',
     'contextbridge',
     'webframe',
+    'messagechannelmain',
   ];
   return !nonEventEmitters.includes(module.name.toLowerCase());
 };
