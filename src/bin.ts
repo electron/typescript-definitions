@@ -45,16 +45,17 @@ const resolvedOutDir =
 runner.text = chalk.cyan(`Generating API in directory: ${chalk.yellow(`"${resolvedOutDir}"`)}`);
 
 const start = Date.now();
+const resolvedFilePath = path.resolve(resolvedOutDir, './electron.d.ts');
 
 fs.mkdirp(resolvedOutDir).then(() =>
   generateDefinitions({
     electronApi: require(resolvedApi),
   })
-    .then(data => fs.writeFile(path.resolve(resolvedOutDir, './electron.d.ts'), data))
+    .then(data => fs.writeFile(resolvedFilePath, data))
     .then(() =>
       runner.succeed(
         `${chalk.green('Electron Typescript Definitions generated in')} ${chalk.yellow(
-          `"${resolvedOutDir}"`,
+          `"${resolvedFilePath}"`,
         )} took ${chalk.cyan(pretty(Date.now() - start))}`,
       ),
     )
