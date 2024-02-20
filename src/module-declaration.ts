@@ -13,7 +13,6 @@ import {
   DetailedFunctionType,
   ElementDocumentationContainer,
   DocumentationTag,
-  PropertyDocumentationBlock,
   DetailedEventType,
   DetailedEventReferenceType,
 } from '@electron/docs-parser';
