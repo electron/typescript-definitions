@@ -8,6 +8,7 @@ import {
   DocumentationBlock,
   DetailedFunctionType,
   DocumentationTag,
+  ParsedDocumentationResult,
 } from '@electron/docs-parser';
 import _ from 'lodash';
 import d from 'debug';
@@ -257,34 +258,30 @@ export const paramify = (paramName: string) => {
   }
   return paramName;
 };
-// TODO: Infer through electron-docs-linter/parser
-export const isEmitter = (module: Pick<ModuleDocumentationContainer, 'name'>) => {
-  const nonEventEmitters = [
-    'menuitem',
-    'nativeimage',
-    'shell',
-    'browserview',
-    'webrequest',
-    'crashreporter',
-    'dock',
-    'commandline',
-    'browserwindowproxy',
-    'clipboard',
-    'contenttracing',
-    'desktopcapturer',
-    'dialog',
-    'globalshortcut',
-    'powersaveblocker',
-    'touchbar',
-    'touchbarbutton',
-    'net',
-    'netlog',
-    'protocol',
-    'contextbridge',
-    'webframe',
-    'messagechannelmain',
-  ];
-  return !nonEventEmitters.includes(module.name.toLowerCase());
+export const isEmitter = (doc: ParsedDocumentationResult[0]) => {
+  // Is a module, has events, is an eventemitter
+  if (doc.type === 'Module' && doc.events.length) {
+    return true;
+  }
+
+  // Is a class, has instance events, is an eventemitter
+  if (doc.type === 'Class' && doc.instanceEvents.length) {
+    return true;
+  }
+
+  // Implements the on and removeListener methods normally means
+  // it's an EventEmitter wrapper like ipcMain or ipcRenderer
+  const relevantMethods =
+    doc.type === 'Class' ? doc.instanceMethods : doc.type === 'Module' ? doc.methods : [];
+  if (
+    relevantMethods.find(m => m.name === 'on') &&
+    relevantMethods.find(m => m.name === 'removeListener')
+  ) {
+    return true;
+  }
+
+  // Structure and Elements are not eventemitters, so bail here
+  return false;
 };
 export const isPrimitive = (type: string) => {
   const primitives = ['boolean', 'number', 'any', 'string', 'void', 'unknown'];
