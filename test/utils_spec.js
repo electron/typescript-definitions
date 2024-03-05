@@ -116,11 +116,18 @@ describe('utils', () => {
 
   describe('isEmitter', () => {
     it('should return true on most modules', () => {
-      expect(utils.isEmitter({ name: 'app' })).to.eq(true);
+      expect(utils.isEmitter({ name: 'app', type: 'Module', events: [1] })).to.eq(true);
     });
 
     it('should return false for specific non-emitter modules', () => {
-      expect(utils.isEmitter({ name: 'menuitem' })).to.eq(false);
+      expect(
+        utils.isEmitter({
+          name: 'menuitem',
+          type: 'Class',
+          instanceEvents: [],
+          instanceMethods: [],
+        }),
+      ).to.eq(false);
     });
   });
 
