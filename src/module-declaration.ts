@@ -31,12 +31,11 @@ export const generateModuleDeclaration = (
 ) => {
   const moduleAPI = modules[_.upperFirst(module.name)] || [];
   const newModule = !modules[_.upperFirst(module.name)];
-  const isStaticVersion =
-    module.type === 'Module' &&
-    API.some(
-      (tModule, tIndex) =>
-        index !== tIndex && tModule.name.toLowerCase() === module.name.toLowerCase(),
-    );
+  const instanceModuleForStaticVersion = API.find(
+    (tModule, tIndex) =>
+      index !== tIndex && tModule.name.toLowerCase() === module.name.toLowerCase(),
+  );
+  const isStaticVersion = module.type === 'Module' && !!instanceModuleForStaticVersion;
   const isClass = module.type === 'Class' || isStaticVersion;
   const parentModules: ParsedDocumentationResult = [];
   let parentModule:
@@ -53,11 +52,23 @@ export const generateModuleDeclaration = (
   // Interface Declaration
   if (newModule) {
     if (module.type !== 'Structure') {
-      if (utils.isEmitter(module)) {
+      let extendsInfo = '';
+      if (module.extends) {
+        extendsInfo = ` extends ${module.extends}`;
+      } else if (
+        utils.isEmitter(module) ||
+        (isStaticVersion &&
+          instanceModuleForStaticVersion &&
+          utils.isEmitter(instanceModuleForStaticVersion))
+      ) {
+        extendsInfo = ` extends ${isClass ? 'NodeEventEmitter' : 'NodeJS.EventEmitter'}`;
+      }
+      if (module.name.toLowerCase() === 'session' && isStaticVersion) {
+        console.log({ isStaticVersion, instanceModuleForStaticVersion, extendsInfo });
+      }
+      if (extendsInfo) {
         moduleAPI.push(
-          `${isClass ? 'class' : 'interface'} ${_.upperFirst(
-            module.name,
-          )} extends ${module.extends || (isClass ? 'NodeEventEmitter' : 'NodeJS.EventEmitter')} {`,
+          `${isClass ? 'class' : 'interface'} ${_.upperFirst(module.name)}${extendsInfo} {`,
         );
         moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '');
       } else {
