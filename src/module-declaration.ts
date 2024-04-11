@@ -199,23 +199,13 @@ export const generateModuleDeclaration = (
           moduleAPI.push(`${method}(event: '${moduleEvent.name}', listener: ${listener}): this;`);
         }
 
-        // EventEmitter methods get overriden above. In order to not break untyped usage, we need to add them back.
+        // EventEmitter methods get overriden above. In order to not break untyped usage, we need to add them back after the last event.
         if (module.name === 'process' && i === events.length - 1) {
-          moduleAPI.push(
-            `on(eventName: string | symbol, listener: (...args: any[]) => void): this;`,
-          );
-          moduleAPI.push(
-            `off(eventName: string | symbol, listener: (...args: any[]) => void): this;`,
-          );
-          moduleAPI.push(
-            `once(eventName: string | symbol, listener: (...args: any[]) => void): this;`,
-          );
-          moduleAPI.push(
-            `addListener(eventName: string | symbol, listener: (...args: any[]) => void): this;`,
-          );
-          moduleAPI.push(
-            `removeListener(eventName: string | symbol, listener: (...args: any[]) => void): this;`,
-          );
+          for (const method of methods) {
+            moduleAPI.push(
+              `${method}(eventName: string | symbol, listener: (...args: any[]) => void): this;`,
+            );
+          }
         }
       });
   }
