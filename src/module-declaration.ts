@@ -96,7 +96,7 @@ export const generateModuleDeclaration = (
       ...parentModules.map(m => m.instanceEvents || []),
     )
       .sort((a, b) => a.name.localeCompare(b.name))
-      .forEach(moduleEvent => {
+      .forEach((moduleEvent, i, events) => {
         utils.extendArray(
           moduleAPI,
           utils.wrapComment(moduleEvent.description, moduleEvent.additionalTags),
@@ -197,6 +197,25 @@ export const generateModuleDeclaration = (
             utils.extendArray(moduleAPI, utils.wrapComment('', moduleEvent.additionalTags));
           }
           moduleAPI.push(`${method}(event: '${moduleEvent.name}', listener: ${listener}): this;`);
+        }
+
+        // EventEmitter methods get overriden above. In order to not break untyped usage, we need to add them back.
+        if (module.name === 'process' && i === events.length - 1) {
+          moduleAPI.push(
+            `on(eventName: string | symbol, listener: (...args: any[]) => void): this;`,
+          );
+          moduleAPI.push(
+            `off(eventName: string | symbol, listener: (...args: any[]) => void): this;`,
+          );
+          moduleAPI.push(
+            `once(eventName: string | symbol, listener: (...args: any[]) => void): this;`,
+          );
+          moduleAPI.push(
+            `addListener(eventName: string | symbol, listener: (...args: any[]) => void): this;`,
+          );
+          moduleAPI.push(
+            `removeListener(eventName: string | symbol, listener: (...args: any[]) => void): this;`,
+          );
         }
       });
   }
