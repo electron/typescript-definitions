@@ -63,9 +63,6 @@ export const generateModuleDeclaration = (
       ) {
         extendsInfo = ` extends ${isClass ? 'NodeEventEmitter' : 'NodeJS.EventEmitter'}`;
       }
-      if (module.name.toLowerCase() === 'session' && isStaticVersion) {
-        console.log({ isStaticVersion, instanceModuleForStaticVersion, extendsInfo });
-      }
       if (extendsInfo) {
         moduleAPI.push(
           `${isClass ? 'class' : 'interface'} ${_.upperFirst(module.name)}${extendsInfo} {`,
