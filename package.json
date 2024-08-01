@@ -6,6 +6,9 @@
     "electron-typescript-definitions": "dist/bin.js"
   },
   "main": "dist/index.js",
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "prepare": "husky install",
