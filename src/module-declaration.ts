@@ -100,7 +100,7 @@ export const generateModuleDeclaration = (
         );
         let listener = 'Function';
 
-        if (moduleEvent.parameters && moduleEvent.parameters.length) {
+        if (moduleEvent.parameters) {
           const args: string[] = [];
           const indent = _.repeat(' ', moduleEvent.name.length + 29);
 
