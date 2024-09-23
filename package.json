@@ -25,7 +25,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@electron/docs-parser": "^1.2.2",
+    "@electron/docs-parser": "^2.0.0",
     "@types/debug": "^4.1.12",
     "@types/jest": "^29.5.13",
     "@types/lodash": "^4.17.7",
