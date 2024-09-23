@@ -1,17 +1,32 @@
 #!/usr/bin/env node
 
-import * as fs from 'fs-extra';
-import minimist from 'minimist';
-import ora from 'ora';
-import * as path from 'path';
-import pretty from 'pretty-ms';
+import fs from 'node:fs';
+import path from 'node:path';
+import { parseArgs } from 'node:util';
 
 import chalk from 'chalk';
-import { generateDefinitions } from '.';
+import ora from 'ora';
+import pretty from 'pretty-ms';
 
-const args = minimist(process.argv);
+import { generateDefinitions } from './index.js';
 
-const { api, outDir, help } = args;
+const {
+  values: { api, outDir, help },
+} = parseArgs({
+  options: {
+    api: {
+      type: 'string',
+    },
+    outDir: {
+      type: 'string',
+      default: process.cwd(),
+    },
+    help: {
+      type: 'boolean',
+      default: false,
+    },
+  },
+});
 
 if (help) {
   console.info(
@@ -30,7 +45,7 @@ if (typeof api !== 'string') {
 }
 
 const resolvedApi = path.isAbsolute(api) ? api : path.resolve(process.cwd(), api);
-if (!fs.pathExistsSync(resolvedApi)) {
+if (!fs.existsSync(resolvedApi)) {
   runner.fail(`${chalk.red('Resolved directory does not exist:')} ${chalk.cyan(resolvedApi)}`);
   process.exit(1);
 }
@@ -47,11 +62,11 @@ runner.text = chalk.cyan(`Generating API in directory: ${chalk.yellow(`"${resolv
 const start = Date.now();
 const resolvedFilePath = path.resolve(resolvedOutDir, './electron.d.ts');
 
-fs.mkdirp(resolvedOutDir).then(() =>
+fs.promises.mkdir(resolvedOutDir, { recursive: true }).then(() =>
   generateDefinitions({
     electronApi: require(resolvedApi),
   })
-    .then(data => fs.writeFile(resolvedFilePath, data))
+    .then((data) => fs.promises.writeFile(resolvedFilePath, data))
     .then(() =>
       runner.succeed(
         `${chalk.green('Electron Typescript Definitions generated in')} ${chalk.yellow(
@@ -59,7 +74,7 @@ fs.mkdirp(resolvedOutDir).then(() =>
         )} took ${chalk.cyan(pretty(Date.now() - start))}`,
       ),
     )
-    .catch(err => {
+    .catch((err) => {
       console.error(err);
       process.exit(1);
     }),

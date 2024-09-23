@@ -1,6 +1,3 @@
-import _ from 'lodash';
-import { DynamicParamInterfaces } from './dynamic-param-interfaces';
-import * as utils from './utils';
 import {
   ParsedDocumentationResult,
   ModuleDocumentationContainer,
@@ -17,6 +14,10 @@ import {
   DetailedEventType,
   DetailedEventReferenceType,
 } from '@electron/docs-parser';
+import _ from 'lodash';
+
+import { DynamicParamInterfaces } from './dynamic-param-interfaces.js';
+import * as utils from './utils.js';
 
 const modules: Record<string, string[]> = {};
 
@@ -45,7 +46,7 @@ export const generateModuleDeclaration = (
     | ElementDocumentationContainer
     | undefined = module;
   while (parentModule && parentModule.extends) {
-    parentModule = API.find(m => m.name === parentModule!.extends);
+    parentModule = API.find((m) => m.name === parentModule!.extends);
     if (parentModule) parentModules.push(parentModule);
   }
 
@@ -89,8 +90,8 @@ export const generateModuleDeclaration = (
       [],
       module.instanceEvents || [],
       module.events || [],
-      ...parentModules.map(m => m.events || []),
-      ...parentModules.map(m => m.instanceEvents || []),
+      ...parentModules.map((m) => m.events || []),
+      ...parentModules.map((m) => m.instanceEvents || []),
     )
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach((moduleEvent, i, events) => {
@@ -116,7 +117,7 @@ export const generateModuleDeclaration = (
             }
 
             let argType: string | null = null;
-            const objectListenerArg = eventListenerArg as (DetailedObjectType) &
+            const objectListenerArg = eventListenerArg as DetailedObjectType &
               DocumentationBlock &
               TypeInformation & { required: boolean };
             if (
@@ -134,10 +135,10 @@ export const generateModuleDeclaration = (
               );
             }
 
-            const eventGenericListenerArg = eventListenerArg as (DetailedEventType) &
+            const eventGenericListenerArg = eventListenerArg as DetailedEventType &
               DocumentationBlock &
               TypeInformation & { required: boolean };
-            const eventReferenceListenerArg = eventListenerArg as (DetailedEventReferenceType) &
+            const eventReferenceListenerArg = eventListenerArg as DetailedEventReferenceType &
               DocumentationBlock &
               TypeInformation & { required: boolean };
 
@@ -167,7 +168,7 @@ export const generateModuleDeclaration = (
             }
 
             let newType = argType || utils.typify(eventListenerArg);
-            const functionListenerArg = (eventListenerArg as any) as DetailedFunctionType &
+            const functionListenerArg = eventListenerArg as any as DetailedFunctionType &
               DocumentationBlock &
               TypeInformation;
             if (newType === 'Function') {
@@ -210,7 +211,7 @@ export const generateModuleDeclaration = (
   // Dom Element Events
   if (module.type === 'Element') {
     if (module.events) {
-      module.events.forEach(domEvent => {
+      module.events.forEach((domEvent) => {
         utils.extendArray(
           moduleAPI,
           utils.wrapComment(domEvent.description, domEvent.additionalTags),
@@ -343,26 +344,28 @@ export const generateModuleDeclaration = (
   if (module.staticMethods) {
     module.staticMethods
       .sort((a, b) => a.name.localeCompare(b.name))
-      .forEach(m => addMethod(m, 'static '));
+      .forEach((m) => addMethod(m, 'static '));
   }
 
   // Method Declaration
   if (module.methods) {
     module.methods
       .sort((a, b) => a.name.localeCompare(b.name))
-      .forEach(m => addMethod(m, isStaticVersion ? 'static ' : ''));
+      .forEach((m) => addMethod(m, isStaticVersion ? 'static ' : ''));
   }
 
   // Instance Method Declaration
   if (module.instanceMethods) {
-    module.instanceMethods.sort((a, b) => a.name.localeCompare(b.name)).forEach(m => addMethod(m));
+    module.instanceMethods
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((m) => addMethod(m));
   }
 
   // Class properties
   if (module.instanceProperties) {
     module.instanceProperties
       .sort((a, b) => a.name.localeCompare(b.name))
-      .forEach(prop => {
+      .forEach((prop) => {
         const isOptional = !prop.required ? '?' : '';
         const isReadonly = prop.additionalTags.includes(DocumentationTag.AVAILABILITY_READONLY)
           ? 'readonly '
@@ -378,7 +381,7 @@ export const generateModuleDeclaration = (
   if (module.staticProperties) {
     module.staticProperties
       .sort((a, b) => a.name.localeCompare(b.name))
-      .forEach(prop => {
+      .forEach((prop) => {
         const isReadonly = prop.additionalTags.includes(DocumentationTag.AVAILABILITY_READONLY)
           ? 'readonly '
           : '';
@@ -394,13 +397,13 @@ export const generateModuleDeclaration = (
   if (pseudoProperties.length) {
     pseudoProperties
       .sort((a, b) => a.name.localeCompare(b.name))
-      .forEach(p => {
+      .forEach((p) => {
         let paramType = p;
         let type: string = '';
         if (paramType.type === 'Object') {
           type = DynamicParamInterfaces.createParamInterface(p as any, '');
         } else if (Array.isArray(paramType.type)) {
-          paramType.type = paramType.type.map(t =>
+          paramType.type = paramType.type.map((t) =>
             t.type !== 'Object'
               ? t
               : {

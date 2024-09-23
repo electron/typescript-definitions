@@ -1,6 +1,7 @@
-import _ from 'lodash';
-import d from 'debug';
 import { ParsedDocumentationResult } from '@electron/docs-parser';
+import d from 'debug';
+import _ from 'lodash';
+
 const debug = d('primary-interface');
 
 export const generatePrimaryInterfaces = (
@@ -100,7 +101,7 @@ export const generatePrimaryInterfaces = (
       }
       EMRI[classify(module.name).toLowerCase()] = true;
       const declarations = [...newConstDeclarations, ...newTypeAliases].map(
-        s => `  ${s.substr(0, s.length - 1)}`,
+        (s) => `  ${s.substr(0, s.length - 1)}`,
       );
       TargetNamespace.push(...declarations);
       CrossProcessExportsNamespace.push(...declarations);
@@ -133,7 +134,7 @@ export const generatePrimaryInterfaces = (
   CrossProcessExportsNamespace.push('}');
 
   const withSemicolons = (lines: string[]) => {
-    return lines.map(l => (l.endsWith('{') || l.endsWith('}') ? l : `${l};`));
+    return lines.map((l) => (l.endsWith('{') || l.endsWith('}') ? l : `${l};`));
   };
   addToOutput(['']);
   addToOutput(withSemicolons(CommonNamespace));
