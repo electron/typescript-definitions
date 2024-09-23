@@ -28,10 +28,11 @@ The module exports a function that parses a given API JSON object and returns
 an array of lines to create the definition file
 
 ```js
-const { generateDefinitions } = require('@electron/typescript-definitions')
+import { generateDefinitions } from '@electron/typescript-definitions'
+
 const apiPath = './vendor/electron/docs/api.json'
 
-const definitionLines = generateDefinitions({ electronApi: require(apiPath) })
+const definitionLines = generateDefinitions({ electronApi: loadJSON(apiPath) })
 // definitionLines will be an strin representation of the definition file
 ```
 

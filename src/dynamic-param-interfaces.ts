@@ -295,3 +295,5 @@ export class DynamicParamInterfaces {
   static createParamInterface = createParamInterface;
   static flushParamInterfaces = flushParamInterfaces;
 }
+
+utils.setParamInterfaces(DynamicParamInterfaces);

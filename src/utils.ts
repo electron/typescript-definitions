@@ -16,11 +16,9 @@ import { DynamicParamInterfaces } from './dynamic-param-interfaces.js';
 const debug = d('utils');
 
 let paramInterfaces: typeof DynamicParamInterfaces;
-const lazyParamInterfaces = () => {
-  if (!paramInterfaces) {
-    paramInterfaces = require('./dynamic-param-interfaces').DynamicParamInterfaces;
-  }
-  return paramInterfaces;
+
+export const setParamInterfaces = (provided: typeof DynamicParamInterfaces) => {
+  paramInterfaces = provided;
 };
 
 export const extendArray = <T>(arr1: T[], arr2: T[]): T[] => {
@@ -176,10 +174,7 @@ export const typify = (
           inner.type === 'Object'
             ? {
                 ...inner,
-                type: lazyParamInterfaces().createParamInterface(
-                  inner as any,
-                  maybeInnerReturnTypeName,
-                ),
+                type: paramInterfaces.createParamInterface(inner as any, maybeInnerReturnTypeName),
               }
             : inner,
         );

@@ -62,9 +62,9 @@ runner.text = chalk.cyan(`Generating API in directory: ${chalk.yellow(`"${resolv
 const start = Date.now();
 const resolvedFilePath = path.resolve(resolvedOutDir, './electron.d.ts');
 
-fs.promises.mkdir(resolvedOutDir, { recursive: true }).then(() =>
+fs.promises.mkdir(resolvedOutDir, { recursive: true }).then(async () =>
   generateDefinitions({
-    electronApi: require(resolvedApi),
+    electronApi: JSON.parse(await fs.promises.readFile(resolvedApi, 'utf-8')),
   })
     .then((data) => fs.promises.writeFile(resolvedFilePath, data))
     .then(() =>
