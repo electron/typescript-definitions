@@ -1,8 +1,6 @@
-import chalk from 'chalk';
 import {
   TypeInformation,
   DetailedStringType,
-  ModuleDocumentationContainer,
   MethodDocumentationBlock,
   DetailedObjectType,
   DocumentationBlock,
@@ -12,15 +10,15 @@ import {
 } from '@electron/docs-parser';
 import _ from 'lodash';
 import d from 'debug';
-import { DynamicParamInterfaces } from './dynamic-param-interfaces';
+
+import { DynamicParamInterfaces } from './dynamic-param-interfaces.js';
+
 const debug = d('utils');
 
 let paramInterfaces: typeof DynamicParamInterfaces;
-const lazyParamInterfaces = () => {
-  if (!paramInterfaces) {
-    paramInterfaces = require('./dynamic-param-interfaces').DynamicParamInterfaces;
-  }
-  return paramInterfaces;
+
+export const setParamInterfaces = (provided: typeof DynamicParamInterfaces) => {
+  paramInterfaces = provided;
 };
 
 export const extendArray = <T>(arr1: T[], arr2: T[]): T[] => {
@@ -66,7 +64,7 @@ export const wrapComment = (comment: string, additionalTags: DocumentationTag[] 
     const nodePlatforms: string[] = [];
     result.push(
       ...additionalTags
-        .map(tag => {
+        .map((tag) => {
           switch (tag) {
             case DocumentationTag.STABILITY_DEPRECATED:
               return ' * @deprecated';
@@ -87,7 +85,7 @@ export const wrapComment = (comment: string, additionalTags: DocumentationTag[] 
           }
           return '';
         })
-        .filter(tag => tag),
+        .filter((tag) => tag),
     );
     if (nodePlatforms.length) {
       result.push(` * @platform ${nodePlatforms.join(',')}`);
@@ -110,18 +108,27 @@ const prefixTypeForSafety = (type: string) => {
 };
 
 export const typify = (
-  type: TypeInformation | TypeInformation[],
+  type: string | string[] | TypeInformation | TypeInformation[],
   maybeInnerReturnTypeName?: string,
 ): string => {
   // Capture some weird edge cases
   const originalType = type;
-  if (!Array.isArray(type) && type.type && typeof type.type === 'object') {
+  if (
+    typeof type !== 'string' &&
+    !Array.isArray(type) &&
+    type.type &&
+    typeof type.type === 'object'
+  ) {
     type = type.type;
   }
 
   if (Array.isArray(type)) {
-    const arrayType = Array.from(new Set(type.map(t => `(${typify(t)})`))).join(' | ');
-    if (!Array.isArray(originalType) && originalType.collection) {
+    const arrayType = Array.from(new Set(type.map((t) => `(${typify(t)})`))).join(' | ');
+    if (
+      !Array.isArray(originalType) &&
+      typeof originalType !== 'string' &&
+      originalType.collection
+    ) {
       return `Array<${arrayType}>`;
     }
     return arrayType;
@@ -146,7 +153,9 @@ export const typify = (
     if (typeof newType === 'string' && newType.toLowerCase() === 'string') {
       const stringType = type as DetailedStringType;
       if (stringType.possibleValues) {
-        const stringEnum = stringType.possibleValues!.map(value => `'${value.value}'`).join(' | ');
+        const stringEnum = stringType
+          .possibleValues!.map((value) => `'${value.value}'`)
+          .join(' | ');
         if (type.collection) {
           // Array<foo | bar> syntax instead of (foo | bar)[]
           newType = `Array<${stringEnum}>`;
@@ -161,14 +170,11 @@ export const typify = (
       innerTypes = type.innerTypes;
       if (type.innerTypes) {
         // Handle one of the innerType being an Object type
-        innerTypes = type.innerTypes.map(inner =>
+        innerTypes = type.innerTypes.map((inner) =>
           inner.type === 'Object'
             ? {
                 ...inner,
-                type: lazyParamInterfaces().createParamInterface(
-                  inner as any,
-                  maybeInnerReturnTypeName,
-                ),
+                type: paramInterfaces.createParamInterface(inner as any, maybeInnerReturnTypeName),
               }
             : inner,
         );
@@ -178,7 +184,7 @@ export const typify = (
     typeAsString = newType;
   }
 
-  if (type.collection) typeAsString += '[]';
+  if (typeof type !== 'string' && type.collection) typeAsString += '[]';
 
   if (typeof typeAsString !== 'string') {
     throw new Error('typeAsString is not a string, something has gone terribly wrong');
@@ -274,8 +280,8 @@ export const isEmitter = (doc: ParsedDocumentationResult[0]) => {
   const relevantMethods =
     doc.type === 'Class' ? doc.instanceMethods : doc.type === 'Module' ? doc.methods : [];
   if (
-    relevantMethods.find(m => m.name === 'on') &&
-    relevantMethods.find(m => m.name === 'removeListener')
+    relevantMethods.find((m) => m.name === 'on') &&
+    relevantMethods.find((m) => m.name === 'removeListener')
   ) {
     return true;
   }
@@ -363,7 +369,7 @@ export const genMethodString = (
     );
   };
   return `${includeType ? '(' : ''}${(moduleMethod.parameters || [])
-    .map(param => {
+    .map((param) => {
       let paramType: string | null = param as any;
 
       const objectParam = param as DetailedObjectType &
@@ -375,7 +381,7 @@ export const genMethodString = (
       }
 
       if (Array.isArray(param.type)) {
-        param.type = param.type.map(paramType => {
+        param.type = param.type.map((paramType) => {
           const functionParam = paramType as DetailedFunctionType;
           const objectParam = paramType as DetailedObjectType &
             TypeInformation &
@@ -425,7 +431,7 @@ export const genMethodString = (
       let type;
       const stringParam = param as DetailedStringType;
       if (stringParam.possibleValues && stringParam.possibleValues.length) {
-        type = stringParam.possibleValues.map(v => `'${v.value}'`).join(' | ');
+        type = stringParam.possibleValues.map((v) => `'${v.value}'`).join(' | ');
       } else {
         type = `${typify(paramType as any)}${
           paramify(param.name).startsWith('...') && !typify(paramType as any).endsWith('[]')

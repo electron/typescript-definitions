@@ -1,6 +1,3 @@
-import _ from 'lodash';
-import * as utils from './utils';
-import d from 'debug';
 import {
   EventParameterDocumentation,
   DetailedObjectType,
@@ -9,6 +6,11 @@ import {
   DocumentationTag,
 } from '@electron/docs-parser';
 import chalk from 'chalk';
+import d from 'debug';
+import _ from 'lodash';
+
+import * as utils from './utils.js';
+
 const debug = d('dynamic-param');
 
 type ParamInterface = EventParameterDocumentation &
@@ -37,7 +39,7 @@ const polite = (s: string): string => {
 const ignoreDescriptions = <T extends EventParameterDocumentation>(
   props: T[],
 ): Pick<T, Exclude<keyof T, 'description'>>[] =>
-  _.map(props, p => {
+  _.map(props, (p) => {
     const { description, ...toReturn } = p;
 
     return toReturn;
@@ -48,7 +50,7 @@ const unsetDescriptions = (o: any): any => {
   if (noDescriptionCache.has(o)) return noDescriptionCache.get(o);
   if (typeof o !== 'object' || !o) return o;
   const val = Array.isArray(o)
-    ? o.map(item => unsetDescriptions(item))
+    ? o.map((item) => unsetDescriptions(item))
     : Object.keys(o).reduce((accum: any, key: string) => {
         if (key === 'description') return accum;
         accum[key] = unsetDescriptions(o[key]);
@@ -149,7 +151,7 @@ const flushParamInterfaces = (
       .sort((a, b) =>
         paramInterfacesToDeclare[a].tName!.localeCompare(paramInterfacesToDeclare[b].tName!),
       )
-      .forEach(paramKey => {
+      .forEach((paramKey) => {
         if (paramKey === 'Event') {
           throw 'Unexpected dynamic Event type, should be routed through the Event handler';
         }
@@ -181,7 +183,7 @@ const flushParamInterfaces = (
         );
 
         param.properties = param.properties || [];
-        param.properties.forEach(paramProperty => {
+        param.properties.forEach((paramProperty) => {
           if (paramProperty.description) {
             utils.extendArray(
               paramAPI,
@@ -192,7 +194,7 @@ const flushParamInterfaces = (
           if (!Array.isArray(paramProperty.type) && paramProperty.type.toLowerCase() === 'object') {
             let argType =
               (paramProperty as any).__type || _.upperFirst(_.camelCase(paramProperty.name));
-            if (API.some(a => a.name === argType)) {
+            if (API.some((a) => a.name === argType)) {
               paramProperty.type = argType;
               debug(
                 chalk.red(
@@ -210,7 +212,7 @@ const flushParamInterfaces = (
           }
 
           if (Array.isArray(paramProperty.type)) {
-            paramProperty.type = paramProperty.type.map(paramPropertyType => {
+            paramProperty.type = paramProperty.type.map((paramPropertyType) => {
               const functionProp = paramPropertyType as DetailedFunctionType;
               if (paramPropertyType.type === 'Function' && functionProp.parameters) {
                 return {
@@ -229,7 +231,7 @@ const flushParamInterfaces = (
               ) {
                 let argType =
                   (paramProperty as any).__type || _.upperFirst(_.camelCase(paramProperty.name));
-                if (API.some(a => a.name === argType)) {
+                if (API.some((a) => a.name === argType)) {
                   paramPropertyType.type = argType;
                   debug(
                     chalk.red(
@@ -293,3 +295,5 @@ export class DynamicParamInterfaces {
   static createParamInterface = createParamInterface;
   static flushParamInterfaces = flushParamInterfaces;
 }
+
+utils.setParamInterfaces(DynamicParamInterfaces);

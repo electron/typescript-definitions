@@ -1,17 +1,19 @@
-import _ from 'lodash';
-import * as utils from './utils';
-import d from 'debug';
 import { ParsedDocumentationResult, MethodDocumentationBlock } from '@electron/docs-parser';
 import chalk from 'chalk';
+import d from 'debug';
+import _ from 'lodash';
+
+import * as utils from './utils.js';
+
 const debug = d('remap-optionals');
 
 export const remapOptionals = (API: ParsedDocumentationResult) => {
-  API.forEach(module => {
+  API.forEach((module) => {
     // Remap optionals to actually be multiple methods when appropriate
     const remap = (attr: string) => {
       const moreMethods: MethodDocumentationBlock[] = [];
       const attrs = ((module as any)[attr] as MethodDocumentationBlock[]) || [];
-      attrs.forEach(method => {
+      attrs.forEach((method) => {
         if (!method.parameters) return;
         if ((method as any).__handled) return;
         let optionalFound = false;

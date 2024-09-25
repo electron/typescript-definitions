@@ -1,12 +1,14 @@
-import _ from 'lodash';
-import * as fs from 'fs-extra';
-import * as path from 'path';
-import * as utils from './utils';
-import { getModuleDeclarations, generateModuleDeclaration } from './module-declaration';
-import { remapOptionals } from './remap-optionals';
-import { generatePrimaryInterfaces } from './primary-interfaces';
+import fs from 'node:fs';
+import path from 'node:path';
+
 import { ParsedDocumentationResult } from '@electron/docs-parser';
-import { DynamicParamInterfaces } from './dynamic-param-interfaces';
+import _ from 'lodash';
+
+import * as utils from './utils.js';
+import { getModuleDeclarations, generateModuleDeclaration } from './module-declaration.js';
+import { remapOptionals } from './remap-optionals.js';
+import { generatePrimaryInterfaces } from './primary-interfaces.js';
+import { DynamicParamInterfaces } from './dynamic-param-interfaces.js';
 
 // takes the predefined header and footer and wraps them around the generated files
 const wrapWithHeaderAndFooter = (outputLines: string[], electronVersion: string) => {
@@ -14,7 +16,7 @@ const wrapWithHeaderAndFooter = (outputLines: string[], electronVersion: string)
   utils.extendArray(
     newOutputLines,
     fs
-      .readFileSync(path.resolve(__dirname, '../base/base_header.ts'), 'utf8')
+      .readFileSync(path.resolve(import.meta.dirname, '../base/base_header.ts'), 'utf8')
       .replace('<<VERSION>>', electronVersion)
       .split(/\r?\n/),
   );
@@ -23,18 +25,18 @@ const wrapWithHeaderAndFooter = (outputLines: string[], electronVersion: string)
   utils.extendArray(
     newOutputLines,
     fs
-      .readFileSync(path.resolve(__dirname, '../base/base_inner.ts'), 'utf8')
+      .readFileSync(path.resolve(import.meta.dirname, '../base/base_inner.ts'), 'utf8')
       .replace('<<VERSION>>', electronVersion)
       .split(/\r?\n/),
   );
 
-  outputLines.slice(0).forEach(l => newOutputLines.push(`${_.trimEnd(`  ${l}`)}`));
+  outputLines.slice(0).forEach((l) => newOutputLines.push(`${_.trimEnd(`  ${l}`)}`));
   utils.extendArray(newOutputLines, ['}', '']);
 
   utils.extendArray(
     newOutputLines,
     fs
-      .readFileSync(path.resolve(__dirname, '../base/base_footer.ts'), 'utf8')
+      .readFileSync(path.resolve(import.meta.dirname, '../base/base_footer.ts'), 'utf8')
       .replace('<<VERSION>>', electronVersion)
       .split(/\r?\n/),
   );
@@ -106,7 +108,7 @@ export async function generateDefinitions({ electronApi: API }: GenerateOptions)
   // fetch everything that's been made and pop it into the actual API
   Object.keys(getModuleDeclarations())
     .sort((m1, m2) => m1.localeCompare(m2))
-    .forEach(moduleKey => {
+    .forEach((moduleKey) => {
       if (moduleKey === 'Process') return;
       const moduleAPI = getModuleDeclarations()[moduleKey];
       moduleAPI.push('}');
