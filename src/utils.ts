@@ -256,7 +256,8 @@ export const typify = (
       return 'NodeJS.ReadableStream';
   }
   // Custom type
-  if (innerTypes) return `${typeAsString}<${typify(innerTypes[0])}>`;
+  if (innerTypes)
+    return `${typeAsString}<${innerTypes.map((innerType) => typify(innerType)).join(', ')}>`;
   return typeAsString;
 };
 export const paramify = (paramName: string) => {

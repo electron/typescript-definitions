@@ -116,6 +116,23 @@ describe('utils', () => {
           type: 'Foo',
         }),
       ).toEqual('Foo<T>');
+
+      expect(
+        utils.typify({
+          collection: false,
+          innerTypes: [
+            {
+              collection: false,
+              type: 'A',
+            },
+            {
+              collection: false,
+              type: 'B',
+            },
+          ],
+          type: 'Foo',
+        }),
+      ).toEqual('Foo<A, B>');
     });
   });
 
