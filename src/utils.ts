@@ -255,6 +255,8 @@ export const typify = (
       // we'll have to qualify it with the Node.js namespace.
       return 'NodeJS.ReadableStream';
   }
+  // Custom type
+  if (innerTypes) return `${typeAsString}<${typify(innerTypes[0])}>`;
   return typeAsString;
 };
 export const paramify = (paramName: string) => {

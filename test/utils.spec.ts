@@ -102,6 +102,21 @@ describe('utils', () => {
     it('should map node objects to the correct type', () => {
       expect(utils.typify('buffer')).toEqual('Buffer');
     });
+
+    it('should convert custom types with inner types', () => {
+      expect(
+        utils.typify({
+          collection: false,
+          innerTypes: [
+            {
+              collection: false,
+              type: 'T',
+            },
+          ],
+          type: 'Foo',
+        }),
+      ).toEqual('Foo<T>');
+    });
   });
 
   describe('paramify', () => {
