@@ -2,7 +2,7 @@
 
 This module uses Electron's [JSON API documentation](https://github.com/electron/docs-parser) to produce a TypeScript definition file for the Electron API.
 
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/electron/typescript-definitions/tree/main.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/electron/typescript-definitions/tree/main)
+[![Test](https://github.com/electron/typescript-definitions/actions/workflows/test.yml/badge.svg)](https://github.com/electron/typescript-definitions/actions/workflows/test.yml)
 [![npm version](http://img.shields.io/npm/v/@electron/typescript-definitions.svg)](https://npmjs.org/package/@electron/typescript-definitions)
 
 ## Installation
@@ -33,7 +33,7 @@ import { generateDefinitions } from '@electron/typescript-definitions'
 const apiPath = './vendor/electron/docs/api.json'
 
 const definitionLines = generateDefinitions({ electronApi: loadJSON(apiPath) })
-// definitionLines will be an strin representation of the definition file
+// definitionLines will be an string representation of the definition file
 ```
 
 ## License

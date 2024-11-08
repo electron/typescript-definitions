@@ -24,6 +24,9 @@
     "homepage": "https://www.samuelattard.com"
   },
   "license": "MIT",
+  "publishConfig": {
+    "provenance": true
+  },
   "devDependencies": {
     "@electron/docs-parser": "^2.0.0",
     "@types/debug": "^4.1.12",
