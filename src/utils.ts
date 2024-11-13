@@ -293,7 +293,7 @@ export const isEmitter = (doc: ParsedDocumentationResult[0]) => {
   return false;
 };
 export const isPrimitive = (type: string) => {
-  const primitives = ['boolean', 'number', 'any', 'string', 'void', 'unknown'];
+  const primitives = ['boolean', 'number', 'any', 'string', 'void', 'null', 'unknown'];
   return primitives.indexOf(type.toLowerCase().replace(/\[\]/g, '')) !== -1;
 };
 export const isBuiltIn = (type: string) => {
