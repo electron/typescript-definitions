@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { describe, expect, it } from 'vitest';
 
 import { remapOptionals } from '../src/remap-optionals.js';
 

@@ -17,7 +17,7 @@
     "prettier:check": "prettier --list-different \"{src,test}/**/*.ts\"",
     "prettier:write": "prettier --write \"{src,test}/**/*.ts\"",
     "pretest": "tsc",
-    "test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" jest"
+    "test": "vitest run"
   },
   "author": {
     "name": "Samuel Attard",
@@ -30,15 +30,12 @@
   "devDependencies": {
     "@electron/docs-parser": "^2.0.0",
     "@types/debug": "^4.1.12",
-    "@types/jest": "^29.5.13",
     "@types/lodash": "^4.17.7",
-    "cross-env": "^7.0.3",
     "husky": "^9.1.6",
-    "jest": "^30.0.0-alpha.6",
     "lint-staged": "^15.2.10",
     "prettier": "^3.3.3",
-    "ts-jest": "^29.2.5",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "vitest": "^3.0.4"
   },
   "dependencies": {
     "@types/node": "^20.11.25",

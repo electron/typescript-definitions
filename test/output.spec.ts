@@ -2,6 +2,8 @@ import fs from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 
+import { beforeAll, describe, expect, it } from 'vitest';
+
 const OUTPUT_PATH = path.resolve(import.meta.dirname, '..', 'electron.d.ts');
 let output: string;
 

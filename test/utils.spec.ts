@@ -1,4 +1,5 @@
 import { DocumentationTag } from '@electron/docs-parser';
+import { describe, expect, it } from 'vitest';
 
 import * as utils from '../src/utils.js';
 
