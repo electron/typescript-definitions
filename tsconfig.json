@@ -9,8 +9,7 @@
 			"es7"
 		],
 		"types": [
-			"node",
-			"jest"
+			"node"
 		],
 		"declaration": false,
 		"sourceMap": true,
