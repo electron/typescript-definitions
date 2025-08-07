@@ -91,13 +91,17 @@ export const generatePrimaryInterfaces = (
       TargetNamespace = MainNamespace;
     } else if (module.process.renderer) {
       TargetNamespace = RendererNamespace;
+    } else if (module.process.utility) {
+      TargetNamespace = UtilityNamespace;
     }
     if (TargetNamespace) {
       debug(classify(module.name).toLowerCase(), EMRI[classify(module.name).toLowerCase()]);
       if (!EMRI[classify(module.name).toLowerCase()] && moduleString) {
         TargetNamespace.push(moduleString);
         CrossProcessExportsNamespace.push(moduleString);
-        if (module.process.utility) UtilityNamespace.push(moduleString);
+        if (TargetNamespace !== UtilityNamespace && module.process.utility) {
+          UtilityNamespace.push(moduleString);
+        }
       }
       EMRI[classify(module.name).toLowerCase()] = true;
       const declarations = [...newConstDeclarations, ...newTypeAliases].map(
@@ -105,7 +109,7 @@ export const generatePrimaryInterfaces = (
       );
       TargetNamespace.push(...declarations);
       CrossProcessExportsNamespace.push(...declarations);
-      if (module.process.utility) {
+      if (TargetNamespace !== UtilityNamespace && module.process.utility) {
         UtilityNamespace.push(...declarations);
         if (newConstDeclarations.length > 0) {
           utilityNamespaceHasValues = true;
