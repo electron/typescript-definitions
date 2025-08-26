@@ -135,6 +135,21 @@ describe('utils', () => {
         }),
       ).toEqual('Foo<A, B>');
     });
+
+    it('should convert a Promise<undefined>', () => {
+      expect(
+        utils.typify({
+          collection: false,
+          innerTypes: [
+            {
+              collection: false,
+              type: 'undefined',
+            },
+          ],
+          type: 'Promise',
+        }),
+      ).toEqual('Promise<undefined>');
+    });
   });
 
   describe('paramify', () => {
