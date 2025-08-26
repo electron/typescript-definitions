@@ -100,7 +100,7 @@ const prefixTypeForSafety = (type: string) => {
     typeof type === 'string' &&
     !isPrimitive(type) &&
     !isBuiltIn(type) &&
-    !/\(\| /gi.test(type)
+    !/[\(\| ]/gi.test(type)
   ) {
     return `Electron.${type}`;
   }
