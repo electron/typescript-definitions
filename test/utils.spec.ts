@@ -104,6 +104,30 @@ describe('utils', () => {
       expect(utils.typify('buffer')).toEqual('Buffer');
     });
 
+    it('should convert a promise with multiple inner types', () => {
+      expect(
+        utils.typify({
+          collection: false,
+          innerTypes: [
+            {
+              collection: false,
+              type: [
+                {
+                  collection: false,
+                  type: 'number',
+                },
+                {
+                  collection: false,
+                  type: 'null',
+                },
+              ],
+            },
+          ],
+          type: 'Promise',
+        }),
+      ).toEqual('Promise<(number) | (null)>');
+    });
+
     it('should convert custom types with inner types', () => {
       expect(
         utils.typify({
