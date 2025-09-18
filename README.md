@@ -1,5 +1,7 @@
 # Electron TypeScript Definitions
 
+<img width="124" height="124" align="right" alt="typescript-definitions-logo" src="design/logo.png" />
+
 This module uses Electron's [JSON API documentation](https://github.com/electron/docs-parser) to produce a TypeScript definition file for the Electron API.
 
 [![Test](https://github.com/electron/typescript-definitions/actions/workflows/test.yml/badge.svg)](https://github.com/electron/typescript-definitions/actions/workflows/test.yml)
