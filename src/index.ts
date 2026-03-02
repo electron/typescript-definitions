@@ -63,7 +63,7 @@ const appendNodeJSOverride = (outputLines: string[]) => {
 
   utils.extendArray(outputLines, ['}']);
 
-  return outputLines.join('\n');
+  return outputLines.join('\n') + '\n';
 };
 
 interface GenerateOptions {
