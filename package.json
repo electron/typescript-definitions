@@ -34,7 +34,7 @@
     "lint-staged": "^16.2.7",
     "prettier": "^3.3.3",
     "typescript": "^5.6.2",
-    "vitest": "^3.0.4"
+    "vitest": "^4.1.1"
   },
   "dependencies": {
     "@types/node": "^20.11.25",
