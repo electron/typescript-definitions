@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { describe, expect, it } from 'vitest';
 
 import { remapOptionals } from '../src/remap-optionals.js';
@@ -64,35 +63,35 @@ const middleAPI = [
 
 describe('remap-optionals', () => {
   it('should duplicate a method with a preceeding optional parameter', () => {
-    const API = _.cloneDeep(fakeAPI);
+    const API = structuredClone(fakeAPI);
     expect(API[0].methods.length).toEqual(2);
     remapOptionals(API as any);
     expect(API[0].methods.length).toEqual(3);
   });
 
   it('should duplicate methods and remove preceeding optional parameters', () => {
-    const API = _.cloneDeep(fakeAPI);
+    const API = structuredClone(fakeAPI);
     expect(API[0].methods[0].parameters.length).toEqual(2);
     remapOptionals(API as any);
     expect(API[0].methods[2].parameters.length).toEqual(1);
   });
 
   it('should make the original method legal by making param non-optional', () => {
-    const API = _.cloneDeep(fakeAPI);
+    const API = structuredClone(fakeAPI);
     expect(API[0].methods[0].parameters[0].description).toContain('optional');
     remapOptionals(API as any);
     expect(API[0].methods[0].parameters[0].description).not.toContain('optional');
   });
 
   it('should not affect legal parameter orders', () => {
-    const API = _.cloneDeep(fakeAPI);
-    const methodBefore = _.cloneDeep(API[0].methods[1]);
+    const API = structuredClone(fakeAPI);
+    const methodBefore = structuredClone(API[0].methods[1]);
     remapOptionals(API as any);
     expect(API[0].methods[1]).toEqual(methodBefore);
   });
 
   it('should remap optional middle params', () => {
-    const API = _.cloneDeep(middleAPI);
+    const API = structuredClone(middleAPI);
     expect(API[0].methods.length).toEqual(1);
     expect(API[0].methods[0].parameters.length).toEqual(3);
     remapOptionals(API as any);

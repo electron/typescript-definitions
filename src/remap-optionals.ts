@@ -1,7 +1,6 @@
 import { ParsedDocumentationResult, MethodDocumentationBlock } from '@electron/docs-parser';
 import chalk from 'chalk';
 import d from 'debug';
-import _ from 'lodash';
 
 import * as utils from './utils.js';
 
@@ -17,7 +16,7 @@ export const remapOptionals = (API: ParsedDocumentationResult) => {
         if (!method.parameters) return;
         if ((method as any).__handled) return;
         let optionalFound = false;
-        _.concat([], method.parameters).forEach((param, index) => {
+        [...method.parameters].forEach((param, index) => {
           if (optionalFound && !utils.isOptional(param)) {
             debug(
               chalk.cyan(
@@ -25,8 +24,8 @@ export const remapOptionals = (API: ParsedDocumentationResult) => {
               ),
             );
             moreMethods.push(
-              Object.assign({}, _.cloneDeep(method), {
-                parameters: [..._.cloneDeep(method.parameters)].filter((tParam, pIndex) => {
+              Object.assign({}, structuredClone(method), {
+                parameters: structuredClone(method.parameters).filter((tParam, pIndex) => {
                   if (pIndex >= index) return true;
                   return !utils.isOptional(tParam);
                 }),

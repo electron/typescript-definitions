@@ -1,6 +1,7 @@
 import { ParsedDocumentationResult } from '@electron/docs-parser';
 import d from 'debug';
-import _ from 'lodash';
+
+import { upperFirst } from './utils.js';
 
 const debug = d('primary-interface');
 
@@ -46,8 +47,8 @@ export const generatePrimaryInterfaces = (
     }
     const moduleString = isClass
       ? module.process.exported
-        ? `  class ${_.upperFirst(module.name)} extends Electron.${_.upperFirst(module.name)} {}`
-        : `  type ${_.upperFirst(module.name)} = Electron.${_.upperFirst(module.name)}`
+        ? `  class ${upperFirst(module.name)} extends Electron.${upperFirst(module.name)} {}`
+        : `  type ${upperFirst(module.name)} = Electron.${upperFirst(module.name)}`
       : '';
     const newConstDeclarations: string[] = [];
     const newTypeAliases: string[] = [];
@@ -61,28 +62,24 @@ export const generatePrimaryInterfaces = (
     if ((!isClass || module.name !== classify(module.name)) && module.process.exported) {
       if (isClass) {
         newConstDeclarations.push(
-          `type ${classify(module.name)} = ${_.upperFirst(module.name)};`,
-          `const ${classify(module.name)}: typeof ${_.upperFirst(module.name)};`,
+          `type ${classify(module.name)} = ${upperFirst(module.name)};`,
+          `const ${classify(module.name)}: typeof ${upperFirst(module.name)};`,
         );
       } else {
         if (isModuleButActuallyStaticClass && !isClass) {
           newConstDeclarations.push(
-            `const ${classify(module.name)}: typeof ${_.upperFirst(module.name)};`,
+            `const ${classify(module.name)}: typeof ${upperFirst(module.name)};`,
           );
         } else {
-          newConstDeclarations.push(
-            `const ${classify(module.name)}: ${_.upperFirst(module.name)};`,
-          );
+          newConstDeclarations.push(`const ${classify(module.name)}: ${upperFirst(module.name)};`);
         }
         newTypeAliases.push(
-          `type ${_.upperFirst(module.name)} = Electron.${_.upperFirst(module.name)};`,
+          `type ${upperFirst(module.name)} = Electron.${upperFirst(module.name)};`,
         );
       }
     }
     if (module.type === 'Element') {
-      newTypeAliases.push(
-        `type ${_.upperFirst(module.name)} = Electron.${_.upperFirst(module.name)};`,
-      );
+      newTypeAliases.push(`type ${upperFirst(module.name)} = Electron.${upperFirst(module.name)};`);
     }
     constDeclarations.push(...newConstDeclarations);
     if (module.process.main && module.process.renderer) {

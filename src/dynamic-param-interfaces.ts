@@ -1,3 +1,5 @@
+import { isDeepStrictEqual } from 'node:util';
+
 import {
   EventParameterDocumentation,
   DetailedObjectType,
@@ -7,9 +9,9 @@ import {
 } from '@electron/docs-parser';
 import chalk from 'chalk';
 import d from 'debug';
-import _ from 'lodash';
 
 import * as utils from './utils.js';
+import { upperFirst, lowerFirst, camelCase } from './utils.js';
 
 const debug = d('dynamic-param');
 
@@ -39,11 +41,13 @@ const polite = (s: string): string => {
 const ignoreDescriptions = <T extends EventParameterDocumentation>(
   props: T[],
 ): Pick<T, Exclude<keyof T, 'description'>>[] =>
-  _.map(props, (p) => {
-    const { description, ...toReturn } = p;
+  props
+    .map((p) => {
+      const { description, ...toReturn } = p;
 
-    return toReturn;
-  }).sort((a, b) => a.name.localeCompare(b.name));
+      return toReturn;
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 
 const noDescriptionCache = new WeakMap();
 const unsetDescriptions = (o: any): any => {
@@ -71,14 +75,14 @@ const createParamInterface = (
 ): string => {
   const maybeArray = (type: string) => (param.collection ? `Array<${type}>` : type);
   const potentialExistingArgType = polite(IName);
-  const potentialExistingArgName = _.lowerFirst(polite(IName));
-  let argType = polite(IName) + _.upperFirst(_.camelCase(param.name));
+  const potentialExistingArgName = lowerFirst(polite(IName));
+  let argType = polite(IName) + upperFirst(camelCase(param.name));
   let argName = param.name;
   // TODO: Note.  It is still possible for even backupIName to be already used
   let usingExistingParamInterface = false;
-  _.forIn(paramInterfacesToDeclare, (value, key) => {
+  for (const [key, value] of Object.entries(paramInterfacesToDeclare)) {
     const test = unsetDescriptions(
-      _.assign({}, param, {
+      Object.assign({}, param, {
         name: argName,
         tName: argType,
         required: value.required,
@@ -86,7 +90,7 @@ const createParamInterface = (
       }),
     );
     const potentialTest = unsetDescriptions(
-      _.assign({}, param, {
+      Object.assign({}, param, {
         name: potentialExistingArgName,
         tName: potentialExistingArgType,
         required: value.required,
@@ -94,25 +98,25 @@ const createParamInterface = (
       }),
     );
     const unsetValue = unsetDescriptions(value);
-    if (_.isEqual(test, unsetValue) || _.isEqual(potentialTest, unsetValue)) {
+    if (isDeepStrictEqual(test, unsetValue) || isDeepStrictEqual(potentialTest, unsetValue)) {
       usingExistingParamInterface = true;
       debug(
         chalk.cyan(
-          `Using existing type for param name ${argType} --> ${key} in Interface: ${_.upperFirst(
+          `Using existing type for param name ${argType} --> ${key} in Interface: ${upperFirst(
             param.tName,
           )} --- This is because their structure is identical`,
         ),
       );
       argType = key;
-      return false;
+      break;
     }
-  });
+  }
   if (usingExistingParamInterface) {
     return maybeArray(argType);
   }
   if (
     paramInterfacesToDeclare[argType] &&
-    !_.isEqual(
+    !isDeepStrictEqual(
       ignoreDescriptions(paramInterfacesToDeclare[argType].properties),
       ignoreDescriptions(param.properties),
     )
@@ -167,7 +171,7 @@ const flushParamInterfaces = (
             delete toDeclareCheck[prop];
             delete declaredCheck[prop];
           }
-          if (!_.isEqual(toDeclareCheck, declaredCheck)) {
+          if (!isDeepStrictEqual(toDeclareCheck, declaredCheck)) {
             throw new Error('Ruh roh, "' + paramKey + '" is already declared');
           }
           delete paramInterfacesToDeclare[paramKey];
@@ -177,7 +181,7 @@ const flushParamInterfaces = (
         const param = paramInterfacesToDeclare[paramKey];
         const paramAPI: string[] = [];
         paramAPI.push(
-          `interface ${_.upperFirst(param.tName)}${
+          `interface ${upperFirst(param.tName)}${
             param.extends ? ` extends ${param.extends}` : ''
           } {`,
         );
@@ -193,12 +197,12 @@ const flushParamInterfaces = (
 
           if (!Array.isArray(paramProperty.type) && paramProperty.type.toLowerCase() === 'object') {
             let argType =
-              (paramProperty as any).__type || _.upperFirst(_.camelCase(paramProperty.name));
+              (paramProperty as any).__type || upperFirst(camelCase(paramProperty.name));
             if (API.some((a) => a.name === argType)) {
               paramProperty.type = argType;
               debug(
                 chalk.red(
-                  `Auto-correcting type from Object --> ${argType} in Interface: ${_.upperFirst(
+                  `Auto-correcting type from Object --> ${argType} in Interface: ${upperFirst(
                     param.tName,
                   )} --- This should be fixed in the docs`,
                 ),
@@ -230,12 +234,12 @@ const flushParamInterfaces = (
                 paramPropertyType.type.toLowerCase() === 'object'
               ) {
                 let argType =
-                  (paramProperty as any).__type || _.upperFirst(_.camelCase(paramProperty.name));
+                  (paramProperty as any).__type || upperFirst(camelCase(paramProperty.name));
                 if (API.some((a) => a.name === argType)) {
                   paramPropertyType.type = argType;
                   debug(
                     chalk.red(
-                      `Auto-correcting type from Object --> ${argType} in Interface: ${_.upperFirst(
+                      `Auto-correcting type from Object --> ${argType} in Interface: ${upperFirst(
                         param.tName,
                       )} --- This should be fixed in the docs`,
                     ),

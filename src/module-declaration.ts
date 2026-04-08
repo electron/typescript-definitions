@@ -14,10 +14,10 @@ import {
   DetailedEventType,
   DetailedEventReferenceType,
 } from '@electron/docs-parser';
-import _ from 'lodash';
 
 import { DynamicParamInterfaces } from './dynamic-param-interfaces.js';
 import * as utils from './utils.js';
+import { upperFirst, camelCase } from './utils.js';
 
 const modules: Record<string, string[]> = {};
 
@@ -30,8 +30,8 @@ export const generateModuleDeclaration = (
   index: number,
   API: ParsedDocumentationResult,
 ) => {
-  const moduleAPI = modules[_.upperFirst(module.name)] || [];
-  const newModule = !modules[_.upperFirst(module.name)];
+  const moduleAPI = modules[upperFirst(module.name)] || [];
+  const newModule = !modules[upperFirst(module.name)];
   const instanceModuleForStaticVersion = API.find(
     (tModule, tIndex) =>
       index !== tIndex && tModule.name.toLowerCase() === module.name.toLowerCase(),
@@ -66,16 +66,16 @@ export const generateModuleDeclaration = (
       }
       if (extendsInfo) {
         moduleAPI.push(
-          `${isClass ? 'class' : 'interface'} ${_.upperFirst(module.name)}${extendsInfo} {`,
+          `${isClass ? 'class' : 'interface'} ${upperFirst(module.name)}${extendsInfo} {`,
         );
         moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '');
       } else {
-        moduleAPI.push(`${isClass ? 'class' : 'interface'} ${_.upperFirst(module.name)} {`);
+        moduleAPI.push(`${isClass ? 'class' : 'interface'} ${upperFirst(module.name)} {`);
         moduleAPI.push('', `// Docs: ${module.websiteUrl}`, '');
       }
     } else {
       moduleAPI.push(
-        `interface ${_.upperFirst(module.name)}${
+        `interface ${upperFirst(module.name)}${
           module.extends ? ` extends ${module.extends}` : ''
         } {`,
       );
@@ -86,13 +86,12 @@ export const generateModuleDeclaration = (
   // Event Declaration
   if (module.type !== 'Element') {
     // To assist with declaration merging we define all parent events in this class too
-    _.concat(
-      [],
-      module.instanceEvents || [],
-      module.events || [],
-      ...parentModules.map((m) => m.events || []),
-      ...parentModules.map((m) => m.instanceEvents || []),
-    )
+    [
+      ...(module.instanceEvents || []),
+      ...(module.events || []),
+      ...parentModules.flatMap((m) => m.events || []),
+      ...parentModules.flatMap((m) => m.instanceEvents || []),
+    ]
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach((moduleEvent, i, events) => {
         utils.extendArray(
@@ -103,7 +102,7 @@ export const generateModuleDeclaration = (
 
         if (moduleEvent.parameters) {
           const args: string[] = [];
-          const indent = _.repeat(' ', moduleEvent.name.length + 29);
+          const indent = ' '.repeat(moduleEvent.name.length + 29);
 
           moduleEvent.parameters.forEach((eventListenerArg, index) => {
             let argString = '';
@@ -129,9 +128,9 @@ export const generateModuleDeclaration = (
               argType = DynamicParamInterfaces.createParamInterface(
                 objectListenerArg,
                 eventListenerArg.name === 'params'
-                  ? _.upperFirst(_.camelCase(moduleEvent.name))
+                  ? upperFirst(camelCase(moduleEvent.name))
                   : undefined,
-                _.upperFirst(_.camelCase(moduleEvent.name)),
+                upperFirst(camelCase(moduleEvent.name)),
               );
             }
 
@@ -156,9 +155,7 @@ export const generateModuleDeclaration = (
                 };
                 eventParamsType = DynamicParamInterfaces.createParamInterface(
                   fakeObject,
-                  `${_.upperFirst(_.camelCase(module.name))}${_.upperFirst(
-                    _.camelCase(moduleEvent.name),
-                  )}`,
+                  `${upperFirst(camelCase(module.name))}${upperFirst(camelCase(moduleEvent.name))}`,
                 );
               }
               if (eventReferenceListenerArg.eventPropertiesReference) {
@@ -229,16 +226,14 @@ export const generateModuleDeclaration = (
 
           domEvent.parameters.forEach((eventListenerProp, index) => {
             if (eventListenerProp.name === 'result') {
-              (eventListenerProp as any).__type = `${_.upperFirst(
-                _.camelCase(domEvent.name),
-              )}Result`;
+              (eventListenerProp as any).__type = `${upperFirst(camelCase(domEvent.name))}Result`;
             }
             fakeObject.properties.push(eventListenerProp);
           });
 
           eventType = DynamicParamInterfaces.createParamInterface(
             fakeObject,
-            _.upperFirst(_.camelCase(domEvent.name)),
+            upperFirst(camelCase(domEvent.name)),
           );
         }
 
@@ -300,7 +295,7 @@ export const generateModuleDeclaration = (
     if (returnType === 'Object' || (returnType as TypeInformation).type === 'Object') {
       returnType = DynamicParamInterfaces.createParamInterface(
         moduleMethod.returns! as any,
-        _.upperFirst(moduleMethod.name),
+        upperFirst(moduleMethod.name),
       );
 
       // The process module is not in the Electron namespace so we need to reference the Electron namespace to use these types
@@ -323,7 +318,7 @@ export const generateModuleDeclaration = (
           ? ''
           : `: ${utils.typify(
               returnType as TypeInformation,
-              `${_.upperFirst(moduleMethod.name)}ReturnValue`,
+              `${upperFirst(moduleMethod.name)}ReturnValue`,
             )}`
       };`,
     );
@@ -448,7 +443,7 @@ export const generateModuleDeclaration = (
   }
 
   // Save moduleAPI for later reuse
-  modules[_.upperFirst(module.name)] = moduleAPI;
+  modules[upperFirst(module.name)] = moduleAPI;
 };
 
 export const getModuleDeclarations = () => modules;
