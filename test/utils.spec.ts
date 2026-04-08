@@ -4,6 +4,69 @@ import { describe, expect, it } from 'vitest';
 import * as utils from '../src/utils.js';
 
 describe('utils', () => {
+  describe('upperFirst', () => {
+    it('should uppercase the first character', () => {
+      expect(utils.upperFirst('foo')).toEqual('Foo');
+    });
+
+    it('should leave the rest of the string untouched', () => {
+      expect(utils.upperFirst('fooBAR')).toEqual('FooBAR');
+    });
+
+    it('should leave already-uppercase strings unchanged', () => {
+      expect(utils.upperFirst('Foo')).toEqual('Foo');
+    });
+
+    it('should return an empty string for empty or undefined input', () => {
+      expect(utils.upperFirst('')).toEqual('');
+      expect(utils.upperFirst(undefined)).toEqual('');
+    });
+  });
+
+  describe('lowerFirst', () => {
+    it('should lowercase the first character', () => {
+      expect(utils.lowerFirst('Foo')).toEqual('foo');
+    });
+
+    it('should leave the rest of the string untouched', () => {
+      expect(utils.lowerFirst('FooBAR')).toEqual('fooBAR');
+    });
+
+    it('should return an empty string for empty or undefined input', () => {
+      expect(utils.lowerFirst('')).toEqual('');
+      expect(utils.lowerFirst(undefined)).toEqual('');
+    });
+  });
+
+  describe('camelCase', () => {
+    it('should convert kebab-case to camelCase', () => {
+      expect(utils.camelCase('did-finish-load')).toEqual('didFinishLoad');
+      expect(utils.camelCase('window-all-closed')).toEqual('windowAllClosed');
+    });
+
+    it('should convert snake_case to camelCase', () => {
+      expect(utils.camelCase('foo_bar_baz')).toEqual('fooBarBaz');
+    });
+
+    it('should lowercase the first character of an already camelCased string', () => {
+      expect(utils.camelCase('authInfo')).toEqual('authInfo');
+      expect(utils.camelCase('WebContents')).toEqual('webContents');
+    });
+
+    it('should split runs of uppercase letters', () => {
+      expect(utils.camelCase('IPCMain')).toEqual('ipcMain');
+    });
+
+    it('should pass through single lowercase words', () => {
+      expect(utils.camelCase('params')).toEqual('params');
+    });
+
+    it('should return an empty string for empty or undefined input', () => {
+      expect(utils.camelCase('')).toEqual('');
+      expect(utils.camelCase(undefined)).toEqual('');
+    });
+  });
+
   describe('extendArray', () => {
     it('should return an array with all elements added correctly', () => {
       expect(utils.extendArray(['foo'], ['bar'])).toEqual(['foo', 'bar']);
