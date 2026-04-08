@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { ParsedDocumentationResult } from '@electron/docs-parser';
-import _ from 'lodash';
 
 import * as utils from './utils.js';
 import { getModuleDeclarations, generateModuleDeclaration } from './module-declaration.js';
@@ -30,7 +29,7 @@ const wrapWithHeaderAndFooter = (outputLines: string[], electronVersion: string)
       .split(/\r?\n/),
   );
 
-  outputLines.slice(0).forEach((l) => newOutputLines.push(`${_.trimEnd(`  ${l}`)}`));
+  outputLines.slice(0).forEach((l) => newOutputLines.push(`  ${l}`.trimEnd()));
   utils.extendArray(newOutputLines, ['}', '']);
 
   utils.extendArray(

@@ -8,7 +8,6 @@ import {
   DocumentationTag,
   ParsedDocumentationResult,
 } from '@electron/docs-parser';
-import _ from 'lodash';
 import d from 'debug';
 
 import { DynamicParamInterfaces } from './dynamic-param-interfaces.js';
@@ -19,6 +18,21 @@ let paramInterfaces: typeof DynamicParamInterfaces;
 
 export const setParamInterfaces = (provided: typeof DynamicParamInterfaces) => {
   paramInterfaces = provided;
+};
+
+export const upperFirst = (s?: string): string => (s ? s[0].toUpperCase() + s.slice(1) : '');
+
+export const lowerFirst = (s?: string): string => (s ? s[0].toLowerCase() + s.slice(1) : '');
+
+export const camelCase = (s?: string): string => {
+  if (!s) return '';
+  return s
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
+    .split(/[^a-zA-Z0-9]+/)
+    .filter(Boolean)
+    .map((w, i) => (i === 0 ? w.toLowerCase() : upperFirst(w.toLowerCase())))
+    .join('');
 };
 
 export const extendArray = <T>(arr1: T[], arr2: T[]): T[] => {
@@ -350,25 +364,25 @@ export const genMethodString = (
       ) {
         return paramInterfaces.createParamInterface(
           objectParam,
-          _.upperFirst(module.name) + _.upperFirst(moduleMethod.name),
+          upperFirst(module.name) + upperFirst(moduleMethod.name),
         );
       }
 
-      return paramInterfaces.createParamInterface(objectParam, _.upperFirst(moduleMethod.name));
+      return paramInterfaces.createParamInterface(objectParam, upperFirst(moduleMethod.name));
     }
 
     if (['set', 'get'].includes(moduleMethod.name.toLowerCase())) {
       return paramInterfaces.createParamInterface(
         objectParam,
-        _.upperFirst(module.name) + _.upperFirst(moduleMethod.name),
+        upperFirst(module.name) + upperFirst(moduleMethod.name),
       );
     }
 
     return paramInterfaces.createParamInterface(
       objectParam,
       '',
-      _.upperFirst(moduleMethod.name),
-      topLevelModuleMethod ? _.upperFirst(topLevelModuleMethod.name) : '',
+      upperFirst(moduleMethod.name),
+      topLevelModuleMethod ? upperFirst(topLevelModuleMethod.name) : '',
     );
   };
   return `${includeType ? '(' : ''}${(moduleMethod.parameters || [])
@@ -395,7 +409,7 @@ export const genMethodString = (
                 paramInterfaces,
                 module,
                 {
-                  name: _.upperFirst(moduleMethod.name) + _.upperFirst(param.name),
+                  name: upperFirst(moduleMethod.name) + upperFirst(param.name),
                   ...functionParam,
                 } as any /* FIXME: */,
                 true,
