@@ -39,6 +39,6 @@ jobs:
       - name: Build
         run: yarn build
       - name: Lint
-        run: yarn prettier:check
+        run: yarn lint
       - name: Test
         run: yarn test
