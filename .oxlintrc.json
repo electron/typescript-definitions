@@ -1,0 +1,8 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "unicorn", "oxc", "import"],
+  "categories": { "correctness": "warn" },
+  // enable type-aware when we migrate away from Node10 moduleResolution
+  "options": { "typeAware": false },
+  "ignorePatterns": ["base/"]
+}

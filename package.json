@@ -12,10 +12,10 @@
   },
   "scripts": {
     "build": "tsc",
+    "lint": "oxfmt --check . && oxlint",
+    "lint:fix": "oxfmt --write . && oxlint --fix",
     "prepare": "husky",
     "prepack": "yarn build",
-    "prettier:check": "prettier --list-different \"{src,test}/**/*.ts\"",
-    "prettier:write": "prettier --write \"{src,test}/**/*.ts\"",
     "test": "vitest run"
   },
   "author": {
@@ -29,10 +29,12 @@
   "devDependencies": {
     "@electron/docs-parser": "^2.0.0",
     "@types/debug": "^4.1.12",
-    "husky": "^9.1.6",
-    "lint-staged": "^16.2.7",
-    "prettier": "^3.3.3",
-    "typescript": "^5.6.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "oxfmt": "^0.44.0",
+    "oxlint": "^1.59.0",
+    "oxlint-tsgolint": "^0.20.0",
+    "typescript": "^6.0.2",
     "vitest": "^4.1.1"
   },
   "dependencies": {
@@ -52,7 +54,13 @@
     "base"
   ],
   "lint-staged": {
-    "*.ts": "prettier --write"
+    "*.{js,ts}": [
+      "oxfmt --write",
+      "oxlint --fix"
+    ],
+    "*.json": [
+      "oxfmt --write"
+    ]
   },
   "resolutions": {
     "fsevents": "npm:@electron/fsevents@2.3.3-fork"

@@ -1,27 +1,19 @@
 {
-	"compilerOptions": {
-		"module": "es2022",
-		"target": "es2022",
-		"moduleResolution": "Node",
-		"outDir": "dist",
-		"lib": [
-			"es6",
-			"es7"
-		],
-		"types": [
-			"node"
-		],
-		"declaration": false,
-		"sourceMap": true,
-		"rootDir": "src",
-		"experimentalDecorators": true,
-		"strict": true,
-		"esModuleInterop": true
-	},
-	"exclude": [
-		"base",
-		"dist",
-		"electron.d.ts",
-		"test"
-	]
+  "compilerOptions": {
+    "module": "es2022",
+    "target": "es2022",
+    "moduleResolution": "Node",
+    "outDir": "dist",
+    "lib": ["es6", "es7"],
+    "types": ["node"],
+    "declaration": false,
+    "sourceMap": true,
+    "rootDir": "src",
+    "experimentalDecorators": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "ignoreDeprecations": "6.0",
+    "skipLibCheck": true
+  },
+  "exclude": ["base", "dist", "electron.d.ts", "test"]
 }
