@@ -1,8 +1,6 @@
 # Contributing to electron/typescript-definitions
 
-## Code of Conduct
-
-This project adheres to Electron's [code of conduct](https://github.com/electron/electron/blob/main/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to coc@electronjs.org.
+Hi there! We're thrilled that you'd like to contribute to this project. Your help is essential for keeping it great.
 
 ## Developing Locally
 
