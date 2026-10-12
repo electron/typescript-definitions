@@ -121,5 +121,5 @@ export async function generateDefinitions({ electronApi: API }: GenerateOptions)
 
   const electronOutput = wrapWithHeaderAndFooter(outputLines, API[0].version);
 
-  return appendNodeJSOverride(electronOutput);
+  return appendNodeJSOverride(electronOutput) + '\n';
 }
