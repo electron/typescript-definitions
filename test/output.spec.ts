@@ -20,9 +20,10 @@ describe('Definition File', function () {
     });
   });
 
-  it('should output a electron.d.ts file', () => {
+  it('should output a electron.d.ts file with a trailing newline', () => {
     expect(fs.existsSync(OUTPUT_PATH)).toEqual(true);
     output = fs.readFileSync(OUTPUT_PATH, 'utf8');
+    expect(output.endsWith('\n')).toEqual(true);
   });
 
   it('should correctly output all exported Electron modules', () => {
