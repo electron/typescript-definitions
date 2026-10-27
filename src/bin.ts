@@ -62,20 +62,23 @@ runner.text = chalk.cyan(`Generating API in directory: ${chalk.yellow(`"${resolv
 const start = Date.now();
 const resolvedFilePath = path.resolve(resolvedOutDir, './electron.d.ts');
 
-fs.promises.mkdir(resolvedOutDir, { recursive: true }).then(async () =>
-  generateDefinitions({
-    electronApi: JSON.parse(await fs.promises.readFile(resolvedApi, 'utf-8')),
-  })
-    .then((data) => fs.promises.writeFile(resolvedFilePath, data))
-    .then(() =>
-      runner.success(
-        `${chalk.green('Electron Typescript Definitions generated in')} ${chalk.yellow(
-          `"${resolvedFilePath}"`,
-        )} took ${chalk.cyan(pretty(Date.now() - start))}`,
+fs.promises
+  .mkdir(resolvedOutDir, { recursive: true })
+  .then(async () =>
+    generateDefinitions({
+      electronApi: JSON.parse(await fs.promises.readFile(resolvedApi, 'utf-8')),
+    })
+      .then((data) => fs.promises.writeFile(resolvedFilePath, data))
+      .then(() =>
+        runner.success(
+          `${chalk.green('Electron Typescript Definitions generated in')} ${chalk.yellow(
+            `"${resolvedFilePath}"`,
+          )} took ${chalk.cyan(pretty(Date.now() - start))}`,
+        ),
       ),
-    )
-    .catch((err) => {
-      console.error(err);
-      process.exit(1);
-    }),
-);
+  )
+  .catch((err) => {
+    runner.error();
+    console.error(err);
+    process.exit(1);
+  });
