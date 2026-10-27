@@ -41,8 +41,8 @@
     "@types/node": "^20.11.25",
     "chalk": "^5.3.0",
     "debug": "^4.3.7",
-    "ora": "^8.1.0",
-    "pretty-ms": "^9.1.0"
+    "pretty-ms": "^9.1.0",
+    "yocto-spinner": "^1.2.2"
   },
   "repository": {
     "type": "git",
