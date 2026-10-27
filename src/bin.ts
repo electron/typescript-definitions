@@ -5,8 +5,8 @@ import path from 'node:path';
 import { parseArgs } from 'node:util';
 
 import chalk from 'chalk';
-import ora from 'ora';
 import pretty from 'pretty-ms';
+import yoctoSpinner from 'yocto-spinner';
 
 import { generateDefinitions } from './index.js';
 
@@ -37,16 +37,16 @@ if (help) {
   process.exit(0);
 }
 
-const runner = ora(chalk.yellow('Checking argv')).start();
+const runner = yoctoSpinner({ text: chalk.yellow('Checking argv') }).start();
 
 if (typeof api !== 'string') {
-  runner.fail(chalk.red('Missing required --api argument.  "--api ../electron-api.json"'));
+  runner.error(chalk.red('Missing required --api argument.  "--api ../electron-api.json"'));
   process.exit(1);
 }
 
 const resolvedApi = path.isAbsolute(api) ? api : path.resolve(process.cwd(), api);
 if (!fs.existsSync(resolvedApi)) {
-  runner.fail(`${chalk.red('Resolved directory does not exist:')} ${chalk.cyan(resolvedApi)}`);
+  runner.error(`${chalk.red('Resolved directory does not exist:')} ${chalk.cyan(resolvedApi)}`);
   process.exit(1);
 }
 
@@ -62,20 +62,23 @@ runner.text = chalk.cyan(`Generating API in directory: ${chalk.yellow(`"${resolv
 const start = Date.now();
 const resolvedFilePath = path.resolve(resolvedOutDir, './electron.d.ts');
 
-fs.promises.mkdir(resolvedOutDir, { recursive: true }).then(async () =>
-  generateDefinitions({
-    electronApi: JSON.parse(await fs.promises.readFile(resolvedApi, 'utf-8')),
-  })
-    .then((data) => fs.promises.writeFile(resolvedFilePath, data))
-    .then(() =>
-      runner.succeed(
-        `${chalk.green('Electron Typescript Definitions generated in')} ${chalk.yellow(
-          `"${resolvedFilePath}"`,
-        )} took ${chalk.cyan(pretty(Date.now() - start))}`,
+fs.promises
+  .mkdir(resolvedOutDir, { recursive: true })
+  .then(async () =>
+    generateDefinitions({
+      electronApi: JSON.parse(await fs.promises.readFile(resolvedApi, 'utf-8')),
+    })
+      .then((data) => fs.promises.writeFile(resolvedFilePath, data))
+      .then(() =>
+        runner.success(
+          `${chalk.green('Electron Typescript Definitions generated in')} ${chalk.yellow(
+            `"${resolvedFilePath}"`,
+          )} took ${chalk.cyan(pretty(Date.now() - start))}`,
+        ),
       ),
-    )
-    .catch((err) => {
-      console.error(err);
-      process.exit(1);
-    }),
-);
+  )
+  .catch((err) => {
+    runner.error();
+    console.error(err);
+    process.exit(1);
+  });
