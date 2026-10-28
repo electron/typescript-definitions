@@ -5,10 +5,10 @@
   "bin": {
     "electron-typescript-definitions": "dist/bin.js"
   },
-  "main": "dist/index.js",
+  "exports": "./dist/index.js",
   "type": "module",
   "engines": {
-    "node": ">=20.9.0"
+    "node": ">=22.12.0"
   },
   "scripts": {
     "build": "tsc",
@@ -27,7 +27,8 @@
     "provenance": true
   },
   "devDependencies": {
-    "@electron/docs-parser": "^2.0.0",
+    "@electron/docs-parser": "^3.0.3",
+    "@tsconfig/node22": "^22.0.2",
     "@types/debug": "^4.1.12",
     "husky": "^9.1.7",
     "lint-staged": "^17.4.1",
@@ -38,7 +39,7 @@
     "vitest": "^4.1.1"
   },
   "dependencies": {
-    "@types/node": "^20.11.25",
+    "@types/node": "^22.10.7",
     "chalk": "^5.3.0",
     "debug": "^4.3.7",
     "pretty-ms": "^9.1.0",
