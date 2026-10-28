@@ -18,7 +18,7 @@ npm install @electron/typescript-definitions --save
 To generate the definitions
 
 ```sh
-electron-typescript-definitions --api=path/to/electron/api.json --out-dir=path/to/out/dir
+electron-typescript-definitions --api=path/to/electron/api.json --outDir=path/to/out/dir
 ```
 
 Any warnings during the generation can normally be ignored unless it actually throws

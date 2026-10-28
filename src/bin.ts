@@ -31,7 +31,7 @@ const {
 if (help) {
   console.info(
     chalk.cyan(
-      'Usage: electron-typescript-definitions --api ../electron-api.json [--out-dir ../electron-out]',
+      'Usage: electron-typescript-definitions --api ../electron-api.json [--outDir ../electron-out]',
     ),
   );
   process.exit(0);
