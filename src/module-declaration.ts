@@ -186,21 +186,42 @@ export const generateModuleDeclaration = (
           listener = `(${args.join(`,\n${indent}`)}) => void`;
         }
 
-        const methods = ['on', 'off', 'once', 'addListener', 'removeListener'];
+        const methods = [
+          'on',
+          'off',
+          'once',
+          'addListener',
+          'prependListener',
+          'prependOnceListener',
+          'removeListener',
+        ].map((method) => `${method}(event: '${moduleEvent.name}', listener: ${listener}): this;`);
+        methods.push(`removeAllListeners(event?: '${moduleEvent.name}'): this;`);
+        methods.push(`listeners(event: '${moduleEvent.name}'): (${listener})[];`);
+        methods.push(
+          `listenerCount(event: '${moduleEvent.name}', listener?: ${listener}): number;`,
+        );
+        methods.push(`rawListeners(event: '${moduleEvent.name}'): (${listener})[];`);
         for (const method of methods) {
           if (methods.indexOf(method) > 0) {
             utils.extendArray(moduleAPI, utils.wrapComment('', moduleEvent.additionalTags));
           }
-          moduleAPI.push(`${method}(event: '${moduleEvent.name}', listener: ${listener}): this;`);
+          moduleAPI.push(method);
         }
 
         // EventEmitter methods get overriden above. In order to not break untyped usage, we need to add them back after the last event.
         if (module.name === 'process' && i === events.length - 1) {
+          const untypedListener = '...args: any[]) => void';
           for (const method of methods) {
             moduleAPI.push(
-              `${method}(eventName: string | symbol, listener: (...args: any[]) => void): this;`,
+              `${method}(eventName: string | symbol, listener: (${untypedListener}): this;`,
             );
           }
+          moduleAPI.push(`removeAllListeners(event?: '${moduleEvent.name}'): this;`);
+          moduleAPI.push(`listeners(event: '${moduleEvent.name}'): (${untypedListener})[];`);
+          moduleAPI.push(
+            `listenerCount(event: '${moduleEvent.name}', listener?: ${untypedListener}): number;`,
+          );
+          moduleAPI.push(`rawListeners(event: '${moduleEvent.name}'): (${untypedListener})[];`);
         }
       });
   }
